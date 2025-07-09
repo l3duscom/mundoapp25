@@ -37,10 +37,10 @@
             <div class="btn-group">
 
                 <a href="<?php echo site_url('ingressos/add'); ?>" class="btn btn-primary">Add ingressos</a>
-                <a href="<?php echo site_url('pedidos/entrega'); ?>" class="btn btn-warning">Aguardando Entrega</a>
-                <a href="<?php echo site_url('pedidos/enviados'); ?>" class="btn btn-secondary">Enviados</a>
-                <a href="<?php echo site_url('pedidos/vip'); ?>" class="btn btn-dark">VIP - Aguardando</a>
-                <a href="<?php echo site_url('pedidos/gerenciar'); ?>" class="btn btn-dark">Todos</a>
+                <a href="<?php echo site_url('pedidos/entrega/' . $evento); ?>" class="btn btn-warning">Aguardando Entrega</a>
+                <a href="<?php echo site_url('pedidos/enviados/' . $evento); ?>" class="btn btn-secondary">Enviados</a>
+                <a href="<?php echo site_url('pedidos/vip/' . $evento); ?>" class="btn btn-dark">VIP - Aguardando</a>
+                <a href="<?php echo site_url('pedidos/gerenciar_evento/' . $evento); ?>" class="btn btn-dark">Todos</a>
 
 
             </div>
@@ -131,7 +131,7 @@
 
             "oLanguage": DATATABLE_PTBR,
 
-            "ajax": "<?php echo site_url('pedidos/recuperaPedidosAdminVipEntregue'); ?>",
+            "ajax": "<?php echo site_url('pedidos/recuperaPedidosAdminVipEntregue/' . $evento); ?>",
             "columns": [{
                     "data": "cod_pedido"
                 },

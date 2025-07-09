@@ -15,10 +15,10 @@
 
     <div class="row">
         <div class="btn-group mb-4">
-            <a href="<?php echo site_url('pedidos/recompra'); ?>" class="btn btn-secondary"><i class='bx bx-time'></i> Aguardando contato</a>
-            <a href="<?php echo site_url('pedidos/recomprainiciada'); ?>" class="btn btn-primary"><i class='bx bxl-whatsapp'></i> Contato Iniciado</a>
-            <a href="<?php echo site_url('pedidos/recomprarevertida'); ?>" class="btn btn-success"><i class='bx bxs-like'></i> Compra Revertida</a>
-            <a href="<?php echo site_url('pedidos/recomprarejeitada'); ?>" class="btn btn-danger"><i class='bx bxs-dislike'></i> Compra Rejeitada</a>
+            <a href="<?php echo site_url('pedidos/recompra/' . $evento); ?>" class="btn btn-secondary"><i class='bx bx-time'></i> Aguardando contato</a>
+            <a href="<?php echo site_url('pedidos/recomprainiciada/' . $evento); ?>" class="btn btn-primary"><i class='bx bxl-whatsapp'></i> Contato Iniciado</a>
+            <a href="<?php echo site_url('pedidos/recomprarevertida/' . $evento); ?>" class="btn btn-success"><i class='bx bxs-like'></i> Compra Revertida</a>
+            <a href="<?php echo site_url('pedidos/recomprarejeitada/' . $evento); ?>" class="btn btn-danger"><i class='bx bxs-dislike'></i> Compra Rejeitada</a>
         </div>
         <?php foreach ($recompra as $r) : ?>
             <div class="col-lg-12">

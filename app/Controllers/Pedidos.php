@@ -105,7 +105,7 @@ class Pedidos extends BaseController
 		return view('Pedidos/gerenciar_evento', $data);
 	}
 
-	public function entrega()
+	public function entrega($event_id)
 	{
 
 		if (!$this->usuarioLogado()->temPermissaoPara('editar-clientes')) {
@@ -119,13 +119,14 @@ class Pedidos extends BaseController
 
 		$data = [
 			'titulo' => 'Pedidos aguardando envio',
+			'evento' => $event_id,
 		];
 
 
 		return view('Pedidos/entrega', $data);
 	}
 
-	public function vip()
+	public function vip($event_id)
 	{
 
 		if (!$this->usuarioLogado()->temPermissaoPara('editar-clientes')) {
@@ -139,13 +140,14 @@ class Pedidos extends BaseController
 
 		$data = [
 			'titulo' => 'Pedidos aguardando envio',
+			'evento' => $event_id,
 		];
 
 
 		return view('Pedidos/vip', $data);
 	}
 
-	public function vipentregue()
+	public function vipentregue($event_id)
 	{
 
 		if (!$this->usuarioLogado()->temPermissaoPara('editar-clientes')) {
@@ -159,13 +161,14 @@ class Pedidos extends BaseController
 
 		$data = [
 			'titulo' => 'Pedidos aguardando envio',
+			'evento' => $event_id,
 		];
 
 
 		return view('Pedidos/vipentregue', $data);
 	}
 
-	public function enviados()
+	public function enviados($event_id)
 	{
 
 		if (!$this->usuarioLogado()->temPermissaoPara('editar-clientes')) {
@@ -179,13 +182,14 @@ class Pedidos extends BaseController
 
 		$data = [
 			'titulo' => 'Pedidos enviados',
+			'evento' => $event_id,
 		];
 
 
 		return view('Pedidos/enviados', $data);
 	}
 
-	public function recompra()
+	public function recompra($event_id)
 	{
 
 		if (!$this->usuarioLogado()->temPermissaoPara('editar-clientes')) {
@@ -194,16 +198,15 @@ class Pedidos extends BaseController
 		}
 
 		$usuario_logado = $this->usuarioLogado()->id;
-		//ID do evento para comparação
-		$idevento = 11;
 
 
-		$recompra = $this->pedidosModel->recuperaRecompraPorEvento($idevento);
+		$recompra = $this->pedidosModel->recuperaRecompraPorEvento($event_id);
 
 		$data = [
 			'titulo' => 'Recompra',
 			'recompra' => $recompra,
 			'usuario_logado' => $usuario_logado,
+			'evento' => $event_id,
 		];
 
 
@@ -211,7 +214,7 @@ class Pedidos extends BaseController
 		return view('Pedidos/recompra', $data);
 	}
 
-	public function recomprarevertida()
+	public function recomprarevertida($event_id)
 	{
 
 		if (!$this->usuarioLogado()->temPermissaoPara('editar-clientes')) {
@@ -220,16 +223,15 @@ class Pedidos extends BaseController
 		}
 
 		$usuario_logado = $this->usuarioLogado()->id;
-		//ID do evento para comparação
-		$idevento = 11;
 
 
-		$recompra = $this->pedidosModel->recuperaRecompraRevertidaPorEvento($idevento);
+		$recompra = $this->pedidosModel->recuperaRecompraRevertidaPorEvento($event_id);
 
 		$data = [
 			'titulo' => 'Recompra',
 			'recompra' => $recompra,
 			'usuario_logado' => $usuario_logado,
+			'evento' => $event_id,
 		];
 
 
@@ -237,7 +239,7 @@ class Pedidos extends BaseController
 		return view('Pedidos/recomprarevertida', $data);
 	}
 
-	public function recomprarejeitada()
+	public function recomprarejeitada($event_id)
 	{
 
 		if (!$this->usuarioLogado()->temPermissaoPara('editar-clientes')) {
@@ -246,16 +248,15 @@ class Pedidos extends BaseController
 		}
 
 		$usuario_logado = $this->usuarioLogado()->id;
-		//ID do evento para comparação
-		$idevento = 11;
 
 
-		$recompra = $this->pedidosModel->recuperaRecompraRejeitadaPorEvento($idevento);
+		$recompra = $this->pedidosModel->recuperaRecompraRejeitadaPorEvento($event_id);
 
 		$data = [
 			'titulo' => 'Recompra',
 			'recompra' => $recompra,
 			'usuario_logado' => $usuario_logado,
+			'evento' => $event_id,
 		];
 
 
@@ -263,7 +264,7 @@ class Pedidos extends BaseController
 		return view('Pedidos/recomprarejeitada', $data);
 	}
 
-	public function recomprainiciada()
+	public function recomprainiciada($event_id)
 	{
 
 		if (!$this->usuarioLogado()->temPermissaoPara('editar-clientes')) {
@@ -272,16 +273,15 @@ class Pedidos extends BaseController
 		}
 
 		$usuario_logado = $this->usuarioLogado()->id;
-		//ID do evento para comparação
-		$idevento = 11;
 
 
-		$recompra = $this->pedidosModel->recuperaRecompraIniciadaPorEvento($idevento);
+		$recompra = $this->pedidosModel->recuperaRecompraIniciadaPorEvento($event_id);
 
 		$data = [
 			'titulo' => 'Recompra',
 			'recompra' => $recompra,
 			'usuario_logado' => $usuario_logado,
+			'evento' => $event_id,
 		];
 
 
