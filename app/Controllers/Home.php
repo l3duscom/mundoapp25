@@ -28,9 +28,7 @@ class Home extends BaseController
     public function index()
     {
 
-        //$eventos = $this->eventoModel->orderBy('created_at', 'DESC')->findAll();
-        $eventos = $this->eventoModel->findAll();
-
+        $eventos = $this->eventoModel->orderBy('id', 'DESC')->findAll();
 
         $data = [
             'titulo' => 'Home',
