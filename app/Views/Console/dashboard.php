@@ -76,13 +76,7 @@
                 <div class="flex-grow-1 mt-3" style="padding-right: 20px;">
                 <div class="col-lg-9">
             
-            <div class="alert alert-secondary" role="alert">
-                <h3 style="padding-top: 20px;">Compre o FAST PASS e faça algo muito feio: <strong style="color: orangered">FURE A FILA</strong></h3>
-                <hr>
-                <p class="mb-0">Chega de filas e de perder o tempo! Com o Fast Pass, você fura a fila das ativações próprias do Dream25 e garante acesso prioritário ao <strong> PALCO MUNDO, que tem lugares LIMITADOS,</strong> pra não perder a apresentação de nenhum dos seus ídolos!</p>
-                
-                <a href="https://ingressos.dreamfest.com.br/carrinho/adicional/12" target="_blank" class="btn btn-lg btn-success mt-2 shadow w-100"><i class='bx  bx-plus-circle' ></i>  Quero furar a fila</a>
-            </div>
+            
 
                     <?php $ingresso_id = null ?>
                     <?php if ($ingressos != null) : ?>
