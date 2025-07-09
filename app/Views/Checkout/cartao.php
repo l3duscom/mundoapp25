@@ -54,7 +54,7 @@ $total = $_SESSION['total'] + $_SESSION['valor_frete'];
 
 
 
-                        <form method="POST" action="<?= site_url('Checkout/finalizarcartao') ?>">
+                        <form method="POST" action="<?= site_url('Checkout/finalizarcartao/'. $event_id) ?>">
 
                             <?= csrf_field() ?>
 

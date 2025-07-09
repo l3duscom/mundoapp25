@@ -460,7 +460,7 @@ class Checkout extends BaseController
 		return view('Checkout/confirmadm', $data);
 	}
 
-	public function cartao()
+	public function cartao($event_id)
 	{
 
 
@@ -481,13 +481,14 @@ class Checkout extends BaseController
 		$data = [
 			'titulo' => 'Comprar ingressos',
 			'id' => $id,
+			'event_id' => $event_id
 		];
 
 
 		return view('Checkout/cartao_step_1', $data);
 	}
 
-	public function cartao_step_2()
+	public function cartao_step_2($event_id)
 	{
 
 
@@ -539,7 +540,8 @@ class Checkout extends BaseController
 
 		$data = [
 			'titulo' => 'Comprar ingressos',
-			'data_cli' => $data_cli
+			'data_cli' => $data_cli,
+			'event_id' => $event_id
 		];
 
 

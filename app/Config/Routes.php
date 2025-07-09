@@ -122,6 +122,14 @@ $routes->group('relatorios', function ($routes) {
 $routes->get('api/checkout/obrigado', 'Api\Checkout::obrigado');
 $routes->post('api/checkout/notify', 'Api\Checkout::notify');
 
+// Rotas do Checkout
+$routes->get('checkout/pix/(:num)', 'Checkout::pix/$1');
+$routes->get('checkout/cartao/(:num)', 'Checkout::cartao/$1');
+$routes->post('checkout/cartao_step_2/(:num)', 'Checkout::cartao_step_2/$1');
+$routes->post('checkout/finalizarpix/(:num)', 'Checkout::finalizarpix/$1');
+$routes->post('checkout/finalizarcartao/(:num)', 'Checkout::finalizarcartao/$1');
+$routes->get('checkout/qrcode/(:any)', 'Checkout::qrcode/$1');
+
 
 /*
  * --------------------------------------------------------------------

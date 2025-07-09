@@ -17,7 +17,7 @@
 <?php echo $this->section('conteudo') ?>
 
 
-<h5 class="mb-0 mt-3">Quase lá! Agora é só efetuar o pagamento e garantir seus ingressos! <?= $event_id ?></h5>
+<h5 class="mb-0 mt-3">Quase lá! Agora é só efetuar o pagamento e garantir seus ingressos! </h5>
 
 
 <div class="row mt-4">
@@ -279,8 +279,8 @@
                             // Tudo certo com a atualização do usuário
                             // Podemos agora redirecioná-lo tranquilamente
 
-                            window.location.href =
-                                "<?php echo site_url("checkout/qrcode/"); ?>" + response.id;
+                            window.location.href = "<?php echo site_url('checkout/qrcode/' . $event_id . '/'); ?>" + response.id;
+
 
                         }
 

@@ -48,13 +48,12 @@
                         </div>
 
 
-                        <form method="POST" action="<?= site_url('Checkout/cartao_step_2') ?>">
+                        <form method="POST" action="<?= site_url('Checkout/cartao_step_2/'.$event_id) ?>">
                             <?= csrf_field() ?>
 
                             <input type="hidden" name="valor_total" id="valor_total" value="<?= $_SESSION['total'] * 100 ?>" required>
                             <input type="hidden" name="convite" value="<?= $_SESSION['convite'] ?>">
                             <input type="hidden" name="forma_pagamento" value="cartão">
-                            <input type="hidden" name="event_id" value="<?= $event_id ?>">
 
 
                             <div class="form-group col-md-12">

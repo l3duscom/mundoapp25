@@ -1869,7 +1869,7 @@ if (isset($event_id)) {
                 <?php if ($_SESSION['total'] != 0) : ?>
                     <div id="areaBotoes" class="row g-3">
                         <div class="col-lg-12">
-                            <a href="<?= site_url('/evento/entrega') ?>" class="w-100 btn btn-primary btn-lg ">Ir para entrega</a>
+                            <a href="<?= site_url('/evento/entrega'. $event_id) ?>" class="w-100 btn btn-primary btn-lg ">Ir para entrega</a>
                         </div>
 
                     </div>
