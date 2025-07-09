@@ -289,13 +289,13 @@ class Pedidos extends BaseController
 		return view('Pedidos/recomprainiciada', $data);
 	}
 
-	public function recuperaPedidosAdmin()
+	public function recuperaPedidosAdmin($event_id)
 	{
 		if (!$this->request->isAJAX()) {
 			return redirect()->back();
 		}
 
-		$pedidos = $this->pedidosModel->listaPedidosAdmin();
+		$pedidos = $this->pedidosModel->listaPedidosAdmin($event_id);
 
 		// Receberá o array de objetos de clientes
 		$data = [];

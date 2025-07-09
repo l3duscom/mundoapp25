@@ -132,7 +132,7 @@
 
             "oLanguage": DATATABLE_PTBR,
 
-            "ajax": "<?php echo site_url('pedidos/recuperapedidosadmin'); ?>",
+            "ajax": "<?php echo site_url('pedidos/recuperapedidosadmin/' . $evento); ?>",
             "columns": [{
                     "data": "cod_pedido"
                 },
