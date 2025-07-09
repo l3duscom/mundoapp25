@@ -411,13 +411,23 @@ class Checkout extends BaseController
 			$id = null;
 		}
 
-
-
-
+		// Calculate total and discount from cart
+		$total = 0;
+		$valor_desconto = 0;
+		
+		if (isset($_SESSION['carrinho']) && is_array($_SESSION['carrinho'])) {
+			foreach ($_SESSION['carrinho'] as $item) {
+				if ($item['quantidade'] > 0) {
+					$total += ($item['quantidade'] * $item['unitario']) + ($item['quantidade'] * $item['taxa']);
+				}
+			}
+		}
 
 		$data = [
 			'titulo' => 'Comprar ingressos',
 			'id' => $id,
+			'total' => $total,
+			'valor_desconto' => $valor_desconto,
 		];
 
 
