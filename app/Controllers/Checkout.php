@@ -397,10 +397,8 @@ class Checkout extends BaseController
 		}
 	}
 
-	public function pix()
+	public function pix($event_id)
 	{
-
-
 
 		if ($this->usuarioLogado()) {
 			$id = $this->usuarioLogado()->id;
@@ -428,6 +426,7 @@ class Checkout extends BaseController
 			'id' => $id,
 			'total' => $total,
 			'valor_desconto' => $valor_desconto,
+			'event_id' => $event_id
 		];
 
 

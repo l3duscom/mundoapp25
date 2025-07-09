@@ -18,7 +18,6 @@
 
 
 <?php
-$event_id = session()->get('event_id');
 if (!isset($_SESSION['frete'])) {
     $_SESSION['frete'] = 1;
     $_SESSION['valor_frete'] = 0;
@@ -177,14 +176,14 @@ if (!isset($_SESSION['impressao'])) {
                                 </div> -->
                             <div id="areaBotoes" class="row g-1">
                                 <div class="col-lg-6">
-                                    <a href="<?= site_url('/checkout/cartao/' . session()->get('event_id')) ?>" class="w-100 btn btn-lg " style="background-color: purple; border-color: purple; color: white;"><span class="text-white" style="font-size: 12px;">Pagar com:</span><i class="bi bi-credit-card-fill me-2 font-16"></i>Cartão</a>
+                                    <a href="<?= site_url('/checkout/cartao/' . $event_id) ?>" class="w-100 btn btn-lg " style="background-color: purple; border-color: purple; color: white;"><span class="text-white" style="font-size: 12px;">Pagar com:</span><i class="bi bi-credit-card-fill me-2 font-16"></i>Cartão</a>
                                 </div>
                                 <div class="col-lg-6">
-                                    <a href="<?= site_url('/checkout/pix/' . session()->get('event_id')) ?>" class="w-100 btn btn-lg " style="background-color: purple; border-color: purple; color: white;"><span class="text-white" style="font-size: 12px;">Pagar com:</span><i class="fa-brands fa-pix"></i> PIX <span class="badge bg-warning text-dark font-13" style="margin-left: 7px;">10% OFF</span></a>
+                                    <a href="<?= site_url('/checkout/pix/' . $event_id) ?>" class="w-100 btn btn-lg " style="background-color: purple; border-color: purple; color: white;"><span class="text-white" style="font-size: 12px;">Pagar com:</span><i class="fa-brands fa-pix"></i> PIX <span class="badge bg-warning text-dark font-13" style="margin-left: 7px;">10% OFF</span></a>
                                 </div>
                                 <!--
                                 <div class="col-lg-4">
-                                    <a href="<?= site_url('/checkout/boleto/' . session()->get('event_id')) ?>" class="w-100 btn btn-primary btn-lg disabled"><span class="text-white" style="font-size: 12px;">Pagar com:</span><i class="bx bx-barcode-reader me-2 font-24"></i>Boleto</a>
+                                    <a href="<?= site_url('/checkout/boleto/'. $event_id) ?>" class="w-100 btn btn-primary btn-lg disabled"><span class="text-white" style="font-size: 12px;">Pagar com:</span><i class="bx bx-barcode-reader me-2 font-24"></i>Boleto</a>
                                 </div>
                             -->
 

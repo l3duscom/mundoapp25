@@ -66,7 +66,8 @@ class Carrinho extends BaseController
 		$data = [
 			'titulo' => 'Comprar ingressos',
 			'id' => $id,
-			'items' => $ingressos
+			'items' => $ingressos,
+			'event_id' => $event_id
 
 		];
 
