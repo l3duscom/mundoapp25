@@ -19,7 +19,7 @@
 $event_id = session()->get('event_id');
 ?>
 
-<h5 class="mb-0 mt-3">Quase lá! Agora é só efetuar o pagamento e garantir seus ingressos!</h5>
+<h5 class="mb-0 mt-3">Quase lá! Agora é só efetuar o pagamento e garantir seus ingressos! <?= $event_id ?></h5>
 
 
 <div class="row mt-4">
