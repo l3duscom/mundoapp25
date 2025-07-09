@@ -23,17 +23,17 @@
     </div>
 
 </div>
-
+<span style="font-size: 12x; ">Escolha o evento desejado:</span>
 <?php foreach ($eventos as $evento) : ?>
     <?php if ($evento->ativo == 1) : ?>
                 
-            <div class="card rounded-4">
+            <div class="card rounded-4 mb-1">
                 <div class="card-body">
-                    <h3 class="card-title">
+                    
                         <a href="<?= site_url('home/evento/' . $evento->id) ?>" style="text-decoration: none; color: inherit;">
                             <?= $evento->nome ?>
                         </a>
-                    </h3>
+             
                      </div>
                 </div>                                    
         <?php endif; ?>
