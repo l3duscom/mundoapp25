@@ -662,7 +662,7 @@ if (isset($event_id)) {
                                 </a>
                                 <center><span style="padding-top: 5px; margin-bottom: -5px">Total a pagar: <strong>R$ <?= number_format($_SESSION['total'], 2, ',', '')  ?></strong></span> </center>
 
-                                <a href="<?= site_url('/evento/entrega') ?>" class="btn btn-lg mt-0" style="padding:10px; background-color: purple; border-color: purple; color: white;"> Ir para o pagamento <i class='bx bx-right-arrow-circle'></i></a>
+                                <a href="<?= site_url('/evento/entrega/'. $event_id) ?>" class="btn btn-lg mt-0" style="padding:10px; background-color: purple; border-color: purple; color: white;"> Ir para o pagamento <i class='bx bx-right-arrow-circle'></i></a>
 
                             </div>
                         </div>
