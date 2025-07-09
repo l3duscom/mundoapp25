@@ -68,7 +68,7 @@ class Pedidos extends BaseController
 
 		$id = $this->usuarioLogado()->id;
 
-		$eventos = $this->eventoModel->findAll();
+		$eventos = $this->eventoModel->orderBy('id', 'DESC')->findAll();
 
 		$data = [
 			'titulo' => 'Gerenciamento de pedidos',
