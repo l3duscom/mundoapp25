@@ -105,7 +105,7 @@ class Evento extends BaseController
 		return view('Carrinho/24', $data);
 	}
 
-	public function entrega()
+	public function entrega($event_id)
 	{
 
 
@@ -125,6 +125,7 @@ class Evento extends BaseController
 		$data = [
 			'titulo' => 'Como você quer receber o seu ingresso?',
 			'id' => $id,
+			'event_id' => $event_id
 
 		];
 
