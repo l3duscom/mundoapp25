@@ -45,6 +45,9 @@ class Home extends BaseController
             'eventos' => $eventos,
         ];
 
+        var_dump($eventos);
+        exit;
+
         if (!$this->usuarioLogado()->temPermissaoPara('visualizar-home')) {
 
             return redirect()->to(site_url("Console/dashboard"));
