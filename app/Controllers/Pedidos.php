@@ -3,8 +3,6 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use App\Entities\Cliente;
-use App\Entities\Cartao;
 use App\Entities\Endereco;
 use App\Traits\ValidacoesTrait;
 
@@ -70,12 +68,7 @@ class Pedidos extends BaseController
 
 		$id = $this->usuarioLogado()->id;
 
-		$eventos = $this->eventoModel->findAll();
-
-
-
-
-
+		$eventos = $this->eventoModel->orderBy('created_at', 'DESC')->findAll();
 
 		$data = [
 			'titulo' => 'Gerenciamento de pedidos',

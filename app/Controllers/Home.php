@@ -8,14 +8,6 @@ use CodeIgniter\Config\Factories;
 
 class Home extends BaseController
 {
-
-    private $ordemModel;
-    private $usuarioModel;
-    private $ordemItemModel;
-    private $clienteModel;
-    private $fornecedorModel;
-    private $itemModel;
-    private $gerencianetService;
     private $ingressoModel;
     private $pedidoModel;
     private $eventoModel;
@@ -36,25 +28,17 @@ class Home extends BaseController
     public function index()
     {
 
-        $eventos = $this->eventoModel->findAll();
-
-
+        $eventos = $this->eventoModel->orderBy('created_at', 'DESC')->findAll();
 
         $data = [
             'titulo' => 'Home',
             'eventos' => $eventos,
         ];
 
-   
-
-
         if (!$this->usuarioLogado()->temPermissaoPara('visualizar-home')) {
 
             return redirect()->to(site_url("Console/dashboard"));
         }
-
-
-
 
         return view('Home/index', $data);
     }
