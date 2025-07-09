@@ -255,8 +255,7 @@
                             // Tudo certo com a atualização do usuário
                             // Podemos agora redirecioná-lo tranquilamente
 
-                            window.location.href =
-                                "<?php echo site_url("checkout/qrcode"); ?>" + response.id;
+                            window.location.href = "<?php echo site_url('checkout/qrcode/' . $event_id . '/'); ?>" + response.id;
 
                         }
 

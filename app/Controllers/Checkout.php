@@ -2173,7 +2173,7 @@ class Checkout extends BaseController
 		return redirect()->to(site_url("ingressos"))->with('sucesso', "Seu ingresso foi gerado com sucesso! Apresente seu cartão na bilheteria do evento para garantir seu acesso.");
 	}
 
-	public function qrcode(string $id)
+	public function qrcode(int $event_id, string $id)
 	{
 
 
@@ -2197,7 +2197,8 @@ class Checkout extends BaseController
 			'transaction' => $transaction,
 			'convite' => $convite->codigo,
 			'indicacoes' => $indicacoes,
-			'status' => $status
+			'status' => $status,
+			'event_id' => $event_id
 		];
 
 
