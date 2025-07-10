@@ -365,68 +365,6 @@ class Carrinho extends BaseController
 		return view('Carrinho/puc', $data);
 	}
 
-	public function adicionar()
-	{
-		$id = $this->request->getPost('id');
-		// Lógica igual ao que já faz para adicionar
-		// ...
-		// Atualize $_SESSION['carrinho'] conforme já faz
-
-		// Calcule total e taxa
-		$total = 0;
-		$taxa = 0;
-		$itens = [];
-		foreach ($_SESSION['carrinho'] as $key => $item) {
-			$total += $item['quantidade'] * $item['preco'];
-			$taxa += $item['quantidade'] * $item['taxa'];
-			$itens[$key] = [
-				'quantidade' => $item['quantidade'],
-				'nome' => $item['nome'],
-				'preco' => $item['preco'],
-				'taxa' => $item['taxa'],
-			];
-		}
-		$_SESSION['total'] = $total;
-
-		return $this->response->setJSON([
-			'sucesso' => true,
-			'total' => number_format($total, 2, ',', ''),
-			'taxa' => number_format($taxa, 2, ',', ''),
-			'itens' => $itens,
-		]);
-	}
-
-	public function remover()
-	{
-		$id = $this->request->getPost('id');
-		// Lógica igual ao que já faz para remover
-		// ...
-		// Atualize $_SESSION['carrinho'] conforme já faz
-
-		// Calcule total e taxa
-		$total = 0;
-		$taxa = 0;
-		$itens = [];
-		foreach ($_SESSION['carrinho'] as $key => $item) {
-			$total += $item['quantidade'] * $item['preco'];
-			$taxa += $item['quantidade'] * $item['taxa'];
-			$itens[$key] = [
-				'quantidade' => $item['quantidade'],
-				'nome' => $item['nome'],
-				'preco' => $item['preco'],
-				'taxa' => $item['taxa'],
-			];
-		}
-		$_SESSION['total'] = $total;
-
-		return $this->response->setJSON([
-			'sucesso' => true,
-			'total' => number_format($total, 2, ',', ''),
-			'taxa' => number_format($taxa, 2, ',', ''),
-			'itens' => $itens,
-		]);
-	}
-
 
 	/**
 	 * Método que recupera o cliente

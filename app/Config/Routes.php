@@ -132,10 +132,6 @@ $routes->post('checkout/finalizarpix/(:num)', 'Checkout::finalizarpix/$1');
 $routes->post('checkout/finalizarcartao/(:num)', 'Checkout::finalizarcartao/$1');
 $routes->get('checkout/qrcode/(:any)', 'Checkout::qrcode/$1');
 
-$routes->post('carrinho/adicionar', 'Carrinho::adicionar');
-$routes->post('carrinho/remover', 'Carrinho::remover');
-
-
 /*
  * --------------------------------------------------------------------
  * Additional Routing
