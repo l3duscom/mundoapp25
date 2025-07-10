@@ -7,6 +7,7 @@
 
 
 <link rel="stylesheet" type="text/css" href="<?php echo site_url('recursos/vendor/datatable/datatables-combinado.min.css') ?>" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"/>
 <style>
     /* Style the tab */
     .tab {
@@ -248,7 +249,13 @@ if (isset($event_id)) {
                                                 </div>
                                                 <div class="col-5 text-right">
                                                     <?php if ($value['estoque'] > 0) : ?>
-                                                        <div class="col-12 mt-3 font-20"><strong style="font-size: 20px;"><a href="?excluir=<?= $key ?>"><i class="bi bi-dash-circle-fill" style=" padding-right: 4px;"></i></a> <?= (isset($_SESSION['carrinho'][$key]['quantidade'])) ? $_SESSION['carrinho'][$key]['quantidade'] : '0' ?> <a href="?adicionar=<?= $key ?>"><i class="bi bi-plus-circle-fill" style="padding-left: 4px"></i></a></strong></div>
+                                                        <div class="col-12 mt-3 font-20">
+                                                            <strong style="font-size: 20px;">
+                                                                <a href="?excluir=<?= $key ?>" class="btn-remover" data-id="<?= $key ?>"><i class="bi bi-dash-circle-fill"></i></a>
+                                                                <span class="quantidade"><?= (isset($_SESSION['carrinho'][$key]['quantidade'])) ? $_SESSION['carrinho'][$key]['quantidade'] : '0' ?></span>
+                                                                <a href="?adicionar=<?= $key ?>" class="btn-adicionar" data-id="<?= $key ?>"><i class="bi bi-plus-circle-fill"></i></a>
+                                                            </strong>
+                                                        </div>
 
                                                         <div class="col-12 text-right ol-4 mt-2"><span style=" font-size: 12px;">R$ </span><strong class="item-price" data-price="<?= $value['preco'] ?>" style="word-wrap: normal;font-size: 26px;"> <?= number_format($value['preco'], 2, ',', ''); ?> </strong>
                                                             <p class="text-muted" style="font-size: 10px">+ <?= (isset($_SESSION['carrinho'][$key]['taxa'])) ? 'R$ ' . number_format($_SESSION['carrinho'][$key]['taxa'], 2, ',', '') . ' Taxa de ingresso' : ' Taxa de ingresso' ?> <a href="?adicionar=<?= $key ?>"> </a></p>
@@ -290,7 +297,13 @@ if (isset($event_id)) {
                                                 </div>
                                                 <div class="col-5 text-right">
                                                     <?php if ($value['estoque'] > 0) : ?>
-                                                        <div class="col-12 mt-3 font-20"><strong style="font-size: 20px;"><a href="?excluir=<?= $key ?>"><i class="bi bi-dash-circle-fill" style=" padding-right: 4px;"></i></a> <?= (isset($_SESSION['carrinho'][$key]['quantidade'])) ? $_SESSION['carrinho'][$key]['quantidade'] : '0' ?> <a href="?adicionar=<?= $key ?>"><i class="bi bi-plus-circle-fill" style="padding-left: 4px"></i></a></strong></div>
+                                                        <div class="col-12 mt-3 font-20">
+                                                            <strong style="font-size: 20px;">
+                                                                <a href="?excluir=<?= $key ?>" class="btn-remover" data-id="<?= $key ?>"><i class="bi bi-dash-circle-fill"></i></a>
+                                                                <span class="quantidade"><?= (isset($_SESSION['carrinho'][$key]['quantidade'])) ? $_SESSION['carrinho'][$key]['quantidade'] : '0' ?></span>
+                                                                <a href="?adicionar=<?= $key ?>" class="btn-adicionar" data-id="<?= $key ?>"><i class="bi bi-plus-circle-fill"></i></a>
+                                                            </strong>
+                                                        </div>
 
                                                         <div class="col-12 text-right ol-4 mt-2"><span style=" font-size: 12px;">R$ </span><strong class="item-price" data-price="<?= $value['preco'] ?>" style="word-wrap: normal;font-size: 26px;"> <?= number_format($value['preco'], 2, ',', ''); ?> </strong>
                                                             <p class="text-muted" style="font-size: 10px">+ <?= (isset($_SESSION['carrinho'][$key]['taxa'])) ? 'R$ ' . number_format($_SESSION['carrinho'][$key]['taxa'], 2, ',', '') . ' Taxa de ingresso' : ' Taxa de ingresso' ?> <a href="?adicionar=<?= $key ?>"> </a></p>
@@ -335,7 +348,13 @@ if (isset($event_id)) {
                                                 </div>
                                                 <div class="col-5 text-right">
                                                     <?php if ($value['estoque'] > 0) : ?>
-                                                        <div class="col-12 mt-3 font-20"><strong style="font-size: 20px;"><a href="?excluir=<?= $key ?>"><i class="bi bi-dash-circle-fill" style=" padding-right: 4px;"></i></a> <?= (isset($_SESSION['carrinho'][$key]['quantidade'])) ? $_SESSION['carrinho'][$key]['quantidade'] : '0' ?> <a href="?adicionar=<?= $key ?>"><i class="bi bi-plus-circle-fill" style="padding-left: 4px"></i></a></strong></div>
+                                                        <div class="col-12 mt-3 font-20">
+                                                            <strong style="font-size: 20px;">
+                                                                <a href="?excluir=<?= $key ?>" class="btn-remover" data-id="<?= $key ?>"><i class="bi bi-dash-circle-fill"></i></a>
+                                                                <span class="quantidade"><?= (isset($_SESSION['carrinho'][$key]['quantidade'])) ? $_SESSION['carrinho'][$key]['quantidade'] : '0' ?></span>
+                                                                <a href="?adicionar=<?= $key ?>" class="btn-adicionar" data-id="<?= $key ?>"><i class="bi bi-plus-circle-fill"></i></a>
+                                                            </strong>
+                                                        </div>
 
                                                         <div class="col-12 text-right ol-4 mt-2"><span style=" font-size: 12px;">R$ </span><strong class="item-price" data-price="<?= $value['preco'] ?>" style="word-wrap: normal;font-size: 26px;"> <?= number_format($value['preco'], 2, ',', ''); ?> </strong>
                                                             <p class="text-muted" style="font-size: 10px">+ <?= (isset($_SESSION['carrinho'][$key]['taxa'])) ? 'R$ ' . number_format($_SESSION['carrinho'][$key]['taxa'], 2, ',', '') . ' Taxa de ingresso' : ' Taxa de ingresso' ?> <a href="?adicionar=<?= $key ?>"> </a></p>
@@ -380,7 +399,13 @@ if (isset($event_id)) {
                                                 </div>
                                                 <div class="col-5 text-right">
                                                     <?php if ($value['estoque'] > 0) : ?>
-                                                        <div class="col-12 mt-3 font-20"><strong style="font-size: 20px;"><a href="?excluir=<?= $key ?>"><i class="bi bi-dash-circle-fill" style=" padding-right: 4px;"></i></a> <?= (isset($_SESSION['carrinho'][$key]['quantidade'])) ? $_SESSION['carrinho'][$key]['quantidade'] : '0' ?> <a href="?adicionar=<?= $key ?>"><i class="bi bi-plus-circle-fill" style="padding-left: 4px"></i></a></strong></div>
+                                                        <div class="col-12 mt-3 font-20">
+                                                            <strong style="font-size: 20px;">
+                                                                <a href="?excluir=<?= $key ?>" class="btn-remover" data-id="<?= $key ?>"><i class="bi bi-dash-circle-fill"></i></a>
+                                                                <span class="quantidade"><?= (isset($_SESSION['carrinho'][$key]['quantidade'])) ? $_SESSION['carrinho'][$key]['quantidade'] : '0' ?></span>
+                                                                <a href="?adicionar=<?= $key ?>" class="btn-adicionar" data-id="<?= $key ?>"><i class="bi bi-plus-circle-fill"></i></a>
+                                                            </strong>
+                                                        </div>
 
                                                         <div class="col-lg-8 col-sm-6 text-muted"><?= $value['descricao'] ?></div>
                                                         <div class="col-lg-4 col-sm-6  text-right ol-4" style="padding-left: 60px; "><span style="font-size: 12px;">R$ </span><strong class="item-price" data-price="<?= $value['preco'] ?>" style="word-wrap: normal;font-size: 26px;"> <?= number_format($value['preco'], 2, ',', ''); ?> </strong>
@@ -427,7 +452,13 @@ if (isset($event_id)) {
                                                 </div>
                                                 <div class="col-5 text-right">
                                                     <?php if ($value['estoque'] > 0) : ?>
-                                                        <div class="col-12 mt-3 font-20"><strong style="font-size: 20px;"><a href="?excluir=<?= $key ?>"><i class="bi bi-dash-circle-fill" style=" padding-right: 4px;"></i></a> <?= (isset($_SESSION['carrinho'][$key]['quantidade'])) ? $_SESSION['carrinho'][$key]['quantidade'] : '0' ?> <a href="?adicionar=<?= $key ?>"><i class="bi bi-plus-circle-fill" style="padding-left: 4px"></i></a></strong></div>
+                                                        <div class="col-12 mt-3 font-20">
+                                                            <strong style="font-size: 20px;">
+                                                                <a href="?excluir=<?= $key ?>" class="btn-remover" data-id="<?= $key ?>"><i class="bi bi-dash-circle-fill"></i></a>
+                                                                <span class="quantidade"><?= (isset($_SESSION['carrinho'][$key]['quantidade'])) ? $_SESSION['carrinho'][$key]['quantidade'] : '0' ?></span>
+                                                                <a href="?adicionar=<?= $key ?>" class="btn-adicionar" data-id="<?= $key ?>"><i class="bi bi-plus-circle-fill"></i></a>
+                                                            </strong>
+                                                        </div>
                                                         <div class="col-12 text-right ol-4 mt-2"><span style=" font-size: 12px;">R$ </span><strong class="item-price" data-price="<?= $value['preco'] ?>" style="word-wrap: normal;font-size: 26px;"> <?= number_format($value['preco'], 2, ',', ''); ?> </strong>
                                                             <p class="text-muted" style="font-size: 10px">+ <?= (isset($_SESSION['carrinho'][$key]['taxa'])) ? 'R$ ' . number_format($_SESSION['carrinho'][$key]['taxa'], 2, ',', '') . ' Taxa de ingresso' : ' Taxa de ingresso' ?> <a href="?adicionar=<?= $key ?>"> </a></p>
                                                         </div>
@@ -470,7 +501,13 @@ if (isset($event_id)) {
                                                 </div>
                                                 <div class="col-5 text-right">
                                                     <?php if ($value['estoque'] > 0) : ?>
-                                                        <div class="col-12 mt-3 font-20"><strong style="font-size: 20px;"><a href="?excluir=<?= $key ?>"><i class="bi bi-dash-circle-fill" style=" padding-right: 4px;"></i></a> <?= (isset($_SESSION['carrinho'][$key]['quantidade'])) ? $_SESSION['carrinho'][$key]['quantidade'] : '0' ?> <a href="?adicionar=<?= $key ?>"><i class="bi bi-plus-circle-fill" style="padding-left: 4px"></i></a></strong></div>
+                                                        <div class="col-12 mt-3 font-20">
+                                                            <strong style="font-size: 20px;">
+                                                                <a href="?excluir=<?= $key ?>" class="btn-remover" data-id="<?= $key ?>"><i class="bi bi-dash-circle-fill"></i></a>
+                                                                <span class="quantidade"><?= (isset($_SESSION['carrinho'][$key]['quantidade'])) ? $_SESSION['carrinho'][$key]['quantidade'] : '0' ?></span>
+                                                                <a href="?adicionar=<?= $key ?>" class="btn-adicionar" data-id="<?= $key ?>"><i class="bi bi-plus-circle-fill"></i></a>
+                                                            </strong>
+                                                        </div>
 
                                                         <div class="col-12 text-right ol-4 mt-2"><span style=" font-size: 12px;">R$ </span><strong class="item-price" data-price="<?= $value['preco'] ?>" style="word-wrap: normal;font-size: 26px;"> <?= number_format($value['preco'], 2, ',', ''); ?> </strong>
                                                             <p class="text-muted" style="font-size: 10px">+ <?= (isset($_SESSION['carrinho'][$key]['taxa'])) ? 'R$ ' . number_format($_SESSION['carrinho'][$key]['taxa'], 2, ',', '') . ' Taxa de ingresso' : ' Taxa de ingresso' ?> <a href="?adicionar=<?= $key ?>"> </a></p>
@@ -513,7 +550,13 @@ if (isset($event_id)) {
                                                 </div>
                                                 <div class="col-5 text-right">
                                                     <?php if ($value['estoque'] > 0) : ?>
-                                                        <div class="col-12 mt-3 font-20"><strong style="font-size: 20px;"><a href="?excluir=<?= $key ?>"><i class="bi bi-dash-circle-fill" style=" padding-right: 4px;"></i></a> <?= (isset($_SESSION['carrinho'][$key]['quantidade'])) ? $_SESSION['carrinho'][$key]['quantidade'] : '0' ?> <a href="?adicionar=<?= $key ?>"><i class="bi bi-plus-circle-fill" style="padding-left: 4px"></i></a></strong></div>
+                                                        <div class="col-12 mt-3 font-20">
+                                                            <strong style="font-size: 20px;">
+                                                                <a href="?excluir=<?= $key ?>" class="btn-remover" data-id="<?= $key ?>"><i class="bi bi-dash-circle-fill"></i></a>
+                                                                <span class="quantidade"><?= (isset($_SESSION['carrinho'][$key]['quantidade'])) ? $_SESSION['carrinho'][$key]['quantidade'] : '0' ?></span>
+                                                                <a href="?adicionar=<?= $key ?>" class="btn-adicionar" data-id="<?= $key ?>"><i class="bi bi-plus-circle-fill"></i></a>
+                                                            </strong>
+                                                        </div>
 
                                                         <div class="col-12 text-right ol-4 mt-2"><span style=" font-size: 12px;">R$ </span><strong class="item-price" data-price="<?= $value['preco'] ?>" style="word-wrap: normal;font-size: 26px;"> <?= number_format($value['preco'], 2, ',', ''); ?> </strong>
                                                             <p class="text-muted" style="font-size: 10px">+ <?= (isset($_SESSION['carrinho'][$key]['taxa'])) ? 'R$ ' . number_format($_SESSION['carrinho'][$key]['taxa'], 2, ',', '') . ' Taxa de ingresso' : ' Taxa de ingresso' ?> <a href="?adicionar=<?= $key ?>"> </a></p>
@@ -617,7 +660,7 @@ if (isset($event_id)) {
                                             <?php if ($value['quantidade'] != 0) : ?>
                                                 <tr>
                                                     <td><u><?= $value['nome']; ?></u></td>
-                                                    <td style="padding-left: 25px;"><a href="?excluir=<?= $key ?>"><i class="fadeIn animated bx bx-minus-circle" style="padding-right: 10px;"></i></a><?= $value['quantidade']; ?> <a href="?adicionar=<?= $key ?>"><i class="fadeIn animated bx bx-plus-circle" style="padding-left: 10px"></i></a></td>
+                                                    <td style="padding-left: 25px;"><a href="?excluir=<?= $key ?>" class="btn-remover" data-id="<?= $key ?>"><i class="fadeIn animated bx bx-minus-circle" style="padding-right: 10px;"></i></a><?= $value['quantidade']; ?> <a href="?adicionar=<?= $key ?>" class="btn-adicionar" data-id="<?= $key ?>"><i class="fadeIn animated bx bx-plus-circle" style="padding-left: 10px"></i></a></td>
                                                     <td>R$ <strong><?= number_format($value['quantidade'] * $value['unitario'], 2, ',', ''); ?></strong><span style="font-size: 12px;"><br> + R$ <?= number_format($value['quantidade'] * $value['taxa'], 2, ',', ''); ?> taxa de ingresso</span> </td>
                                                 </tr>
                                             <?php endif; ?>
@@ -657,7 +700,13 @@ if (isset($event_id)) {
                                     <!-- <i class="bi bi-arrow-down-circle-fill" style="font-size: 25px; color: purple;"></i>-->
                                     <strong><i class='bx bx-down-arrow-circle'></i> Ver detalhes da compra</strong>
                                 </a>
-                                <center><span style="padding-top: 5px; margin-bottom: -5px">Total a pagar: <strong>R$ <?= number_format($_SESSION['total'], 2, ',', '')  ?></strong></span> </center>
+                                <center>
+                                    <span style="padding-top: 5px; margin-bottom: -5px">
+                                        Total a pagar: <strong id="totalCarrinho">R$ <?= number_format($_SESSION['total'], 2, ',', '')  ?></strong>
+                                    </span>
+                                </center>
+                                <!-- Se quiser mostrar taxa separada -->
+                                <span id="taxaCarrinho" style="display:none"><?= number_format($total_taxa, 2, ',', '') ?></span>
 
                                 <a href="<?= site_url('/evento/entrega/'. $event_id) ?>" class="btn btn-lg mt-0" style="padding:10px; background-color: purple; border-color: purple; color: white;"> Ir para o pagamento <i class='bx bx-right-arrow-circle'></i></a>
 
@@ -1326,10 +1375,10 @@ if (isset($event_id)) {
                                                 <span class="text-muted"><strong><?= $value['tipo'] ?> - <?= $value['lote'] ?> lote</strong></span>
                                             </div>
                                             <?php if ($value['estoque'] > 0) : ?>
-                                                <div class="col-5 mt-4 font-20 d-flex flex-row-reverse"><strong style="font-size: 24px;"><a href="?excluir=<?= $key ?>"><i class="bi bi-dash-circle-fill" style=" padding-right: 10px;"></i></a> <?= (isset($_SESSION['carrinho'][$key]['quantidade'])) ? $_SESSION['carrinho'][$key]['quantidade'] : '0' ?> <a href="?adicionar=<?= $key ?>"><i class="bi bi-plus-circle-fill" style="padding-left: 10px"></i></a></strong></div>
+                                                <div class="col-5 mt-4 font-20 d-flex flex-row-reverse"><strong style="font-size: 24px;"><a href="?excluir=<?= $key ?>" class="btn-remover" data-id="<?= $key ?>"><i class="bi bi-dash-circle-fill"></i></a> <?= (isset($_SESSION['carrinho'][$key]['quantidade'])) ? $_SESSION['carrinho'][$key]['quantidade'] : '0' ?> <a href="?adicionar=<?= $key ?>" class="btn-adicionar" data-id="<?= $key ?>"><i class="bi bi-plus-circle-fill"></i></a></strong></div>
 
                                                 <div class="col-lg-8 col-sm-6 text-muted"><?= $value['descricao'] ?></div>
-                                                <div class="col-lg-4 col-sm-6  text-right ol-4" style="padding-left: 60px; "><span style="font-size: 12px;">R$ </span><strong style="word-wrap: normal;font-size: 26px;"> <?= number_format($value['preco'], 2, ',', ''); ?> </strong>
+                                                <div class="col-lg-4 col-sm-6  text-right ol-4" style="padding-left: 60px; "><span style="font-size: 12px;">R$ </span><strong class="item-price" data-price="<?= $value['preco'] ?>" style="word-wrap: normal;font-size: 26px;"> <?= number_format($value['preco'], 2, ',', ''); ?> </strong>
                                                     <p class="text-muted" style="font-size: 12px">+ <?= (isset($_SESSION['carrinho'][$key]['taxa'])) ? 'R$ ' . number_format($_SESSION['carrinho'][$key]['taxa'], 2, ',', '') . ' Taxa de ingresso' : ' Taxa de ingresso' ?> <a href="?adicionar=<?= $key ?>"> </a></p>
                                                 </div>
                                             <?php else : ?>
@@ -2135,3 +2184,69 @@ function trackInitiateCheckout() {
 
 
 <?php echo $this->endSection() ?>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    // Adicionar item ao carrinho
+    $(document).on('click', '.btn-adicionar', function(e) {
+        e.preventDefault();
+        var id = $(this).data('id');
+        var $card = $(this).closest('.card');
+        $.LoadingOverlay("show");
+        $.post('<?= site_url("carrinho/adicionar") ?>', {id: id}, function(res) {
+            $.LoadingOverlay("hide");
+            if(res.sucesso) {
+                atualizarCarrinho(res);
+                toastr.success('Ingresso adicionado!');
+                animarCard($card);
+            } else {
+                toastr.error(res.erro || 'Erro ao adicionar ingresso.');
+            }
+        }, 'json');
+    });
+
+    // Remover item do carrinho
+    $(document).on('click', '.btn-remover', function(e) {
+        e.preventDefault();
+        var id = $(this).data('id');
+        var $card = $(this).closest('.card');
+        $.LoadingOverlay("show");
+        $.post('<?= site_url("carrinho/remover") ?>', {id: id}, function(res) {
+            $.LoadingOverlay("hide");
+            if(res.sucesso) {
+                atualizarCarrinho(res);
+                toastr.info('Ingresso removido!');
+                animarCard($card);
+            } else {
+                toastr.error(res.erro || 'Erro ao remover ingresso.');
+            }
+        }, 'json');
+    });
+
+    // Função para animar o card do item alterado
+    function animarCard($card) {
+        $card.addClass('bg-warning');
+        setTimeout(function() {
+            $card.removeClass('bg-warning');
+        }, 400);
+    }
+
+    // Função para atualizar o HTML do carrinho
+    function atualizarCarrinho(dados) {
+        // Atualize totais, quantidades, taxas, etc.
+        $('#totalCarrinho').text('R$ ' + dados.total);
+        $('#taxaCarrinho').text('R$ ' + dados.taxa);
+        // Atualize as quantidades dos itens
+        $.each(dados.itens, function(id, item) {
+            $('.card[data-item-id="'+id+'"] .quantidade').text(item.quantidade);
+        });
+        // Se carrinho vazio, mostre mensagem
+        if(dados.total == 0) {
+            $('#areaBotoes').html('<div class="alert alert-info">Seu carrinho está vazio!</div>');
+        }
+    }
+});
+</script>
