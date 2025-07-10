@@ -1721,10 +1721,10 @@ class Checkout extends BaseController
 				}
 			}
 
-			return redirect()->to(site_url("checkout/cartao/"))->with('erro', "Erro ao processar pagamento!");
+			return redirect()->to(site_url("checkout/cartao/".$event_id))->with('erro', "Erro ao processar pagamento!");
 		} catch (\Throwable $e) {
 			log_message('error', 'Erro em finalizarcartao: ' . $e->getMessage());
-			return redirect()->to(site_url("checkout/cartao/"))->with('erro', "Erro inesperado");
+			return redirect()->to(site_url("checkout/cartao/".$event_id))->with('erro', "Erro inesperado");
 		}
 	}
 
