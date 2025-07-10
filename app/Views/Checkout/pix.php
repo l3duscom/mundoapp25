@@ -147,7 +147,7 @@
 
                         <div class="d-grid gap-2 mb-0" style="padding:7px">
                             <center><span style="padding-top: 5px; margin-bottom: -5px">Resumo da compra: <strong>R$ <?= number_format($total, 2, ',', '')  ?></strong></span> com <strong>R$ <?= number_format($valor_desconto, 2, ',', '')  ?></strong> de desconto</center>
-                            <input id="btn-salvar" type="submit" value="Comprar agora" class="btn btn-primary btn-lg mt-0" style="background-color: purple; border-color: purple; color: white;">
+                            <input id="btn-salvar" type="submit" value="Comprar agora" class="btn btn-lg mt-0" style="background-color: purple; border-color: purple; color: white;">
 
                         </div>
                         <?php echo form_close(); ?>
@@ -222,19 +222,6 @@
 
 <?php echo $this->section('scripts') ?>
 
-<!-- Modal de Processamento -->
-<div class="modal fade" id="modalProcessando" tabindex="-1" aria-labelledby="modalProcessandoLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content" style="text-align:center;">
-      <div class="modal-body py-5">
-        <div class="spinner-border text-primary mb-3" style="width: 4rem; height: 4rem;" role="status"></div>
-        <h5 class="mb-3 mt-2">Processando pagamento...</h5>
-        <p class="text-muted">Não feche ou atualize esta página.<br>Sua compra está sendo finalizada.</p>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- Meta Pixel Events -->
 <?php if (isset($evento) && !empty($evento->meta_pixel_id)): ?>
 <script>
@@ -281,21 +268,6 @@ function trackInitiateCheckoutPix() {
 <script src="<?php echo site_url('recursos/vendor/mask/app.js') ?>"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.querySelector('form[action*="finalizarpix"]');
-    const btn = document.getElementById('btn-salvar');
-
-    if (form && btn) {
-        form.addEventListener('submit', function(e) {
-            btn.disabled = true;
-            btn.value = "Processando...";
-            btn.classList.add('disabled');
-            // Mostra o modal
-            var modal = new bootstrap.Modal(document.getElementById('modalProcessando'));
-            modal.show();
-        });
-    }
-
     $(document).ready(function() {
 
         //$("#form").LoadingOverlay("show");
