@@ -222,6 +222,45 @@
 
 <?php echo $this->section('scripts') ?>
 
+<!-- Meta Pixel Events -->
+<?php if (isset($evento) && !empty($evento->meta_pixel_id)): ?>
+<script>
+// ViewContent Event - quando a página PIX é carregada
+fbq('track', 'ViewContent', {
+    content_name: '<?= $evento->nome ?> - PIX',
+    content_category: '<?= $evento->categoria ?? 'Evento' ?>',
+    content_type: 'product',
+    content_ids: [<?= $evento->id ?>]
+});
+
+// InitiateCheckout Event - quando o usuário clica para finalizar o pagamento PIX
+function trackInitiateCheckoutPix() {
+    let totalValue = <?= $total ?? 0 ?>;
+    let cartItems = [];
+    let totalItems = 0;
+    
+    <?php if (isset($_SESSION['carrinho']) && is_array($_SESSION['carrinho'])): ?>
+        <?php foreach ($_SESSION['carrinho'] as $key => $value): ?>
+            <?php if ($value['quantidade'] > 0): ?>
+                cartItems.push(<?= $key ?>);
+                totalItems += <?= $value['quantidade'] ?>;
+            <?php endif; ?>
+        <?php endforeach; ?>
+    <?php endif; ?>
+    
+    fbq('track', 'InitiateCheckout', {
+        content_name: '<?= $evento->nome ?> - PIX',
+        content_category: '<?= $evento->categoria ?? 'Evento' ?>',
+        content_type: 'product',
+        value: totalValue,
+        currency: 'BRL',
+        content_ids: cartItems,
+        num_items: totalItems
+    });
+}
+</script>
+<?php endif; ?>
+
 <script src="<?php echo site_url('recursos/vendor/loadingoverlay/loadingoverlay.min.js') ?>"></script>
 
 
@@ -233,8 +272,12 @@
 
         //$("#form").LoadingOverlay("show");
 
-
-
+        // Track InitiateCheckout when user submits PIX payment
+        $("#form").on('submit', function(e) {
+            <?php if (isset($evento) && !empty($evento->meta_pixel_id)): ?>
+            trackInitiateCheckoutPix();
+            <?php endif; ?>
+        });
 
         $("#form").on('submit', function(e) {
 

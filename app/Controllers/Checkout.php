@@ -409,6 +409,9 @@ class Checkout extends BaseController
 			$id = null;
 		}
 
+		// Buscar dados do evento para o pixel
+		$evento = $this->eventoModel->find($event_id);
+
 		// Calculate total and discount from cart
 		$total = 0;
 		$valor_desconto = 0;
@@ -426,7 +429,8 @@ class Checkout extends BaseController
 			'id' => $id,
 			'total' => $total,
 			'valor_desconto' => $valor_desconto,
-			'event_id' => $event_id
+			'event_id' => $event_id,
+			'evento' => $evento
 		];
 
 
@@ -500,6 +504,8 @@ class Checkout extends BaseController
 		$email = $post['email'];
 		$data_cli = [];
 
+		// Buscar dados do evento para o pixel
+		$evento = $this->eventoModel->find($event_id);
 
 		$atributos = [
 			'clientes.id',
@@ -535,13 +541,15 @@ class Checkout extends BaseController
 			];
 		}
 
-
-
+		// Calcular total da sessão
+		$total = $_SESSION['total'] ?? 0;
 
 		$data = [
 			'titulo' => 'Comprar ingressos',
 			'data_cli' => $data_cli,
-			'event_id' => $event_id
+			'event_id' => $event_id,
+			'evento' => $evento,
+			'total' => $total
 		];
 
 
@@ -552,6 +560,9 @@ class Checkout extends BaseController
 	public function obrigado()
 	{
 		$event_id = 17;
+
+		// Buscar dados do evento para o pixel
+		$evento = $this->eventoModel->find($event_id);
 
 		if ($this->usuarioLogado()) {
 			$id = $this->usuarioLogado()->id;
@@ -581,13 +592,17 @@ class Checkout extends BaseController
 			);
 		}
 
+		// Calcular total da sessão
+		$total = $_SESSION['total'] ?? 0;
 
 		$data = [
 			'titulo' => 'Comprar ingressos',
 			'id' => $id,
-			'items' => $ingressos
+			'items' => $ingressos,
+			'evento' => $evento,
+			'total' => $total,
+			'order_id' => session()->get('order_id') ?? ''
 		];
-
 
 		return view('Checkout/obrigado', $data);
 	}
@@ -2179,6 +2194,8 @@ class Checkout extends BaseController
 
 		$transaction = $this->buscatransactionOu404($id);
 
+		// Buscar dados do evento para o pixel
+		$evento = $this->eventoModel->find($event_id);
 
 		$convite = $this->usuarioModel->select('usuarios.codigo')
 			->join('pedidos', 'pedidos.user_id = usuarios.id')
@@ -2198,7 +2215,8 @@ class Checkout extends BaseController
 			'convite' => $convite->codigo,
 			'indicacoes' => $indicacoes,
 			'status' => $status,
-			'event_id' => $event_id
+			'event_id' => $event_id,
+			'evento' => $evento
 		];
 
 

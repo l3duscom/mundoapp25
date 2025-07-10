@@ -325,6 +325,22 @@ $event_id = session()->get('event_id');
 
 <?php echo $this->section('scripts') ?>
 
+<!-- Meta Pixel Purchase Event -->
+<?php if (isset($evento) && !empty($evento->meta_pixel_id)): ?>
+<script>
+// Purchase Event - quando a compra é finalizada
+fbq('track', 'Purchase', {
+    content_name: '<?= $evento->nome ?>',
+    content_category: '<?= $evento->categoria ?? 'Evento' ?>',
+    content_type: 'product',
+    value: <?= $total ?? 0 ?>,
+    currency: 'BRL',
+    content_ids: [<?= $evento->id ?>],
+    order_id: '<?= $order_id ?? '' ?>'
+});
+</script>
+<?php endif; ?>
+
 <script src="<?php echo site_url('recursos/vendor/loadingoverlay/loadingoverlay.min.js') ?>"></script>
 
 

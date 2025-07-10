@@ -274,6 +274,21 @@ if (!isset($_SESSION['impressao'])) {
 <script src="<?php echo site_url('recursos/vendor/mask/jquery.mask.min.js') ?>"></script>
 <script src="<?php echo site_url('recursos/vendor/mask/app.js') ?>"></script>
 
+<!-- Meta Pixel ViewContent Event -->
+<?php if (isset($evento) && !empty($evento->meta_pixel_id)): ?>
+<script>
+// ViewContent Event - quando a página de entrega é carregada
+fbq('track', 'ViewContent', {
+    content_name: '<?= $evento->nome ?> - Entrega',
+    content_category: '<?= $evento->categoria ?? 'Evento' ?>',
+    content_type: 'product',
+    content_ids: [<?= $evento->id ?>],
+    value: <?= $total ?? 0 ?>,
+    currency: 'BRL'
+});
+</script>
+<?php endif; ?>
+
 <script>
     $(document).ready(function() {
 

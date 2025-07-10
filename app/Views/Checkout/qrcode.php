@@ -196,7 +196,21 @@
 
 <?php echo $this->section('scripts') ?>
 
-
+<!-- Meta Pixel Purchase Event -->
+<?php if (isset($evento) && !empty($evento->meta_pixel_id)): ?>
+<script>
+// Purchase Event - quando o pagamento PIX é finalizado na página de QR Code
+fbq('track', 'Purchase', {
+    content_name: '<?= $evento->nome ?> - PIX',
+    content_category: '<?= $evento->categoria ?? 'Evento' ?>',
+    content_type: 'product',
+    value: <?= $transaction->installment_value ?? 0 ?>,
+    currency: 'BRL',
+    content_ids: [<?= $evento->id ?>],
+    order_id: '<?= $charge_id ?? '' ?>'
+});
+</script>
+<?php endif; ?>
 
 <script src="<?php echo site_url('recursos/vendor/loadingoverlay/loadingoverlay.min.js') ?>"></script>
 

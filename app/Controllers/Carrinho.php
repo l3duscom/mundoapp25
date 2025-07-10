@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Entities\Cliente;
 use App\Entities\Cartao;
+use App\Entities\Evento;
 use App\Entities\Ticket;
 use App\Traits\ValidacoesTrait;
 
@@ -16,6 +17,7 @@ class Carrinho extends BaseController
 	private $usuarioModel;
 	private $cartaoModel;
 	private $ticketModel;
+	private $eventoModel;
 
 
 
@@ -25,11 +27,14 @@ class Carrinho extends BaseController
 		$this->usuarioModel = new \App\Models\UsuarioModel();
 		$this->cartaoModel = new \App\Models\CartaoModel();
 		$this->ticketModel = new \App\Models\TicketModel();
+		$this->eventoModel = new \App\Models\EventoModel();
 	}
 
 	public function evento($event_id)
 	{
+		// Buscar dados do evento para o pixel
 
+		$evento = $this->eventoModel->find($event_id);
 
 		if ($this->usuarioLogado()) {
 			$id = $this->usuarioLogado()->id;
@@ -40,9 +45,7 @@ class Carrinho extends BaseController
 			$id = null;
 		}
 
-
 		$items = $this->ticketModel->recuperaIngressosPorEvento($event_id);
-
 
 		$ingressos = array();
 		foreach ($items as $item) {
@@ -61,16 +64,14 @@ class Carrinho extends BaseController
 				'estoque' => $item->estoque
 			);
 		}
-		//dd($ingressos);
 
 		$data = [
 			'titulo' => 'Comprar ingressos',
 			'id' => $id,
 			'items' => $ingressos,
-			'event_id' => $event_id
-
+			'event_id' => $event_id,
+			'evento' => $evento // Dados do evento para o pixel
 		];
-
 
 		return view('Carrinho/index', $data);
 	}

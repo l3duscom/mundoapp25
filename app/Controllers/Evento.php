@@ -118,15 +118,19 @@ class Evento extends BaseController
 			$id = null;
 		}
 
+		// Buscar dados do evento para o pixel
+		$eventoModel = new \App\Models\EventoModel();
+		$evento = $eventoModel->find($event_id);
 
-
-
+		// Calcular total da sessão
+		$total = $_SESSION['total'] ?? 0;
 
 		$data = [
 			'titulo' => 'Como você quer receber o seu ingresso?',
 			'id' => $id,
-			'event_id' => $event_id
-
+			'event_id' => $event_id,
+			'evento' => $evento,
+			'total' => $total
 		];
 
 

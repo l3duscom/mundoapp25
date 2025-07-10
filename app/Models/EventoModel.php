@@ -39,6 +39,12 @@ class EventoModel extends Model
 		'visibilidade',
 		'avatar',
 		'cover',
+		'meta_pixel_id',
+		'meta_pixel_view_content',
+		'meta_pixel_add_to_cart',
+		'meta_pixel_initiate_checkout',
+		'meta_pixel_purchase',
+		'meta_pixel_lead',
 
 	];
 

@@ -518,8 +518,37 @@ $total = $_SESSION['total'] + $_SESSION['valor_frete'];
 <script src="https://getbootstrap.com/docs/5.1/dist/js/bootstrap.bundle.min.js"></script>
 
 <script src="https://getbootstrap.com/docs/5.1/examples/checkout/form-validation.js"></script>
+<!-- Meta Pixel InitiateCheckout Event -->
+<?php if (isset($evento) && !empty($evento->meta_pixel_id)): ?>
+<script>
+// InitiateCheckout Event - quando o usuário inicia o processo de pagamento
+let totalValue = <?= $total ?? 0 ?>;
+let cartItems = [];
+let totalItems = 0;
+
+<?php if (isset($_SESSION['carrinho']) && is_array($_SESSION['carrinho'])): ?>
+    <?php foreach ($_SESSION['carrinho'] as $key => $value): ?>
+        <?php if ($value['quantidade'] > 0): ?>
+            cartItems.push(<?= $key ?>);
+            totalItems += <?= $value['quantidade'] ?>;
+        <?php endif; ?>
+    <?php endforeach; ?>
+<?php endif; ?>
+
+fbq('track', 'InitiateCheckout', {
+    content_name: '<?= $evento->nome ?>',
+    content_category: '<?= $evento->categoria ?? 'Evento' ?>',
+    content_type: 'product',
+    value: totalValue,
+    currency: 'BRL',
+    content_ids: cartItems,
+    num_items: totalItems
+});
+</script>
+<?php else: ?>
 <script>
     fbq('track', 'InitiateCheckout');
 </script>
+<?php endif; ?>
 
 <?php echo $this->endSection() ?>
