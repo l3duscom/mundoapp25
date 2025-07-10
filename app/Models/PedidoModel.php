@@ -26,6 +26,8 @@ class PedidoModel extends Model
         'crmobs',
         'cretade_at',
         'updated_at',
+        'charge_id',
+        'comprovante',
     ];
 
     // Dates

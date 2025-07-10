@@ -22,6 +22,7 @@ class Filters extends BaseConfig
         'login' => \App\Filters\LoginFilter::class, // Filtro de login
         'visitante' => \App\Filters\VisitanteFilter::class, // Filtro visitante
         'cliente' => \App\Filters\ClienteFilter::class, // Filtro cliente
+        'webhook' => \App\Filters\WebhookFilter::class, // Filtro webhook
     ];
 
     /**
@@ -33,7 +34,7 @@ class Filters extends BaseConfig
     public $globals = [
         'before' => [
             'honeypot',
-            'csrf' => ['except' => 'cron/paynotify', 'except' => 'cidades/getcidades'],
+            'csrf' => ['except' => 'cron/paynotify', 'except' => 'cidades/getcidades', 'except' => 'api/checkout/notify', 'except' => 'webhook/asaas'],
         ],
         'after' => [
             'toolbar',
@@ -62,6 +63,12 @@ class Filters extends BaseConfig
      * @var array
      */
     public $filters = [
+        'webhook' => [
+            'before' => [
+                'api/checkout/notify',
+                'webhook/asaas',
+            ],
+        ],
         'login' => [
             'before' => [
                 '/',
