@@ -49,13 +49,14 @@
 
 
         <?php echo form_open('/', ['id' => 'form']) ?>
+        <input type="hidden" name="id" value="<?php echo $evento->id; ?>">
         <?php echo $this->include('Eventos/_form'); ?>
         <div class="form-group mb-2">
             <div class="card shadow radius-10">
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div class="btn-group">
-                            <input id="btn-salvar" type="submit" value="Publicar evento" class="btn btn-primary ">
+                            <input id="btn-salvar" type="submit" value="Atualizar evento" class="btn btn-primary ">
                             <a href="<?php echo site_url("eventos") ?>" class="btn btn-dark ">Cancelar</a>
                         </div>
                         <div style="padding-right: 5px;">
@@ -99,7 +100,7 @@
             $.ajax({
 
                 type: 'POST',
-                url: '<?php echo site_url('eventos/cadastrar'); ?>',
+                url: '<?php echo site_url('eventos/atualizar'); ?>',
                 data: new FormData(this),
                 dataType: 'json',
                 contentType: false,
@@ -113,7 +114,7 @@
                 },
                 success: function(response) {
 
-                    $("#btn-salvar").val('Salvar');
+                    $("#btn-salvar").val('Atualizar evento');
                     $("#btn-salvar").removeAttr("disabled");
 
                     $('[name=csrf_ordem]').val(response.token);
@@ -129,11 +130,11 @@
 
                         } else {
 
-                            // Tudo certo com a atualização do usuário
+                            // Tudo certo com a atualização do evento
                             // Podemos agora redirecioná-lo tranquilamente
 
                             window.location.href =
-                                "<?php echo site_url("eventos/gerenciar/"); ?>" + response.id;
+                                "<?php echo site_url("eventos/exibir/"); ?>" + <?php echo $evento->id; ?>;
 
                         }
 
@@ -169,7 +170,7 @@
                     alert(
                         'Não foi possível procesar a solicitação. Por favor entre em contato com o suporte técnico.'
                     );
-                    $("#btn-salvar").val('Salvar');
+                    $("#btn-salvar").val('Atualizar evento');
                     $("#btn-salvar").removeAttr("disabled");
 
                 }
@@ -202,4 +203,4 @@
 
 
 
-<?php echo $this->endSection() ?>
+<?php echo $this->endSection() ?> 

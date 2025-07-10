@@ -19,7 +19,7 @@
                 </div>
                 <div class="form-group col-md-4">
                     <label class="form-control-label">CEP</label>
-                    <input type="text" name="cep" placeholder="Insira o CEP" class="form-control form-control-lg mb-2 " style="font-size:medium; padding:13px" value="<?php echo esc($evento->cep); ?>">
+                    <input type="text" name="cep" placeholder="Insira o CEP" class="form-control form-control-lg mb-2 cep" style="font-size:medium; padding:13px" value="<?php echo esc($evento->cep); ?>">
                     <div id="cep"></div>
                 </div>
 
@@ -62,21 +62,33 @@
                     <input type="text" name="nome" placeholder="Nome do evento" class="form-control form-control-lg mb-2" style="font-size:medium; padding:13px" value="<?php echo esc($evento->nome); ?>">
                 </div>
                 <div class="form-group col-md-6">
+                    <label class="form-control-label">Subtítulo</label>
+                    <input type="text" name="subtitulo" placeholder="Subtítulo do evento" class="form-control form-control-lg mb-2" style="font-size:medium; padding:13px" value="<?php echo esc($evento->subtitulo); ?>">
+                </div>
+                <div class="form-group col-md-6">
+                    <label class="form-control-label">Produtora</label>
+                    <input type="text" name="produtora" placeholder="Nome da produtora" class="form-control form-control-lg mb-2" style="font-size:medium; padding:13px" value="<?php echo esc($evento->produtora); ?>">
+                </div>
+                <div class="form-group col-md-6">
                     <label class="form-control-label">Assunto</label>
                     <select name="assunto" class="form-select form-select-lg text-muted mb-3" style="font-size:medium; padding:13px" aria-label=".form-select-lg example">
-                        <option selected>Selecione um assunto</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
+                        <option value="">Selecione um assunto</option>
+                        <option value="Convenção Geek" <?php echo ($evento->assunto == 'Convenção Geek') ? 'selected' : ''; ?>>Convenção Geek</option>
+                        <option value="Festival de Anime" <?php echo ($evento->assunto == 'Festival de Anime') ? 'selected' : ''; ?>>Festival de Anime</option>
+                        <option value="Evento de Cosplay" <?php echo ($evento->assunto == 'Evento de Cosplay') ? 'selected' : ''; ?>>Evento de Cosplay</option>
+                        <option value="Convenção de Games" <?php echo ($evento->assunto == 'Convenção de Games') ? 'selected' : ''; ?>>Convenção de Games</option>
+                        <option value="Outro" <?php echo ($evento->assunto == 'Outro') ? 'selected' : ''; ?>>Outro</option>
                     </select>
                 </div>
                 <div class="form-group col-md-6">
                     <label class="form-control-label">Categoria</label>
                     <select name="categoria" class="form-select form-select-lg text-muted mb-3" style="font-size:medium; padding:13px" aria-label=".form-select-lg example">
-                        <option selected>Selecione uma categoria</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
+                        <option value="">Selecione uma categoria</option>
+                        <option value="Convenção" <?php echo ($evento->categoria == 'Convenção') ? 'selected' : ''; ?>>Convenção</option>
+                        <option value="Festival" <?php echo ($evento->categoria == 'Festival') ? 'selected' : ''; ?>>Festival</option>
+                        <option value="Workshop" <?php echo ($evento->categoria == 'Workshop') ? 'selected' : ''; ?>>Workshop</option>
+                        <option value="Palestra" <?php echo ($evento->categoria == 'Palestra') ? 'selected' : ''; ?>>Palestra</option>
+                        <option value="Outro" <?php echo ($evento->categoria == 'Outro') ? 'selected' : ''; ?>>Outro</option>
                     </select>
                 </div>
             </div>
@@ -104,19 +116,32 @@
 
                 <div class="form-group col-md-4">
                     <label class="form-label">Data de início</label>
-                    <input type="text" name="data_inicio" class="form-control datepicker" />
+                    <input type="text" name="data_inicio" class="form-control datepicker" value="<?php echo $evento->data_inicio ? date('d/m/Y', strtotime($evento->data_inicio)) : ''; ?>" />
                 </div>
                 <div class="form-group col-md-2">
                     <label class="form-label">Hora de início</label>
-                    <input type="text" name="hora_inicio" class="form-control timepicker" />
+                    <input type="text" name="hora_inicio" class="form-control timepicker" value="<?php echo $evento->hora_inicio; ?>" />
                 </div>
                 <div class="form-group col-md-4">
                     <label class="form-label">Data de fim</label>
-                    <input type="text" name="data_fim" class="form-control datepicker" />
+                    <input type="text" name="data_fim" class="form-control datepicker" value="<?php echo $evento->data_fim ? date('d/m/Y', strtotime($evento->data_fim)) : ''; ?>" />
                 </div>
                 <div class="form-group col-md-2">
                     <label class="form-label">Hora de fim</label>
-                    <input type="text" name="hora_fim" class="form-control timepicker" />
+                    <input type="text" name="hora_fim" class="form-control timepicker" value="<?php echo $evento->hora_fim; ?>" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card shadow radius-10">
+        <div class="card-body">
+            <h6 class="mb-0 text-uppercase">Meta Pixel</h6>
+            <label class="form-control-label">Configure o Meta Pixel para rastreamento de conversões.</label>
+            <hr />
+            <div class="row">
+                <div class="form-group col-md-12">
+                    <label class="form-control-label">Meta Pixel ID</label>
+                    <input type="text" name="meta_pixel_id" placeholder="Ex: 123456789012345" class="form-control form-control-lg mb-2" style="font-size:medium; padding:13px" value="<?php echo esc($evento->meta_pixel_id); ?>">
                 </div>
             </div>
         </div>
@@ -130,11 +155,11 @@
                     <div class="form-group col-md-12">
                         <label class="form-control-label">Como devemos chamar seu ticket?</label>
                         <select name="nomenclatura" class="form-select form-select-lg text-muted mb-3" style="font-size:medium; padding:13px" aria-label=".form-select-lg example">
-                            <option selected>Selecione a nomenclatura</option>
-                            <option value="ingresso">Ingresso</option>
-                            <option value="inscrição">Inscrição</option>
-                            <option value="credencial">Credencial</option>
-                            <option value="contribuição">Contribuição</option>
+                            <option value="">Selecione a nomenclatura</option>
+                            <option value="ingresso" <?php echo ($evento->nomenclatura == 'ingresso') ? 'selected' : ''; ?>>Ingresso</option>
+                            <option value="inscrição" <?php echo ($evento->nomenclatura == 'inscrição') ? 'selected' : ''; ?>>Inscrição</option>
+                            <option value="credencial" <?php echo ($evento->nomenclatura == 'credencial') ? 'selected' : ''; ?>>Credencial</option>
+                            <option value="contribuição" <?php echo ($evento->nomenclatura == 'contribuição') ? 'selected' : ''; ?>>Contribuição</option>
                         </select>
                     </div>
                     <div class="row" style="margin: 1px;">

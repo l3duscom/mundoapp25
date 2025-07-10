@@ -53,9 +53,10 @@
                         <thead>
                             <tr>
                                 <th>Nome</th>
-                                <th>CPF</th>
-                                <th>E-mail</th>
-                                <th>Telefone</th>
+                                <th>Data Início</th>
+                                <th>Data Fim</th>
+                                <th>Categoria</th>
+                                <th>Responsável</th>
                                 <th>Situação</th>
                             </tr>
                         </thead>
@@ -125,18 +126,21 @@
 
             "oLanguage": DATATABLE_PTBR,
 
-            "ajax": "<?php echo site_url('clientes/recuperaclientes'); ?>",
+            "ajax": "<?php echo site_url('eventos/recuperaeventos'); ?>",
             "columns": [{
                     "data": "nome"
                 },
                 {
-                    "data": "cpf"
+                    "data": "data_inicio"
                 },
                 {
-                    "data": "email"
+                    "data": "data_fim"
                 },
                 {
-                    "data": "telefone"
+                    "data": "categoria"
+                },
+                {
+                    "data": "responsavel"
                 },
                 {
                     "data": "situacao"

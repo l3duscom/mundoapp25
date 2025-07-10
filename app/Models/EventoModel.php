@@ -20,6 +20,7 @@ class EventoModel extends Model
 		'cidade',
 		'estado',
 		'nome',
+		'subtitulo',
 		'assunto',
 		'categoria',
 		'descricao',

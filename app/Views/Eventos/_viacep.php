@@ -8,7 +8,7 @@ if (cep.length === 9) {
     $.ajax({
 
         type: 'GET',
-        url: '<?php echo site_url('clientes/consultacep'); ?>',
+        url: '<?php echo site_url('eventos/consultacep'); ?>',
         data: {
             cep: cep
         },
