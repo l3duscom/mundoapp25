@@ -633,9 +633,365 @@ class Checkout extends BaseController
 		var_dump($post);
 	}
 
-	
+	public function finalizarc()
+	{
 
-	
+		// Recupero o post da requisição
+		$post = $this->request->getPost();
+
+
+		$email = $post['email'];
+
+		$total = trim($post['valor_total']);
+		$total = str_replace(".", "", $total);
+
+
+		$atributos = [
+			'clientes.id',
+			'clientes.nome',
+			'clientes.cpf',
+			'clientes.email',
+			'clientes.telefone',
+			'clientes.deleted_at',
+			'clientes.usuario_id'
+		];
+
+		$cliente = $this->clienteModel->select($atributos)
+			->withDeleted(true)
+			->where('clientes.email', $email)
+			->orderBy('id', 'DESC')
+			->first();
+
+		if ($cliente != null) {
+			$user_id = $cliente->usuario_id;
+		} else {
+			//criqar usuario e pegar o ID
+			//$user_id = $this->usuarioModel->getInsertID();
+			$cliente = new Cliente($post);
+
+			if ($this->clienteModel->save($cliente)) {
+				// Cria usuario do cliente
+				$this->criaUsuarioParaCliente($cliente);
+
+				// Envia dados de acesso ao clente
+				$this->enviaEmailCriacaoEmailAcesso($cliente);
+
+				$cliente_id = $this->clienteModel->getInsertID();
+
+				$atributos = [
+					'clientes.id',
+					'clientes.nome',
+					'clientes.cpf',
+					'clientes.email',
+					'clientes.telefone',
+					'clientes.deleted_at',
+					'clientes.usuario_id'
+				];
+
+				$cliente = $this->clienteModel->select($atributos)
+					->withDeleted(true)
+					->where('clientes.id', $cliente_id)
+					->orderBy('id', 'DESC')
+					->first();
+
+				$user_id = $cliente->usuario_id;
+			}
+		}
+		//dd($user_id);
+
+		$data = [
+			'evento_id' => 17,
+			'user_id' => $user_id,
+			'codigo' => $this->pedidoModel->geraCodigoPedido(),
+			'total' => $total / 100,
+			'convite' => $post['convite'],
+			'forma_pagamento' => 'cartão',
+
+		];
+		$this->pedidoModel->skipValidation(true)->protect(false)->insert($data);
+		$pedido_id = $this->pedidoModel->getInsertID();
+
+		foreach ($_SESSION['carrinho'] as $key => $value) {
+
+			for ($i = 0; $i < $value['quantidade']; $i++) {
+
+				$nome = $value['nome'];
+				$quantidade = 1;
+				$valorUnitario = $value['preco'];
+				$valor = $value['preco'];
+				$tipo = $value['tipo'];
+
+				$ingressos = [
+					'pedido_id' => $pedido_id,
+					'user_id' => $user_id,
+					'nome' => $nome,
+					'quantidade' => $quantidade,
+					'valor_unitario' => $valorUnitario,
+					'valor' => $valor,
+					'tipo' => $tipo,
+					'codigo' => $user_id . $this->ingressoModel->geraCodigoIngresso(),
+				];
+
+				$this->ingressoModel->skipValidation(true)->protect(false)->insert($ingressos);
+				$ingresso_id = $this->ingressoModel->getInsertID();
+			}
+		}
+
+
+
+
+		//dd($post);
+		$paymentToken = $_POST['payment_token'];
+
+		$cobrar = [
+			'nome' => $post['nome'],
+			'cpf' => $post['cpf'],
+			'email' => $post['email'],
+			'telefone' => preg_replace('/[^0-9]/', '', $_POST['telefone']),
+			'nascimento' => date('Y-m-d', strtotime($_POST['nascimento'])),
+			'item' => [
+				'name' => 'Ingresso Dreamfest',
+				'amount' => 1,
+				'value' => (int)$total
+			],
+			'rua' => $_POST['endereco'],
+			'numero' => $_POST['numero'],
+			'bairro' => $_POST['bairro'],
+			'cep' => preg_replace('/[^0-9]/', '', $_POST['cep']),
+			'cidade' => $_POST['cidade'],
+			'estado' => $_POST['estado'],
+			'parcelas' => (int) $_POST['parcelas'],
+			'payment_token' => $paymentToken
+
+
+		];
+		$cartao = $this->gerencianetService->criaCartao($cobrar);
+
+		$installment_value = $cartao['data']['installment_value'];
+		$installments = $cartao['data']['installments'];
+		$charge_id = $cartao['data']['charge_id'];
+		$status = $cartao['data']['status'];
+		$payment = $cartao['data']['payment'];
+
+
+		if (isset($charge_id)) {
+			$this->pedidoModel
+				->protect(false)
+				->where(
+					'id',
+					$pedido_id
+				)
+				->set('charge_id', $charge_id)
+				->set('status', $status)
+				->update();
+		}
+
+		if (isset($charge_id)) {
+			$tranaction = [
+				'pedido_id' => $pedido_id,
+				'charge_id' => $charge_id,
+				'installment_value' => $installment_value,
+				'installments' => $installments,
+				'payment' => $payment,
+			];
+
+			$this->transactionModel->skipValidation(true)->protect(false)->insert($tranaction);
+		}
+
+
+		if (isset($charge_id)) {
+			$endereco = [
+				'pedido_id' => $pedido_id,
+				'endereco' => $_POST['endereco'],
+				'numero' => $_POST['numero'],
+				'bairro' => $_POST['bairro'],
+				'cep' => preg_replace('/[^0-9]/', '', $_POST['cep']),
+				'cidade' => $_POST['cidade'],
+				'estado' => $_POST['estado'],
+			];
+
+			$this->enderecoModel->skipValidation(true)->protect(false)->insert($endereco);
+		}
+
+		$this->enviaEmailPedidoCartao($cliente);
+
+
+		return redirect()->to('checkout/obrigado');
+	}
+
+	public function finalizar(int $id = null)
+	{
+		if (!$this->request->isAJAX()) {
+			return redirect()->back();
+		}
+
+		// Envio o hash do token do form
+		$retorno['token'] = csrf_hash();
+
+
+		// Recupero o post da requisição
+		$post = $this->request->getPost();
+
+		$email = $post['email'];
+
+
+
+		$atributos = [
+			'clientes.id',
+			'clientes.nome',
+			'clientes.cpf',
+			'clientes.email',
+			'clientes.telefone',
+			'clientes.deleted_at',
+			'clientes.usuario_id'
+		];
+
+		$cliente = $this->clienteModel->select($atributos)
+			->withDeleted(true)
+			->where('clientes.email', $email)
+			->orderBy('id', 'DESC')
+			->first();
+
+		if ($cliente != null) {
+			$user_id = $cliente->usuario_id;
+		} else {
+			//criqar usuario e pegar o ID
+			//$user_id = $this->usuarioModel->getInsertID();
+			$cliente = new Cliente($post);
+			if ($this->clienteModel->save($cliente)) {
+				// Cria usuario do cliente
+				$this->criaUsuarioParaCliente($cliente);
+
+				// Envia dados de acesso ao clente
+				$this->enviaEmailCriacaoEmailAcesso($cliente);
+
+				$cliente_id = $this->clienteModel->getInsertID();
+
+				$atributos = [
+					'clientes.id',
+					'clientes.nome',
+					'clientes.cpf',
+					'clientes.email',
+					'clientes.telefone',
+					'clientes.deleted_at',
+					'clientes.usuario_id'
+				];
+
+				$cliente = $this->clienteModel->select($atributos)
+					->withDeleted(true)
+					->where('clientes.id', $cliente_id)
+					->orderBy('id', 'DESC')
+					->first();
+
+				$user_id = $cliente->usuario_id;
+			}
+		}
+
+
+		$data = [
+			'evento_id' => 17,
+			'user_id' => $user_id,
+			'codigo' => $this->pedidoModel->geraCodigoPedido(),
+			'total' => $post['total'],
+			'convite' => $post['convite'],
+			'forma_pagamento' => 'boleto',
+
+		];
+		$this->pedidoModel->skipValidation(true)->protect(false)->insert($data);
+		$pedido_id = $this->pedidoModel->getInsertID();
+
+		foreach ($_SESSION['carrinho'] as $key => $value) {
+
+			for ($i = 0; $i < $value['quantidade']; $i++) {
+
+				$nome = $value['nome'];
+				$quantidade = 1;
+				$valorUnitario = $value['preco'];
+				$valor = $value['preco'];
+				$tipo = $value['tipo'];
+
+				$ingressos = [
+					'pedido_id' => $pedido_id,
+					'user_id' => $user_id,
+					'nome' => $nome,
+					'quantidade' => $quantidade,
+					'valor_unitario' => $valorUnitario,
+					'valor' => $valor,
+					'tipo' => $tipo,
+					'codigo' => $user_id . $this->ingressoModel->geraCodigoIngresso(),
+				];
+
+				$this->ingressoModel->skipValidation(true)->protect(false)->insert($ingressos);
+				$ingresso_id = $this->ingressoModel->getInsertID();
+			}
+		}
+		$total = trim($post['total']);
+		$total = str_replace(".", "", $total);
+
+		$cobrar = [
+			'nome' => $post['nome'],
+			'cpf' => $post['cpf'],
+			'email' => $post['email'],
+			'expiration' => date('Y-m-d', strtotime('+5 days')),
+			'item' => [
+				'name' => 'Ingresso Dreamfest',
+				'amount' => 1,
+				'value' => (int)$total
+			],
+
+		];
+
+		$boleto = $this->gerencianetService->criaBoleto($cobrar);
+		$charge_id = $boleto['data']['charge_id'];
+		$status = $boleto['data']['status'];
+		$barcode = $boleto['data']['barcode'];
+		$link_boleto = $boleto['data']['link'];
+		$billet_link = $boleto['data']['billet_link'];
+		$pdf = $boleto['data']['pdf']['charge'];
+		$qrcode = $boleto['data']['pix']['qrcode'];
+		$qrcode_image = $boleto['data']['pix']['qrcode_image'];
+		$expire_at = $boleto['data']['expire_at'];
+		$payment = $boleto['data']['payment'];
+
+
+
+
+		if (isset($charge_id)) {
+			$this->pedidoModel
+				->protect(false)
+				->where('id', $pedido_id)
+				->set('charge_id', $charge_id)
+				->set('status', $status)
+				->update();
+		}
+
+		if (isset($charge_id)) {
+			$tranaction = [
+				'pedido_id' => $pedido_id,
+				'charge_id' => $charge_id,
+				'expire_at' => $expire_at,
+				'barcode' => $barcode,
+				'pdf' => $pdf,
+				'qrcode' => $qrcode,
+				'qrcode_image' => $qrcode_image,
+				'link' => $link_boleto,
+				'billet_link' => $billet_link,
+				'payment' => $payment,
+			];
+
+			$this->transactionModel->skipValidation(true)->protect(false)->insert($tranaction);
+		}
+
+		$cliente->link = $link_boleto;
+
+		$this->enviaEmailPedido($cliente);
+
+		$retorno['id'] = (int)$charge_id;
+
+		// Retorno para o ajax request
+		return $this->response->setJSON($retorno);
+	}
+
 	public function finalizarcartaoOLD()
 	{
 
@@ -1277,35 +1633,68 @@ class Checkout extends BaseController
 			$valorFormatado = number_format((float) $post['valor_total'], 2, '.', '');
 
 			if ($installmentCount <= 1) {
-				$installmentValue = $valorFormatado;
+				$installmentValue = $valorFormatado * 100;
 			} else {
-				$installmentValue = ($valorFormatado + ($valorFormatado * $juros * $installmentCount)) / $installmentCount;
+				$partial = ($valorFormatado + ($valorFormatado * $juros * $installmentCount));
+				$installmentValue = number_format((float) $partial, 2, '.', '');
 			}
 
+			$telefone = preg_replace('/[^0-9]/', '', $post['telefone']);
+			preg_match('/^(\d{2})(\d{8,9})$/', $telefone, $matches);
+
+			$evento = $this->eventoModel->find(17);
+			$integerValue = (int) preg_replace('/\D/', '', $installmentValue);
+
 			$pay = [
-				'customer_id' => $customer_id,
-				'installmentCount' => $post['installmentCount'],
-				'installmentValue' => (float) $installmentValue,
-				'description' => 'Ingressos Dreamfest 25',
-				'postalCode' => preg_replace('/[^0-9]/', '', $post['cep']),
-				'observations' => 'Api ASAAS',
-				'holderName' => $post['holderName'],
-				'number' => $post['numero_cartao'],
-				'expiryMonth' => $post['mes_vencimento'],
-				'expiryYear' => $post['ano_vencimento'],
-				'ccv' => $post['codigo_seguranca'],
-				'nome' => $post['nome'],
-				'email' => $post['email'],
-				'cpf' => $post['cpf'],
-				'cep' => $post['cep'],
-				'numero' => $post['numero'],
-				'telefone' => preg_replace('/[^0-9]/', '', $post['telefone']),
+				'items' => [[
+					'amount' => $integerValue,
+					'description' => 'Ingresso(s) ' . $evento->nome,
+					'quantity' => 1,
+					'code' => 'product_code',
+				]],
+				'customer' => [
+					'name' => $post['nome'],
+					'email' => $post['email'],
+					'document' => preg_replace('/\D/', '', $post['cpf']),
+					'type' => 'individual',
+					'phones' => [
+						'mobile_phone' => [
+							'country_code' => '55',
+							'area_code' => $matches[1],
+							'number' => $matches[2]
+						]
+					],
+				],
+				'payments' => [[
+					'payment_method' => 'credit_card',
+					'credit_card' => [
+						'installments' => $post['installmentCount'],
+						'card' => [
+							'number' => $post['numero_cartao'],
+							'holder_name' => $post['holderName'],
+							'exp_month' => $post['mes_vencimento'],
+							'exp_year' => $post['ano_vencimento'],
+							'cvv' => $post['codigo_seguranca'],
+							'billing_address' => [
+								'country' => 'BR',
+								'state' => $post['estado'],
+								'city' => $post['cidade'],
+								'line_1' => $post['endereco'],
+								'zip_code' => preg_replace('/[^0-9]/', '', $post['cep'])
+							],
+						]
+					]
+				]],
+				'options' => [
+					'antifraud_enabled' => false
+				],
+				'initiator_transaction_key' => uniqid()
 			];
 
-			$payment = $this->asaasService->payments($pay);
+			$payment = $this->pagarmeService->createTransaction($pay);
 
 			if (!isset($payment['errors'][0])) {
-				$status = $payment['status'] == 'CONFIRMED' ? 'CONFIRMED' : $payment['status'];
+				$status = $payment['status'] == 'paid' ? 'CONFIRMED' : $payment['status'];
 
 				$this->pedidoModel->protect(false)->update($pedido_id, [
 					'charge_id' => $payment['id'],
@@ -1317,7 +1706,7 @@ class Checkout extends BaseController
 					'charge_id' => $payment['id'],
 					'installment_value' => $post['valor_total'],
 					'installments' => $post['installmentCount'],
-					'payment' => $payment['billingType'],
+					'payment' => 'CREDIT_CARD',
 				]);
 
 				$this->enderecoModel->protect(false)->insert([
@@ -1332,15 +1721,13 @@ class Checkout extends BaseController
 
 				$this->enviaEmailPedidoCartao($cliente);
 
-				if (in_array($status, ['CONFIRMED', 'RECEIVED'])) {
+				if (in_array($status, ['paid', 'CONFIRMED', 'RECEIVED'])) {
 					unset($_SESSION['carrinho']);
 					return redirect()->to(site_url("checkout/obrigado/"));
-				} else {
-					return redirect()->to(site_url("checkout/cartao/".$event_id))->with('erro', "Erro ao processar pagamento!");
 				}
-			} else {
-				return redirect()->to(site_url("checkout/cartao/".$event_id))->with('erro', "Erro ao processar pagamento!");
 			}
+
+			return redirect()->to(site_url("checkout/cartao/".$event_id))->with('erro', "Erro ao processar pagamento!");
 		} catch (\Throwable $e) {
 			log_message('error', 'Erro em finalizarcartao: ' . $e->getMessage());
 			return redirect()->to(site_url("checkout/cartao/".$event_id))->with('erro', "Erro inesperado");
@@ -1558,8 +1945,8 @@ class Checkout extends BaseController
 			'cpf' => $post['cpf'],
 			'email' => $post['email'],
 			'telefone' => preg_replace('/[^0-9]/', '', $post['telefone']),
-			'cep' => preg_replace('/[^0-9]/', '', $post['cep']),
-			'numero' => $post['numero'],
+			'cep' => '',
+			'numero' => '',
 		];
 
 		$customer = $this->asaasService->customers($cobrar);
