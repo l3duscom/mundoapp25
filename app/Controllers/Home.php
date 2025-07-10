@@ -14,12 +14,8 @@ class Home extends BaseController
 
     public function __construct()
     {
-        $this->ordemModel = new \App\Models\OrdemModel();
         $this->usuarioModel = new \App\Models\UsuarioModel();
-        $this->ordemItemModel = new \App\Models\OrdemItemModel();
         $this->clienteModel = new \App\Models\ClienteModel();
-        $this->fornecedorModel = new \App\Models\FornecedorModel();
-        $this->itemModel = new \App\Models\ItemModel();
         $this->ingressoModel = new \App\Models\IngressoModel();
         $this->pedidoModel = new \App\Models\PedidoModel();
         $this->eventoModel = new \App\Models\EventoModel();
