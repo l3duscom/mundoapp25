@@ -1866,7 +1866,7 @@ class Checkout extends BaseController
 			$this->enviaEmailPedido((object) [
 				'nome' => $cliente->nome,
 				'email' => $cliente->email,
-				'url' => site_url("checkout/qrcode/{$payment['id']}"),
+				'url' => site_url("checkout/qrcode/{$event_id}/{$payment['id']}"),
 				'qrcode_image' => $transaction['encodedImage'],
 				'copiaecola' => $transaction['payload'],
 				'expire_at' => strtotime($transaction['expirationDate']),
