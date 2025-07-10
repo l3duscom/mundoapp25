@@ -478,25 +478,17 @@ class Checkout extends BaseController
 			$id = null;
 		}
 
-
-
-
-
 		$data = [
 			'titulo' => 'Comprar ingressos',
 			'id' => $id,
 			'event_id' => $event_id
 		];
 
-
 		return view('Checkout/cartao_step_1', $data);
 	}
 
 	public function cartao_step_2($event_id)
 	{
-
-
-
 
 		// Recupero o post da requisição
 		$post = $this->request->getPost();
