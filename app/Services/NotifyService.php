@@ -12,6 +12,7 @@ class NotifyService
     private $access_token;
     private $device_token;
     private $url;
+    private $desativado = false;
 
 
 
