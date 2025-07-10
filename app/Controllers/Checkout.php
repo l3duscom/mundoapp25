@@ -489,7 +489,6 @@ class Checkout extends BaseController
 
 	public function cartao_step_2($event_id)
 	{
-
 		// Recupero o post da requisição
 		$post = $this->request->getPost();
 
