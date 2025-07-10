@@ -109,11 +109,9 @@
 
 
 
-                                                    <a href="https://bit.ly/estacionamento-dream" target="_blank" class="btn btn-sm btn-primary mt-2 shadow w-100"><i class="bx bx-car" style="padding-right: 5px;"></i>Comprar estacionamento <strong> CUPOM: 06CEPUC25 </strong></a>
                                                     <?php if (strpos($i->nome, 'VIP') !== false) : ?>
 
                                                         <a href="<?= site_url('/console/meet/' . $i->id) ?>" class="btn btn-success mt-2 shadow w-100"><i class='bx bx-camera'></i> Check in Meet & Greet</a>
-                                                        <a href="https://forms.gle/tRdwDpex1wHNjZQU6" target="_blank" class="btn btn-success mt-2 shadow w-100">Solicitar Estacionamento</a>
 
                                                     <?php elseif (strpos($i->nome, 'EPIC') !== false) : ?>
 

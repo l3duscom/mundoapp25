@@ -92,8 +92,7 @@ $event_id = session()->get('event_id');
                                 <i class="bx bx-check-circle" style="font-size: 80px; color:green"></i>
                                 <p>Parabéns! Sua compra foi realizada com sucesso!, <strong>mas não feche essa página, você vai amar as novidades!</strong> <span style="font-size: 14px; color: red">Os emails de dado de acesso são enviados automaticamente, porém, notamos uma demora no envio para caixas do GMAIL. </span></p>
                                 <hr>
-                                <h3>Compre o FAST PASS e faça algo muito feio: <strong style="color: orangered">FURE A FILA</strong></h3>
-                                <p>Chega de filas e de perder o tempo! Com o Fast Pass, você fura a fila das ativações próprias do Dream25 e garante acesso prioritário ao <strong> PALCO MUNDO, que tem lugares LIMITADOS,</strong> pra não perder a apresentação de nenhum dos seus ídolos!</p>
+                               
                                
                             </center>
                         </div>
@@ -174,7 +173,6 @@ $event_id = session()->get('event_id');
 
                                 <p>O Universo mágico do Dreamfest está te esperando! <strong>Sua compra foi realizada com sucesso e seus ingressos já estão disponíveis no link abaixo!</strong> O comprovante foi enviado para seu email e você deve favoritar esse email para não perder nenhum detalhe!</p>
                                 <a href="<?= site_url('/console/dashboard/') ?>" class="btn btn-lg btn-primary mt-0 shadow">Ver meus ingressos</a>
-                                <p style="padding-top: 15px"><a href="https://indigoneo.com.br/pt/booking/999901058" target="_blank" style="color: black; text-decoration-line: underline">Comprar <strong>estacionamento</strong> com desconto | CUPOM: 06CEPUC25</a></p>
                                 <hr>
                                 <p style="padding-top: 5px"><strong>Essa é sua primeira compra de ingressos para o Dream?</strong> Fique ligado! Você receberá <strong>automaticamente uma senha de acesso em seu email!</strong> Ao receber o email (confira no spam), favorite o mesmo para não perder nenhum detalhe da sua participação!</p>
 
