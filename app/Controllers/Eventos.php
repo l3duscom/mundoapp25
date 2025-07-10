@@ -96,14 +96,10 @@ class Eventos extends BaseController
 
     public function cadastrar()
     {
-        if (!$this->request->isAJAX()) {
+        if ($this->request->getMethod() !== 'post') {
             return redirect()->back();
         }
 
-        // Envio o hash do token do form
-        $retorno['token'] = csrf_hash();
-
-        // Recupero o post da requisição
         $post = $this->request->getPost();
 
         if (!empty($post['data_inicio'])) {
@@ -116,21 +112,13 @@ class Eventos extends BaseController
         $evento = new EventoEntity($post);
 
         if ($this->eventoModel->save($evento)) {
-            $btnCriar = anchor("eventos/criar", 'Cadastrar novo evento', ['class' => 'btn btn-danger mt-2']);
-
-            session()->setFlashdata('sucesso', "Evento salvo com sucesso!<br> $btnCriar");
-
-            $retorno['id'] = $this->eventoModel->getInsertID();
-
-            return $this->response->setJSON($retorno);
+            $id = $this->eventoModel->getInsertID();
+            session()->setFlashdata('sucesso', 'Evento salvo com sucesso!');
+            return redirect()->to(site_url('eventos/exibir/' . $id));
         }
 
         // Retornamos os erros de validação
-        $retorno['erro'] = 'Por favor verifique os erros abaixo e tente novamente';
-        $retorno['erros_model'] = $this->eventoModel->errors();
-
-        // Retorno para o ajax request
-        return $this->response->setJSON($retorno);
+        return redirect()->back()->withInput()->with('erros_model', $this->eventoModel->errors());
     }
 
     public function exibir(int $id = null)
@@ -167,14 +155,10 @@ class Eventos extends BaseController
 
     public function atualizar()
     {
-        if (!$this->request->isAJAX()) {
+        if ($this->request->getMethod() !== 'post') {
             return redirect()->back();
         }
 
-        // Envio o hash do token do form
-        $retorno['token'] = csrf_hash();
-
-        // Recupero o post da requisição
         $post = $this->request->getPost();
 
         if (!empty($post['data_inicio'])) {
@@ -185,27 +169,22 @@ class Eventos extends BaseController
         }
 
         $evento = $this->buscaEventoOu404($post['id']);
-
         $evento->fill($post);
 
         if ($evento->hasChanged() === false) {
-            $retorno['info'] = 'Não há dados para atualizar';
-            return $this->response->setJSON($retorno);
+            session()->setFlashdata('info', 'Não há dados para atualizar');
+            return redirect()->to(site_url('eventos/exibir/' . $evento->id));
         }
 
         if ($this->eventoModel->save($evento)) {
             session()->setFlashdata('sucesso', 'Evento atualizado com sucesso!');
-
-            return $this->response->setJSON($retorno);
+            return redirect()->to(site_url('eventos/exibir/' . $evento->id));
         }
 
         // Retornamos os erros de validação
-        $retorno['erro'] = 'Por favor verifique os erros abaixo e tente novamente';
-        $retorno['erros_model'] = $this->eventoModel->errors();
-
-        // Retorno para o ajax request
-        return $this->response->setJSON($retorno);
+        return redirect()->back()->withInput()->with('erros_model', $this->eventoModel->errors());
     }
+
 
     public function excluir(int $id = null)
     {
@@ -272,7 +251,7 @@ class Eventos extends BaseController
      * @param integer $id
      * @return Exceptions|object
      */
-    private function buscaEventoOu404(int $id = null)
+    private function buscaEventoOu404(int $id)
     {
         if (!$id || !$evento = $this->eventoModel->withDeleted(true)->find($id)) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Não encontramos o evento $id");

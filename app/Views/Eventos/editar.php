@@ -48,7 +48,7 @@
         </div>
 
 
-        <?php echo form_open('/', ['id' => 'form']) ?>
+        <?php echo form_open('eventos/atualizar', ['id' => 'form']) ?>
         <input type="hidden" name="id" value="<?php echo $evento->id; ?>">
         <?php echo $this->include('Eventos/_form'); ?>
         <div class="form-group mb-2">
@@ -90,105 +90,6 @@
         //$("#form").LoadingOverlay("show");
 
         <?php echo $this->include('Eventos/_viacep'); ?>
-
-        $("#form").on('submit', function(e) {
-
-
-            e.preventDefault();
-
-
-            $.ajax({
-
-                type: 'POST',
-                url: '<?php echo site_url('eventos/atualizar'); ?>',
-                data: new FormData(this),
-                dataType: 'json',
-                contentType: false,
-                cache: false,
-                processData: false,
-                beforeSend: function() {
-
-                    $("#response").html('');
-                    $("#btn-salvar").val('Por favor aguarde...');
-
-                },
-                success: function(response) {
-
-                    $("#btn-salvar").val('Atualizar evento');
-                    $("#btn-salvar").removeAttr("disabled");
-
-                    $('[name=csrf_ordem]').val(response.token);
-
-
-                    if (!response.erro) {
-
-
-                        if (response.info) {
-
-                            $("#response").html('<div class="alert alert-info">' + response
-                                .info + '</div>');
-
-                        } else {
-
-                            // Tudo certo com a atualização do evento
-                            // Podemos agora redirecioná-lo tranquilamente
-
-                            window.location.href =
-                                "<?php echo site_url("eventos/exibir/"); ?>" + <?php echo $evento->id; ?>;
-
-                        }
-
-                    }
-
-                    if (response.erro) {
-
-                        // Exitem erros de validação
-
-
-                        $("#response").html('<div class="alert alert-danger">' + response.erro +
-                            '</div>');
-
-
-                        if (response.erros_model) {
-
-
-                            $.each(response.erros_model, function(key, value) {
-
-                                $("#response").append(
-                                    '<ul class="list-unstyled"><li class="text-danger">' +
-                                    value + '</li></ul>');
-
-                            });
-
-                        }
-
-                    }
-
-                },
-                error: function() {
-
-                    alert(
-                        'Não foi possível procesar a solicitação. Por favor entre em contato com o suporte técnico.'
-                    );
-                    $("#btn-salvar").val('Atualizar evento');
-                    $("#btn-salvar").removeAttr("disabled");
-
-                }
-
-
-
-            });
-
-
-        });
-
-
-        $("#form").submit(function() {
-
-            $(this).find(":submit").attr('disabled', 'disabled');
-
-        });
-
 
     });
 </script>

@@ -20,6 +20,7 @@ class EventoModel extends Model
 		'cidade',
 		'estado',
 		'nome',
+		'subtitulo',
 		'assunto',
 		'categoria',
 		'descricao',
@@ -70,7 +71,7 @@ class EventoModel extends Model
 
 	protected function generateSlug(array $data): array
 	{
-		$nome = $data['data']['nome'];
+		$nome = $data['data']['nome'] ?? null;
 		if (isset($nome)) {
 
 			$data['data']['slug'] = strtolower(mb_url_title($nome));

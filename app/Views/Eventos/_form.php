@@ -63,10 +63,6 @@
                     <input type="text" name="nome" placeholder="Nome do evento" class="form-control form-control-lg mb-2" style="font-size:medium; padding:13px" value="<?php echo esc($evento->nome); ?>">
                 </div>
                 <div class="form-group col-md-6">
-                    <label class="form-control-label">Subtítulo</label>
-                    <input type="text" name="subtitulo" placeholder="Subtítulo do evento" class="form-control form-control-lg mb-2" style="font-size:medium; padding:13px" value="<?php echo esc($evento->subtitulo); ?>">
-                </div>
-                <div class="form-group col-md-6">
                     <label class="form-control-label">Produtora</label>
                     <input type="text" name="produtora" placeholder="Nome da produtora" class="form-control form-control-lg mb-2" style="font-size:medium; padding:13px" value="<?php echo esc($evento->produtora); ?>">
                 </div>
