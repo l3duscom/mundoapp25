@@ -133,7 +133,7 @@
                             // Podemos agora redirecioná-lo tranquilamente
 
                             window.location.href =
-                                "<?php echo site_url("eventos/gerenciar/"); ?>" + response.id;
+                                "<?php echo site_url("eventos"); ?>";
 
                         }
 

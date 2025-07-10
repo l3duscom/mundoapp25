@@ -1,4 +1,5 @@
 <input type="hidden" name="user_id" value="<?php echo usuario_logado()->id; ?>">
+<input type="hidden" name="slug" value="<?php echo esc($evento->slug); ?>">
 <div class="col-lg-10 mx-auto mt-4">
     <div class="d-flex align-items-center justify-content-between">
         <div>

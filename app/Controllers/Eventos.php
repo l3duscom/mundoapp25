@@ -106,6 +106,13 @@ class Eventos extends BaseController
         // Recupero o post da requisição
         $post = $this->request->getPost();
 
+        if (!empty($post['data_inicio'])) {
+            $post['data_inicio'] = date('Y-m-d', strtotime(str_replace('/', '-', $post['data_inicio'])));
+        }
+        if (!empty($post['data_fim'])) {
+            $post['data_fim'] = date('Y-m-d', strtotime(str_replace('/', '-', $post['data_fim'])));
+        }
+
         $evento = new EventoEntity($post);
 
         if ($this->eventoModel->save($evento)) {
@@ -169,6 +176,13 @@ class Eventos extends BaseController
 
         // Recupero o post da requisição
         $post = $this->request->getPost();
+
+        if (!empty($post['data_inicio'])) {
+            $post['data_inicio'] = date('Y-m-d', strtotime(str_replace('/', '-', $post['data_inicio'])));
+        }
+        if (!empty($post['data_fim'])) {
+            $post['data_fim'] = date('Y-m-d', strtotime(str_replace('/', '-', $post['data_fim'])));
+        }
 
         $evento = $this->buscaEventoOu404($post['id']);
 
