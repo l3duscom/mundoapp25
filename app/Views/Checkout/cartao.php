@@ -515,7 +515,7 @@ $total = $_SESSION['total'] + $_SESSION['valor_frete'];
         });
     });
 </script>
-<script src="https://getbootstrap.com/docs/5.1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script src="https://getbootstrap.com/docs/5.1/examples/checkout/form-validation.js"></script>
 <!-- Meta Pixel InitiateCheckout Event -->
@@ -550,5 +550,36 @@ fbq('track', 'InitiateCheckout', {
     fbq('track', 'InitiateCheckout');
 </script>
 <?php endif; ?>
+
+<!-- Modal de Processamento -->
+<div class="modal fade" id="modalProcessando" tabindex="-1" aria-labelledby="modalProcessandoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="text-align:center;">
+      <div class="modal-body py-5">
+        <div class="spinner-border text-primary mb-3" style="width: 4rem; height: 4rem;" role="status"></div>
+        <h5 class="mb-3 mt-2">Processando pagamento...</h5>
+        <p class="text-muted">Não feche ou atualize esta página.<br>Sua compra está sendo finalizada.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form[action*="finalizarcartao"]');
+    const btn = document.getElementById('btn-salvar');
+
+    if (form && btn) {
+        form.addEventListener('submit', function(e) {
+            btn.disabled = true;
+            btn.value = "Processando...";
+            btn.classList.add('disabled');
+            // Mostra o modal
+            var modal = new bootstrap.Modal(document.getElementById('modalProcessando'));
+            modal.show();
+        });
+    }
+});
+</script>
 
 <?php echo $this->endSection() ?>
