@@ -151,7 +151,7 @@ if (!isset($_SESSION['impressao'])) {
                                     <hr>
                                     <center>
                                         <span class="text-muted mb-5" style="font-size: 12px;">Processado por:</span><br>
-                                        <img class="mt-1" src="https://blog.asaas.com/wp-content/uploads/2020/08/logo-Asaas_Azul.png" width="150px" height="auto">
+                                        <img class="mt-1" src="<?php echo site_url('recursos/front/images/asaas.png'); ?>" width="150px" height="auto">
                                     </center>
 
 

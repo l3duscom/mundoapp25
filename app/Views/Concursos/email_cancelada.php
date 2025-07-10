@@ -23,7 +23,7 @@
     <hr>
 </p>
 <hr>
-<p><strong>Acesse:</strong><a href="https://ingressos.dreamfest.com.br"> sua área de membros</a> com o email <?= $cliente->email ?> para Visualizar sua inscrição!</p>
+<p><strong>Acesse:</strong><a href="https://mundodream.com.br"> sua área de membros</a> com o email <?= $cliente->email ?> para Visualizar sua inscrição!</p>
 <hr>
 <h3>Detalhes do evento:</h3>
 <p>

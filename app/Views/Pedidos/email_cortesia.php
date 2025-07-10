@@ -3,7 +3,7 @@
 <p>Seus ingressos CORTESIA Já estão disponíveis!</p>
 
 <p>Estamos muito felizes em contar com você no evento geek mais mágico do sul do Brasil!</p>
-<p><strong>Acesse:</strong><a href="https://ingressos.dreamfest.com.br"> sua área de membros</a> com o email <?= $cliente->email ?> para ter acesso aos seus ingressos!</p>
+<p><strong>Acesse:</strong><a href="https://mundodream.com.br"> sua área de membros</a> com o email <?= $cliente->email ?> para ter acesso aos seus ingressos!</p>
 <hr>
 
 <hr>

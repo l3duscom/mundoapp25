@@ -287,7 +287,7 @@ $event_id = session()->get('event_id');
 
                     <center>
                         <span class="text-muted mb-1" style="font-size: 9px;">Processado por:</span><br>
-                        <img class="mt-1 mb-4" src="https://blog.asaas.com/wp-content/uploads/2020/08/logo-Asaas_Azul.png" width="100px" height="auto">
+                                                    <img class="mt-1 mb-4" src="<?php echo site_url('recursos/front/images/asaas.png'); ?>" width="100px" height="auto">
                     </center>
 
                         
