@@ -39,6 +39,9 @@
                 <a href="<?php echo site_url('pedidos/gerenciar_evento/' . $evento); ?>" class="btn btn-dark">Todos</a>
                 <a href="<?php echo site_url('pedidos/entrega/' . $evento); ?>" class="btn btn-warning">Aguardando Entrega</a>
                 <a href="<?php echo site_url('pedidos/enviados/' . $evento); ?>" class="btn btn-secondary">Enviados</a>
+                <a href="<?php echo site_url('pedidos/pendentes/' . $evento); ?>" class="btn btn-danger">Pendentes</a>
+                <a href="<?php echo site_url('pedidos/reembolsados/' . $evento); ?>" class="btn btn-info">Reembolsados</a>
+                <a href="<?php echo site_url('pedidos/chargeback/' . $evento); ?>" class="btn btn-warning">Chargeback</a>
 
             </div>
         </div>

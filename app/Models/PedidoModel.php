@@ -504,4 +504,91 @@ ORDER BY p11.updated_at DESC;
             ->where('ingressos.id', $id)
             ->first();
     }
+
+    public function listaPedidosAdminPendentes($event_id)
+    {
+        $atributos = [
+            'pedidos.id',
+            'pedidos.created_at',
+            'pedidos.codigo as cod_pedido',
+            'pedidos.rastreio',
+            'pedidos.status',
+            'pedidos.status_entrega',
+            'pedidos.frete',
+            'pedidos.total',
+            'pedidos.evento_id',
+            'pedidos.data_vencimento',
+            'clientes.email',
+            'clientes.telefone',
+            'clientes.nome',
+            'clientes.cpf'
+
+        ];
+
+        return $this->select($atributos)
+            ->join('usuarios', 'usuarios.id = pedidos.user_id')
+            ->join('clientes', 'clientes.usuario_id = usuarios.id')
+            ->where('pedidos.evento_id', $event_id)
+            ->whereIn('pedidos.status', ['PENDING', 'OVERDUE'])
+            ->orderBy('pedidos.created_at', 'DESC')
+            ->findAll();
+    }
+
+    public function listaPedidosAdminReembolsados($event_id)
+    {
+        $atributos = [
+            'pedidos.id',
+            'pedidos.created_at',
+            'pedidos.codigo as cod_pedido',
+            'pedidos.rastreio',
+            'pedidos.status',
+            'pedidos.status_entrega',
+            'pedidos.frete',
+            'pedidos.total',
+            'pedidos.evento_id',
+            'pedidos.data_vencimento',
+            'clientes.email',
+            'clientes.telefone',
+            'clientes.nome',
+            'clientes.cpf'
+
+        ];
+
+        return $this->select($atributos)
+            ->join('usuarios', 'usuarios.id = pedidos.user_id')
+            ->join('clientes', 'clientes.usuario_id = usuarios.id')
+            ->where('pedidos.evento_id', $event_id)
+            ->whereIn('pedidos.status', ['REFUNDED'])
+            ->orderBy('pedidos.created_at', 'DESC')
+            ->findAll();
+    }
+
+    public function listaPedidosAdminChargeback($event_id)
+    {
+        $atributos = [
+            'pedidos.id',
+            'pedidos.created_at',
+            'pedidos.codigo as cod_pedido',
+            'pedidos.rastreio',
+            'pedidos.status',
+            'pedidos.status_entrega',
+            'pedidos.frete',
+            'pedidos.total',
+            'pedidos.evento_id',
+            'pedidos.data_vencimento',
+            'clientes.email',
+            'clientes.telefone',
+            'clientes.nome',
+            'clientes.cpf'
+
+        ];
+
+        return $this->select($atributos)
+            ->join('usuarios', 'usuarios.id = pedidos.user_id')
+            ->join('clientes', 'clientes.usuario_id = usuarios.id')
+            ->where('pedidos.evento_id', $event_id)
+            ->like('pedidos.status', 'CHARGEBACK')
+            ->orderBy('pedidos.created_at', 'DESC')
+            ->findAll();
+    }
 }

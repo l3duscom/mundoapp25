@@ -40,6 +40,9 @@
     <a href="<?= site_url('pedidos/recompra/' . $evento); ?>" class="tab cyan<?= (current_url() == site_url('pedidos/recompra/' . $evento)) ? ' active' : ''; ?>">Recompra</a>
     <a href="<?= site_url('pedidos/entrega/' . $evento); ?>" class="tab yellow<?= (current_url() == site_url('pedidos/entrega/' . $evento)) ? ' active' : ''; ?>">Aguardando Entrega</a>
     <a href="<?= site_url('pedidos/enviados/' . $evento); ?>" class="tab gray<?= (current_url() == site_url('pedidos/enviados/' . $evento)) ? ' active' : ''; ?>">Enviados</a>
+    <a href="<?= site_url('pedidos/pendentes/' . $evento); ?>" class="tab red<?= (current_url() == site_url('pedidos/pendentes/' . $evento)) ? ' active' : ''; ?>">Pendentes</a>
+    <a href="<?= site_url('pedidos/reembolsados/' . $evento); ?>" class="tab blue<?= (current_url() == site_url('pedidos/reembolsados/' . $evento)) ? ' active' : ''; ?>">Reembolsados</a>
+    <a href="<?= site_url('pedidos/chargeback/' . $evento); ?>" class="tab orange<?= (current_url() == site_url('pedidos/chargeback/' . $evento)) ? ' active' : ''; ?>">Chargeback</a>
     <a href="<?= site_url('pedidos/vip/' . $evento); ?>" class="tab black<?= (current_url() == site_url('pedidos/vip/' . $evento)) ? ' active' : ''; ?>">VIP - Aguardando</a>
     <a href="<?= site_url('pedidos/vipentregue/' . $evento); ?>" class="tab black<?= (current_url() == site_url('pedidos/vipentregue/' . $evento)) ? ' active' : ''; ?>">VIP - Entregue</a>
 </div>
@@ -80,6 +83,12 @@
 .tab-menu .tab.gray { background: #6b7280; color: #fff; }
 .tab-menu .tab.cyan { background: #06b6d4; color: #fff; }
 .tab-menu .tab.cyan.active { background: #0891b2; color: #fff; }
+.tab-menu .tab.red { background: #ef4444; color: #fff; }
+.tab-menu .tab.red.active { background: #dc2626; color: #fff; }
+.tab-menu .tab.blue { background: #3b82f6; color: #fff; }
+.tab-menu .tab.blue.active { background: #2563eb; color: #fff; }
+.tab-menu .tab.orange { background: #f97316; color: #fff; }
+.tab-menu .tab.orange.active { background: #ea580c; color: #fff; }
 .tab-menu .tab.black { background: #181f2c; color: #fff; }
 </style>
 

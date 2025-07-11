@@ -196,15 +196,38 @@ class Pedidos extends BaseController
 
 		$id = $this->usuarioLogado()->id;
 
-
+		// Buscar dados do evento
+		$evento_selecionado = $this->eventoModel->find($event_id);
 
 		$data = [
-			'titulo' => 'Pedidos enviados',
+			'titulo' => 'Pedidos Enviados',
 			'evento' => $event_id,
+			'evento_selecionado' => $evento_selecionado,
 		];
 
-
 		return view('Pedidos/enviados', $data);
+	}
+
+	public function pendentes($event_id)
+	{
+
+		if (!$this->usuarioLogado()->temPermissaoPara('editar-clientes')) {
+
+			return redirect()->back()->with('atencao', $this->usuarioLogado()->nome . ', você não tem permissão para acessar esse menu.');
+		}
+
+		$id = $this->usuarioLogado()->id;
+
+		// Buscar dados do evento
+		$evento_selecionado = $this->eventoModel->find($event_id);
+
+		$data = [
+			'titulo' => 'Pedidos Pendentes',
+			'evento' => $event_id,
+			'evento_selecionado' => $evento_selecionado,
+		];
+
+		return view('Pedidos/pendentes', $data);
 	}
 
 	public function recompra($event_id)
@@ -461,6 +484,149 @@ class Pedidos extends BaseController
 				'frete' => $pedido->frete,
 				'status_entrega' => esc($pedido->status_entrega),
 				'rastreio' => esc($pedido->rastreio),
+			];
+		}
+
+		$retorno = [
+			'data' => $data,
+		];
+
+		return $this->response->setJSON($retorno);
+	}
+
+	public function recuperaPedidosAdminPendentes(int $event_id)
+	{
+		if (!$this->request->isAJAX()) {
+			return redirect()->back();
+		}
+
+		$pedidos = $this->pedidosModel->listaPedidosAdminPendentes($event_id);
+
+		// Receberá o array de objetos de clientes
+		$data = [];
+
+		foreach ($pedidos as $pedido) {
+			$data[] = [
+				'cod_pedido' => anchor("pedidos/ingressos/" . $pedido->id, esc($pedido->cod_pedido), 'title="Exibir usuário ' . esc($pedido->cod_pedido) . ' "'),
+				'nome' => esc($pedido->nome),
+				'email' => esc($pedido->email),
+				'telefone' => esc($pedido->telefone),
+				'status' => esc($pedido->status),
+				'cpf' => esc($pedido->cpf),
+				'frete' => $pedido->frete,
+				'status_entrega' => esc($pedido->status_entrega),
+				'rastreio' => esc($pedido->rastreio),
+				'data_vencimento' => $pedido->data_vencimento ? date('d/m/Y', strtotime($pedido->data_vencimento)) : '-',
+			];
+		}
+
+		$retorno = [
+			'data' => $data,
+		];
+
+		return $this->response->setJSON($retorno);
+	}
+
+	public function reembolsados($event_id)
+	{
+
+		if (!$this->usuarioLogado()->temPermissaoPara('editar-clientes')) {
+
+			return redirect()->back()->with('atencao', $this->usuarioLogado()->nome . ', você não tem permissão para acessar esse menu.');
+		}
+
+		$id = $this->usuarioLogado()->id;
+
+		// Buscar dados do evento
+		$evento_selecionado = $this->eventoModel->find($event_id);
+
+		$data = [
+			'titulo' => 'Pedidos Reembolsados',
+			'evento' => $event_id,
+			'evento_selecionado' => $evento_selecionado,
+		];
+
+		return view('Pedidos/reembolsados', $data);
+	}
+
+	public function recuperaPedidosAdminReembolsados(int $event_id)
+	{
+		if (!$this->request->isAJAX()) {
+			return redirect()->back();
+		}
+
+		$pedidos = $this->pedidosModel->listaPedidosAdminReembolsados($event_id);
+
+		// Receberá o array de objetos de clientes
+		$data = [];
+
+		foreach ($pedidos as $pedido) {
+			$data[] = [
+				'cod_pedido' => anchor("pedidos/ingressos/" . $pedido->id, esc($pedido->cod_pedido), 'title="Exibir usuário ' . esc($pedido->cod_pedido) . ' "'),
+				'nome' => esc($pedido->nome),
+				'email' => esc($pedido->email),
+				'telefone' => esc($pedido->telefone),
+				'status' => esc($pedido->status),
+				'cpf' => esc($pedido->cpf),
+				'frete' => $pedido->frete,
+				'status_entrega' => esc($pedido->status_entrega),
+				'rastreio' => esc($pedido->rastreio),
+				'data_vencimento' => $pedido->data_vencimento ? date('d/m/Y', strtotime($pedido->data_vencimento)) : '-',
+			];
+		}
+
+		$retorno = [
+			'data' => $data,
+		];
+
+		return $this->response->setJSON($retorno);
+	}
+
+	public function chargeback($event_id)
+	{
+
+		if (!$this->usuarioLogado()->temPermissaoPara('editar-clientes')) {
+
+			return redirect()->back()->with('atencao', $this->usuarioLogado()->nome . ', você não tem permissão para acessar esse menu.');
+		}
+
+		$id = $this->usuarioLogado()->id;
+
+		// Buscar dados do evento
+		$evento_selecionado = $this->eventoModel->find($event_id);
+
+		$data = [
+			'titulo' => 'Pedidos com Chargeback',
+			'evento' => $event_id,
+			'evento_selecionado' => $evento_selecionado,
+		];
+
+		return view('Pedidos/chargeback', $data);
+	}
+
+	public function recuperaPedidosAdminChargeback(int $event_id)
+	{
+		if (!$this->request->isAJAX()) {
+			return redirect()->back();
+		}
+
+		$pedidos = $this->pedidosModel->listaPedidosAdminChargeback($event_id);
+
+		// Receberá o array de objetos de clientes
+		$data = [];
+
+		foreach ($pedidos as $pedido) {
+			$data[] = [
+				'cod_pedido' => anchor("pedidos/ingressos/" . $pedido->id, esc($pedido->cod_pedido), 'title="Exibir usuário ' . esc($pedido->cod_pedido) . ' "'),
+				'nome' => esc($pedido->nome),
+				'email' => esc($pedido->email),
+				'telefone' => esc($pedido->telefone),
+				'status' => esc($pedido->status),
+				'cpf' => esc($pedido->cpf),
+				'frete' => $pedido->frete,
+				'status_entrega' => esc($pedido->status_entrega),
+				'rastreio' => esc($pedido->rastreio),
+				'data_vencimento' => $pedido->data_vencimento ? date('d/m/Y', strtotime($pedido->data_vencimento)) : '-',
 			];
 		}
 

@@ -21,7 +21,7 @@ $routes->setDefaultController('Home');
 $routes->setDefaultMethod('index');
 $routes->setTranslateURIDashes(false);
 $routes->set404Override(); // CRIAR PÁGINA CUSTOMIZADA
-//$routes->setAutoRoute(true);
+$routes->setAutoRoute(true);
 
 //$routes->get('geraCsvDiciScm', 'DeclarationsController::geraCsvDiciScm');
 

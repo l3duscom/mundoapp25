@@ -35,13 +35,14 @@
         </div>
         <div class="ms-auto">
             <div class="btn-group">
-
                 <a href="<?php echo site_url('ingressos/add'); ?>" class="btn btn-primary">Add ingressos</a>
+                <a href="<?php echo site_url('pedidos/gerenciar_evento/' . $evento); ?>" class="btn btn-dark">Todos</a>
                 <a href="<?php echo site_url('pedidos/entrega/' . $evento); ?>" class="btn btn-warning">Aguardando Entrega</a>
                 <a href="<?php echo site_url('pedidos/enviados/' . $evento); ?>" class="btn btn-secondary">Enviados</a>
+                <a href="<?php echo site_url('pedidos/pendentes/' . $evento); ?>" class="btn btn-danger">Pendentes</a>
+                <a href="<?php echo site_url('pedidos/reembolsados/' . $evento); ?>" class="btn btn-info">Reembolsados</a>
+                <a href="<?php echo site_url('pedidos/chargeback/' . $evento); ?>" class="btn btn-warning">Chargeback</a>
                 <a href="<?php echo site_url('pedidos/vip/' . $evento); ?>" class="btn btn-dark">VIP - Aguardando</a>
-                <a href="<?php echo site_url('pedidos/gerenciar_evento/' . $evento); ?>" class="btn btn-dark">Todos</a>
-
 
             </div>
         </div>

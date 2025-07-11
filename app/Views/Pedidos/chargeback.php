@@ -23,7 +23,7 @@
     <?php $id = usuario_logado()->id ?>
     <!--breadcrumb-->
     <div class="page-breadcrumb d-sm-flex align-items-center mb-3">
-        <div class="breadcrumb-title pe-3">Aguardando envio CINEMARK</div>
+        <div class="breadcrumb-title pe-3">Pedidos com Chargeback</div>
         <div class="ps-3">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0 p-0">
@@ -42,7 +42,6 @@
                 <a href="<?php echo site_url('pedidos/pendentes/' . $evento); ?>" class="btn btn-danger">Pendentes</a>
                 <a href="<?php echo site_url('pedidos/reembolsados/' . $evento); ?>" class="btn btn-info">Reembolsados</a>
                 <a href="<?php echo site_url('pedidos/chargeback/' . $evento); ?>" class="btn btn-warning">Chargeback</a>
-                <a href="<?php echo site_url('pedidos/vipentregue/' . $evento); ?>" class="btn btn-dark">VIP - Entregue</a>
 
             </div>
         </div>
@@ -58,11 +57,13 @@
                         <thead>
                             <tr>
                                 <th>Pedido</th>
-                                <th></th>
+                                <th>Status</th>
                                 <th>Nome</th>
                                 <th>Email</th>
                                 <th>Whatsapp</th>
-                                <th>Cinemark</th>
+                                <th>CPF</th>
+                                <th>Vencimento</th>
+                                <th>Frete</th>
                                 <th>Rastreio</th>
                             </tr>
                         </thead>
@@ -132,14 +133,13 @@
 
             "oLanguage": DATATABLE_PTBR,
 
-            "ajax": "<?php echo site_url('pedidos/recuperaPedidosAdminVip/' . $evento); ?>",
+            "ajax": "<?php echo site_url('pedidos/recuperaPedidosAdminChargeback/' . $evento); ?>",
             "columns": [{
                     "data": "cod_pedido"
                 },
                 {
-                    "data": "frete"
+                    "data": "status"
                 },
-
                 {
                     "data": "nome"
                 },
@@ -150,9 +150,14 @@
                     "data": "telefone"
                 },
                 {
-                    "data": "cinemark"
+                    "data": "cpf"
                 },
-
+                {
+                    "data": "data_vencimento"
+                },
+                {
+                    "data": "frete"
+                },
                 {
                     "data": "rastreio"
                 },
@@ -169,4 +174,4 @@
     });
 </script>
 
-<?php echo $this->endSection() ?>
+<?php echo $this->endSection() ?> 
