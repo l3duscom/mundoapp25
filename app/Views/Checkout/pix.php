@@ -35,13 +35,21 @@
 
                         <!-- Exibirá os retornos do backend -->
                         <div id="response">
-
-
+                            <?php if (session()->getFlashdata('erro')): ?>
+                                <div class="alert alert-danger">
+                                    <?= session()->getFlashdata('erro') ?>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <?php if (session()->getFlashdata('sucesso')): ?>
+                                <div class="alert alert-success">
+                                    <?= session()->getFlashdata('sucesso') ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
 
 
-
-                        <?php echo form_open('/', ['id' => 'form']) ?>
+                        <?php echo form_open('Checkout/finalizarpix/' . $event_id, ['id' => 'form']) ?>
 
                         <input type="hidden" name="valor_total" id="valor_total" value="<?= $total * 100 ?>" required>
                         <input type="hidden" name="frete" id="frete" value="<?= $_SESSION['frete'] ?>" required>
@@ -261,16 +269,11 @@ function trackInitiateCheckoutPix() {
 </script>
 <?php endif; ?>
 
-<script src="<?php echo site_url('recursos/vendor/loadingoverlay/loadingoverlay.min.js') ?>"></script>
-
-
 <script src="<?php echo site_url('recursos/vendor/mask/jquery.mask.min.js') ?>"></script>
 <script src="<?php echo site_url('recursos/vendor/mask/app.js') ?>"></script>
 
 <script>
     $(document).ready(function() {
-
-        //$("#form").LoadingOverlay("show");
 
         // Track InitiateCheckout when user submits PIX payment
         $("#form").on('submit', function(e) {
@@ -278,106 +281,6 @@ function trackInitiateCheckoutPix() {
             trackInitiateCheckoutPix();
             <?php endif; ?>
         });
-
-        $("#form").on('submit', function(e) {
-
-
-            e.preventDefault();
-
-
-            $.ajax({
-
-                type: 'POST',
-                url: '<?php echo site_url('Checkout/finalizarpix/' . $event_id); ?>',
-                data: new FormData(this),
-                dataType: 'json',
-                contentType: false,
-                cache: false,
-                processData: false,
-                beforeSend: function() {
-
-                    $("#response").html('');
-                    $("#btn-salvar").val('Processando pagamento...');
-                    $("#btn-salvar").attr('disabled', 'disabled');
-
-                },
-                success: function(response) {
-
-                    $("#btn-salvar").val('Salvar');
-                    $("#btn-salvar").removeAttr("disabled");
-
-                    $('[name=csrf_ordem]').val(response.token);
-
-
-                    if (!response.erro) {
-
-
-                        if (response.info) {
-
-                            $("#response").html('<div class="alert alert-info">' + response
-                                .info + '</div>');
-
-                        } else {
-
-                            // Tudo certo com a atualização do usuário
-                            // Podemos agora redirecioná-lo tranquilamente
-
-                            window.location.href = "<?php echo site_url('checkout/qrcode/' . $event_id . '/'); ?>" + response.id;
-
-
-                        }
-
-                    }
-
-                    if (response.erro) {
-
-                        // Exitem erros de validação
-
-
-                        $("#response").html('<div class="alert alert-danger">' + response.erro +
-                            '</div>');
-
-
-                        if (response.erros_model) {
-
-
-                            $.each(response.erros_model, function(key, value) {
-
-                                $("#response").append(
-                                    '<ul class="list-unstyled"><li class="text-danger">' +
-                                    value + '</li></ul>');
-
-                            });
-
-                        }
-
-                    }
-
-                },
-                error: function() {
-
-                    alert(
-                        'Não foi possível procesar a solicitação. Por favor entre em contato com o suporte técnico.'
-                    );
-                    $("#btn-salvar").val('Salvar');
-                    $("#btn-salvar").removeAttr("disabled");
-
-                }
-
-
-
-            });
-
-
-        });
-
-
-        $("#form").submit(function() {
-
-            $(this).find(":submit").attr('disabled', 'disabled');
-
-        });
-
 
     });
 </script>

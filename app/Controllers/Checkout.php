@@ -1368,15 +1368,10 @@ class Checkout extends BaseController
 	
 	public function finalizarpix($event_id)
 	{
-		if (! $this->request->isAJAX()) {
-			return redirect()->back();
-		}
-
 		// Debug log
 		log_message('info', 'finalizarpix called with event_id: ' . $event_id);
 
 		helper('text');
-		$retorno['token'] = csrf_hash();
 
 		try {
 			$post = $this->request->getPost();
@@ -1384,49 +1379,49 @@ class Checkout extends BaseController
 			// Validar dados obrigatórios
 			if (!isset($post['email'], $post['valor_total'], $_SESSION['carrinho'])) {
 				log_message('error', 'Dados incompletos: email=' . ($post['email'] ?? 'null') . ', valor_total=' . ($post['valor_total'] ?? 'null') . ', carrinho=' . (isset($_SESSION['carrinho']) ? 'exists' : 'null'));
-				return $this->response->setJSON(['erro' => 'Dados incompletos']);
+				return redirect()->back()->with('erro', 'Dados incompletos');
 			}
 
 			// Validar valor total
 			if (empty($post['valor_total']) || $post['valor_total'] <= 0) {
 				log_message('error', 'Valor total inválido: ' . ($post['valor_total'] ?? 'null'));
-				return $this->response->setJSON(['erro' => 'Valor total inválido']);
+				return redirect()->back()->with('erro', 'Valor total inválido');
 			}
 
 			// Validar carrinho
 			if (empty($_SESSION['carrinho']) || !is_array($_SESSION['carrinho'])) {
 				log_message('error', 'Carrinho vazio ou inválido');
-				return $this->response->setJSON(['erro' => 'Carrinho vazio']);
+				return redirect()->back()->with('erro', 'Carrinho vazio');
 			}
 
 			// Validar email
 			if (!filter_var($post['email'], FILTER_VALIDATE_EMAIL)) {
 				log_message('error', 'Email inválido: ' . $post['email']);
-				return $this->response->setJSON(['erro' => 'Email inválido']);
+				return redirect()->back()->with('erro', 'Email inválido');
 			}
 
 			// Validar CPF
 			if (empty($post['cpf'])) {
 				log_message('error', 'CPF não informado');
-				return $this->response->setJSON(['erro' => 'CPF é obrigatório']);
+				return redirect()->back()->with('erro', 'CPF é obrigatório');
 			}
 
 			// Validar nome
 			if (empty($post['nome'])) {
 				log_message('error', 'Nome não informado');
-				return $this->response->setJSON(['erro' => 'Nome é obrigatório']);
+				return redirect()->back()->with('erro', 'Nome é obrigatório');
 			}
 
 			// Validar telefone
 			if (empty($post['telefone'])) {
 				log_message('error', 'Telefone não informado');
-				return $this->response->setJSON(['erro' => 'Telefone é obrigatório']);
+				return redirect()->back()->with('erro', 'Telefone é obrigatório');
 			}
 
 			// Validar frete
 			if (!isset($post['frete'])) {
 				log_message('error', 'Frete não informado');
-				return $this->response->setJSON(['erro' => 'Frete é obrigatório']);
+				return redirect()->back()->with('erro', 'Frete é obrigatório');
 			}
 
 			$cliente = $this->buscaOuCriaCliente($post);
@@ -1446,7 +1441,7 @@ class Checkout extends BaseController
 			]);
 
 			if (isset($payment['errors'][0])) {
-				return $this->response->setJSON(['erro' => 'Falha ao processar compra']);
+				return redirect()->back()->with('erro', 'Falha ao processar compra');
 			}
 
 			$transaction = $this->asaasService->obtemQrCode($payment['id']);
@@ -1479,11 +1474,12 @@ class Checkout extends BaseController
 
 			unset($_SESSION['carrinho']);
 
-			$retorno['id'] = $payment['id'];
-			return $this->response->setJSON($retorno);
+			// Redirecionar para a página do QR Code
+			return redirect()->to("checkout/qrcode/{$event_id}/{$payment['id']}");
+
 		} catch (\Throwable $e) {
 			log_message('error', 'Erro em finalizarpix: ' . $e->getMessage());
-			return $this->response->setJSON(['erro' => 'Erro interno. Tente novamente.']);
+			return redirect()->back()->with('erro', 'Erro interno. Tente novamente.');
 		}
 	}
 
