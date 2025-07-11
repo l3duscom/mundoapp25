@@ -23,6 +23,7 @@ class Filters extends BaseConfig
         'visitante' => \App\Filters\VisitanteFilter::class, // Filtro visitante
         'cliente' => \App\Filters\ClienteFilter::class, // Filtro cliente
         'webhook' => \App\Filters\WebhookFilter::class, // Filtro webhook
+        'eventoContext' => \App\Filters\EventoContextFilter::class, // Filtro contexto de evento
     ];
 
     /**
@@ -120,6 +121,13 @@ class Filters extends BaseConfig
 
                 'usuarios(/editar)?',
                 'usuarios(/editarsenha)?',
+            ],
+        ],
+        'eventoContext' => [
+            'before' => [
+                'concursos(/*)?',
+                'pedidos/gerenciar_evento(/*)?',
+                'ingressos/add(/*)?',
             ],
         ],
     ];

@@ -109,6 +109,23 @@ class Ingressos extends BaseController
 		return $cliente;
 	}
 
+	/**
+	 * Método para gerar QRCode corretamente
+	 *
+	 * @param string $codigo
+	 * @return string
+	 */
+	private function gerarQRCode($codigo)
+	{
+		$qrcode = new QRCode(new QROptions([
+			'outputType' => QRCode::OUTPUT_IMAGE_PNG,
+			'eccLevel' => QRCode::ECC_L,
+			'scale' => 5,
+			'imageBase64' => false,
+		]));
+		return $qrcode->render($codigo);
+	}
+
 	public function vincular_cinemark()
 	{
 
@@ -183,7 +200,7 @@ class Ingressos extends BaseController
 			$generator = new BarcodeGeneratorHTML();
 			$barcode = $generator->getBarcode($ingresso->codigo, $generator::TYPE_CODE_39);
 
-			$qrcode = (new QRCode)->render($ingresso->codigo);
+			$qrcode = $this->gerarQRCode($ingresso->codigo);
 
 
 
@@ -243,7 +260,7 @@ class Ingressos extends BaseController
 		$participante = '';
 
 
-		$qrcode = (new QRCode)->render($pedido->codigo);
+		$qrcode = $this->gerarQRCode($pedido->codigo);
 
 		$data = [
 			'titulo' => 'E-ticket: ' . $pedido->cod_pedido . ' - ' . date('d/m/Y H:i'),
@@ -284,7 +301,7 @@ class Ingressos extends BaseController
 
 		//dd($cliente->nome);
 		foreach ($ingressos as $ingresso) {
-			$qrcode = (new QRCode)->render($ingresso->codigo);
+			$qrcode = $this->gerarQRCode($ingresso->codigo);
 			$participante = (isset($ingresso->participante) && trim($ingresso->participante) !== '') ? $ingresso->participante : $cliente->nome;
 
 			$data['ingressos'][] = [
@@ -340,7 +357,7 @@ class Ingressos extends BaseController
 
 		//dd($cliente->nome);
 		foreach ($ingressos as $ingresso) {
-			$qrcode = (new QRCode)->render($ingresso->codigo);
+			$qrcode = $this->gerarQRCode($ingresso->codigo);
 			$participante = (isset($ingresso->participante) && trim($ingresso->participante) !== '') ? $ingresso->participante : $cliente->nome;
 
 			$data['ingressos'][] = [
@@ -395,7 +412,7 @@ class Ingressos extends BaseController
 
 
 		foreach ($ingressos as $ingresso) {
-			$qrcode = (new QRCode)->render($ingresso->codigo);
+			$qrcode = $this->gerarQRCode($ingresso->codigo);
 			$participante = $ingresso->participante ?? $cliente->nome;
 
 			$data['ingressos'][] = [
@@ -450,7 +467,7 @@ class Ingressos extends BaseController
 
 
 		foreach ($ingressos as $ingresso) {
-			$qrcode = (new QRCode)->render($ingresso->codigo);
+			$qrcode = $this->gerarQRCode($ingresso->codigo);
 			$participante = $ingresso->participante ?? $cliente->nome;
 
 			$data['ingressos'][] = [
@@ -625,27 +642,33 @@ class Ingressos extends BaseController
 		return redirect()->to(site_url("ingressos"))->with('atencao', "Erro ao alterar o participante, contate o suporte!");
 	}
 
-	public function add()
-	{
+	    public function add()
+    {
 
 
-		if (!$this->usuarioLogado()->temPermissaoPara('editar-clientes')) {
+        if (!$this->usuarioLogado()->temPermissaoPara('editar-clientes')) {
 
-			return redirect()->back()->with('atencao', $this->usuarioLogado()->nome . ', você não tem permissão para acessar esse menu.');
-		}
+            return redirect()->back()->with('atencao', $this->usuarioLogado()->nome . ', você não tem permissão para acessar esse menu.');
+        }
+
+        // Verificar se há evento selecionado no contexto
+        $event_id = session()->get('event_id');
+        $evento_selecionado = null;
+        
+        if ($event_id) {
+            $eventoModel = new \App\Models\EventoModel();
+            $evento_selecionado = $eventoModel->find($event_id);
+        }
+
+        $data = [
+            'titulo' => 'Add Ingressos ADMIN',
+            'event_id' => $event_id,
+            'evento_selecionado' => $evento_selecionado,
+        ];
 
 
-
-
-		$data = [
-			'titulo' => 'Add Ingressos ADMIN',
-
-
-		];
-
-
-		return view('Carrinho/admin', $data);
-	}
+        return view('Carrinho/admin', $data);
+    }
 
 	public function pdv()
 	{

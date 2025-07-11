@@ -23,8 +23,18 @@ class Eventos extends BaseController
             return redirect()->back()->with('atencao', $this->usuarioLogado()->nome . ', você não tem permissão para acessar esse menu.');
         }
 
+        // Verificar se há evento selecionado no contexto
+        $event_id = session()->get('event_id');
+        $evento_selecionado = null;
+        
+        if ($event_id) {
+            $evento_selecionado = $this->eventoModel->find($event_id);
+        }
+
         $data = [
             'titulo' => 'Listando eventos',
+            'event_id' => $event_id,
+            'evento_selecionado' => $evento_selecionado,
         ];
 
         return view('Eventos/index', $data);

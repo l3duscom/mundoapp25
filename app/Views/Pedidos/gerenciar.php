@@ -17,25 +17,28 @@
 
 <?php echo $this->section('conteudo') ?>
 
-
 <div class="row">
-
     <?php $id = usuario_logado()->id ?>
-    <!--breadcrumb-->
-   
-    <!--end breadcrumb-->
-    <span style="font-size: 12x; ">Escolha o evento desejado:</span>
-    <?php foreach ($eventos as $evento) : ?>
-        <?php if ($evento->ativo == 1) : ?> 
-                <div class="card rounded-4 mb-1">
-                    <div class="card-body">
-                            <a href="<?= site_url('pedidos/gerenciar_evento/' . $evento->id) ?>" style="text-decoration: none; color: inherit;">
-                                <?= $evento->nome ?>
-                            </a>
-                        </div>
-                    </div>                                    
-                <?php endif; ?>
-        <?php endforeach; ?>
+    
+    <!-- Se não há evento selecionado, mostrar lista -->
+    <div class="col-12">
+        <div class="card rounded-4 mb-3">
+            <div class="card-body">
+                <h5 class="mb-3">Escolha o evento desejado:</h5>
+                <?php foreach ($eventos as $evento) : ?>
+                    <?php if ($evento->ativo == 1) : ?> 
+                        <div class="card rounded-4 mb-2">
+                            <div class="card-body">
+                                <a href="<?= site_url('pedidos/gerenciar_evento/' . $evento->id) ?>" style="text-decoration: none; color: inherit;">
+                                    <?= $evento->nome ?>
+                                </a>
+                            </div>
+                        </div>                                    
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
 </div>
 
 

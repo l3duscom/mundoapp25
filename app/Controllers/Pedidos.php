@@ -58,26 +58,48 @@ class Pedidos extends BaseController
 		return view('Pedidos/meus', $data);
 	}
 
-	public function gerenciar()
-	{
+	    public function gerenciar()
+    {
 
-		if (!$this->usuarioLogado()->temPermissaoPara('editar-clientes')) {
+        if (!$this->usuarioLogado()->temPermissaoPara('editar-clientes')) {
 
-			return redirect()->back()->with('atencao', $this->usuarioLogado()->nome . ', você não tem permissão para acessar esse menu.');
-		}
+            return redirect()->back()->with('atencao', $this->usuarioLogado()->nome . ', você não tem permissão para acessar esse menu.');
+        }
 
-		$id = $this->usuarioLogado()->id;
+        $id = $this->usuarioLogado()->id;
 
-		$eventos = $this->eventoModel->orderBy('id', 'DESC')->findAll();
+        $eventos = $this->eventoModel->orderBy('id', 'DESC')->findAll();
+        
+        // Verificar se há evento selecionado no contexto
+        $event_id = session()->get('event_id');
+        $evento_selecionado = null;
+        
+        if ($event_id) {
+            $evento_selecionado = $this->eventoModel->find($event_id);
+        }
 
-		$data = [
-			'titulo' => 'Gerenciamento de pedidos',
-			'eventos' => $eventos,
-		];
+        // Se há evento selecionado, mostrar diretamente os pedidos
+        if ($event_id && $evento_selecionado) {
+            $data = [
+                'titulo' => 'Gerenciamento de pedidos',
+                'evento' => $event_id,
+                'evento_selecionado' => $evento_selecionado,
+            ];
+            
+            return view('Pedidos/gerenciar_evento', $data);
+        }
+
+        // Se não há evento selecionado, mostrar lista de eventos
+        $data = [
+            'titulo' => 'Gerenciamento de pedidos',
+            'eventos' => $eventos,
+            'event_id' => $event_id,
+            'evento_selecionado' => $evento_selecionado,
+        ];
 
 
-		return view('Pedidos/gerenciar', $data);
-	}
+        return view('Pedidos/gerenciar', $data);
+    }
 	public function gerenciar_evento($event_id)
 	{
 
@@ -88,10 +110,13 @@ class Pedidos extends BaseController
 
 		$id = $this->usuarioLogado()->id;
 
+		// Buscar dados do evento
+		$evento_selecionado = $this->eventoModel->find($event_id);
 
 		$data = [
 			'titulo' => 'Gerenciamento de pedidos',
 			'evento' => $event_id,
+			'evento_selecionado' => $evento_selecionado,
 		];
 
 

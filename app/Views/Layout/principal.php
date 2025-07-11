@@ -115,6 +115,17 @@
 
                 <div class="top-navbar-right ms-auto">
                     <ul class="navbar-nav align-items-center">
+                        <?php if (usuario_logado()->is_admin && evento_selecionado()) : ?>
+                            <li class="nav-item">
+                                <div class="d-flex align-items-center me-3">
+                                    <i class="bi bi-calendar-event text-primary me-2"></i>
+                                    <div class="text-white">
+                                        <small class="d-block">Evento Ativo</small>
+                                        <strong><?= evento_nome() ?></strong>
+                                    </div>
+                                </div>
+                            </li>
+                        <?php endif; ?>
                         <li class="nav-item search-toggle-icon">
                             <a class="nav-link" href="#">
                                 <div class="">
@@ -218,7 +229,12 @@
             <ul class="metismenu" id="menu">
 
                 <?php if (usuario_logado()->is_admin) : ?>
-                    <li class="menu-label">ADMIN</li>
+                    <li class="menu-label">
+                        <div style="line-height:1.2">
+                            <strong><?= esc(usuario_logado()->nome) ?></strong><br>
+                            <small style="font-size:11px; color:#aaa;"> <?= esc(usuario_logado()->email) ?> </small>
+                        </div>
+                    </li>
                     <li>
                         <a href="<?php echo site_url('/'); ?>">
                             <div class="parent-icon"><i class="bx bx-right-arrow-alt"></i>
@@ -234,31 +250,10 @@
                         </a>
                     </li>
                     <li>
-                        <a href="<?php echo site_url('/ingressos/add'); ?>">
-                            <div class="parent-icon"><i class="bx bx-right-arrow-alt"></i>
-                            </div>
-                            <div class="menu-title">Add Ingressos</div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?php echo site_url('/pedidos/gerenciar'); ?>">
-                            <div class="parent-icon"><i class="bx bx-right-arrow-alt"></i>
-                            </div>
-                            <div class="menu-title">Pedidos</div>
-                        </a>
-                    </li>
-                    <li>
                         <a href="<?php echo site_url('/eventos'); ?>">
                             <div class="parent-icon"><i class="bx bx-right-arrow-alt"></i>
                             </div>
                             <div class="menu-title">Eventos</div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?php echo site_url('/concursos'); ?>">
-                            <div class="parent-icon"><i class="bx bx-right-arrow-alt"></i>
-                            </div>
-                            <div class="menu-title">Concursos</div>
                         </a>
                     </li>
                     <li>
@@ -275,17 +270,33 @@
                             <div class="menu-title">Permissões</div>
                         </a>
                     </li>
-
                     <hr>
-
+                    <?php if (evento_selecionado()) : ?>
+                        <li class="menu-label">EVENTO ATUAL</li>
+                        <li>
+                            <a href="<?php echo site_url('/ingressos/add'); ?>">
+                                <div class="parent-icon"><i class="bx bx-right-arrow-alt"></i>
+                                </div>
+                                <div class="menu-title">Add Ingressos</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="<?php echo site_url('/pedidos/gerenciar'); ?>">
+                                <div class="parent-icon"><i class="bx bx-right-arrow-alt"></i>
+                                </div>
+                                <div class="menu-title">Pedidos</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="<?php echo site_url('/concursos/' . evento_selecionado()); ?>">
+                                <div class="parent-icon"><i class="bx bx-right-arrow-alt"></i>
+                                </div>
+                                <div class="menu-title">Concursos</div>
+                            </a>
+                        </li>
+                    <?php endif; ?>
                 <?php endif; ?>
-                <li>
-                    <a href="<?php echo site_url('console/dashboard'); ?>">
-                        <div class="parent-icon"><i class="bi bi-house-fill"></i>
-                        </div>
-                        <div class="menu-title">Dashboard</div>
-                    </a>
-                </li>
+                
                 <!-- Tab links 
                 <li>
                     <a href="#" class="text-muted">
@@ -303,6 +314,14 @@
                     </a>
                 </li>
                 -->
+                <?php if (!usuario_logado()->is_admin) : ?>
+                    <li>
+                    <a href="<?php echo site_url('console/dashboard'); ?>">
+                        <div class="parent-icon"><i class="bi bi-house-fill"></i>
+                        </div>
+                        <div class="menu-title">Dashboard</div>
+                    </a>
+                </li>
                 <li>
                     <a href="<?php echo site_url('pedidos'); ?>">
                         <div class="parent-icon"><i class="fadeIn animated bx bx-detail"></i>
@@ -324,68 +343,6 @@
                         <div class="menu-title">Meus Meet & Greet <span class="badge bg-danger">novo</span></div>
                     </a>
                 </li>
-                <!--
-                <li class="menu-label">BENEFÍCIOS</li>
-                <li> <?php if (usuario_logado()->is_membro) : ?>
-                        <a href="#" class="text-muted">
-                            <div class="parent-icon"><i class="fadeIn animated bx bx-cart"></i>
-                            </div>
-                            <div class="menu-title">Lojas
-                                <i class="fadeIn animated bx bx-crown align-middle text-muted" style="padding-left:10px" title="Membro Premium"></i>
-                            </div>
-                        </a>
-                    <?php else : ?>
-                        <a href="<?php echo site_url('console/premium'); ?>" class="text-muted">
-                            <div class="parent-icon"><i class="fadeIn animated bx bx-cart"></i>
-                            </div>
-                            <div class="menu-title">Lojas
-                                <i class="fadeIn animated bx bx-crown align-middle" style="color: #ffd700; padding-left:10px" title="Seja Premium"></i>
-                            </div>
-                        </a>
-                    <?php endif; ?>
-                </li>
-                <li>
-                    <?php if (usuario_logado()->is_membro) : ?>
-                        <a href="#" class="text-muted">
-                            <div class="parent-icon"><i class="fadeIn animated bx bx-dollar-circle"></i>
-                            </div>
-                            <div class="menu-title">Cashback
-                                <i class="fadeIn animated bx bx-crown align-middle text-muted" style="padding-left:10px" title="Membro Premium"></i>
-                            </div>
-                        </a>
-                    <?php else : ?>
-                        <a href="#" class="text-muted">
-                            <div class="parent-icon"><i class="fadeIn animated bx bx-dollar-circle"></i>
-                            </div>
-                            <div class="menu-title">Cashback
-                                <i class="fadeIn animated bx bx-crown align-middle" style="color: #ffd700; padding-left:10px" title="Seja Premium"></i>
-                            </div>
-                        </a>
-                    <?php endif; ?>
-                </li>
-                <li>
-                    <a href="#" class="text-muted">
-                        <div class="parent-icon"><i class="fadeIn animated bx bx-book-alt"></i>
-                        </div>
-                        <div class="menu-title">Cursos</div>
-                    </a>
-                </li>
-
-                <li class="menu-label">EVENTOS</li>
-                <li>
-                    <a href="#" class="text-muted">
-                        <div class="parent-icon"><i class="fadeIn animated bx bx-calendar-check"></i>
-                        </div>
-                        <div class="menu-title"> Meus eventos</div>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="text-muted">
-                        <div class="parent-icon"><i class="fadeIn animated bx bx-calendar"></i>
-                        </div>
-                        <div class="menu-title">Eventos abertos</div>
-                    </a>
-                </li> -->
                 <li>
                     <a href="<?php echo site_url('concursos/my'); ?>">
                         <div class="parent-icon"><i class="fadeIn animated bx bx-cube-alt"></i>
@@ -394,7 +351,10 @@
                         </div>
                     </a>
                 </li>
-                <li class="menu-label">EXTRAS</li>
+                <?php endif; ?>
+               
+                <?php if (!usuario_logado()->is_admin) : ?>
+                    <li class="menu-label">EXTRAS</li>
                 <li>
                     <a href="<?php echo site_url('usuarios/editarsenha'); ?>">
                         <div class="parent-icon"><i class="bi bi-person-lines-fill"></i>
@@ -402,6 +362,7 @@
                         <div class="menu-title">Alterar senha</div>
                     </a>
                 </li>
+                <?php endif; ?>
                 <li>
                     <a href="<?php echo site_url('logout'); ?>">
                         <div class="parent-icon"><i class="bi bi-lock-fill"></i>

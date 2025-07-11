@@ -11,6 +11,8 @@ class Home extends BaseController
     private $ingressoModel;
     private $pedidoModel;
     private $eventoModel;
+    private $usuarioModel;
+    private $clienteModel;
 
     public function __construct()
     {
@@ -41,6 +43,12 @@ class Home extends BaseController
 
     public function evento(int $event_id)
     {
+        // Salvar o event_id na sessão para contexto global
+        session()->set('event_id', $event_id);
+        
+        // Buscar dados do evento
+        $evento = $this->eventoModel->find($event_id);
+        
         $total_ingressos_individual = $this->ingressoModel->recuperaTotalIngressos($event_id);
         $total_ingressos_sabado = $this->ingressoModel->recuperaTotalIngressosSabado($event_id);
         $total_ingressos_domingo = $this->ingressoModel->recuperaTotalIngressosDomingo($event_id);
@@ -58,11 +66,10 @@ class Home extends BaseController
         $total_epic = $this->ingressoModel->recuperaTotalIngressosEpic($event_id);
         $total_vip = $this->ingressoModel->recuperaTotalIngressosVip($event_id);
 
-
-
-
         $data = [
             'titulo' => 'Home',
+            'event_id' => $event_id,
+            'evento' => $evento,
             'total_ingressos' => $total_ingressos,
             'total_ingressos_hoje' => $total_ingressos_hoje,
             'total_ingressos_pendentes' => $total_ingressos_pendentes,
@@ -79,9 +86,6 @@ class Home extends BaseController
 
             return redirect()->to(site_url("Console/dashboard"));
         }
-
-
-
 
         return view('Home/evento', $data);
     }

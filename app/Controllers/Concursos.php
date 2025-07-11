@@ -46,26 +46,39 @@ class Concursos extends BaseController
 		$this->notifyService = new \App\Services\NotifyService();
 	}
 
-	public function index(int $event_id)
-	{
+	    public function index(int $event_id = null)
+    {
 
-		if (!$this->usuarioLogado()->temPermissaoPara('juri')) {
+        if (!$this->usuarioLogado()->temPermissaoPara('juri')) {
 
-			return redirect()->back()->with('atencao', $this->usuarioLogado()->nome . ', você não tem permissão para acessar esse menu.');
-		}
+            return redirect()->back()->with('atencao', $this->usuarioLogado()->nome . ', você não tem permissão para acessar esse menu.');
+        }
 
-		$concursos = $this->concursoModel->recuperaConcursosPorEvento($event_id);
+        // Se não foi passado event_id, usar o da sessão
+        if (!$event_id) {
+            $event_id = session()->get('event_id');
+        }
+
+        if (!$event_id) {
+            return redirect()->to(site_url('/'))->with('atencao', 'Selecione um evento primeiro.');
+        }
+
+        $concursos = $this->concursoModel->recuperaConcursosPorEvento($event_id);
+        
+        // Buscar dados do evento
+        $eventoModel = new \App\Models\EventoModel();
+        $evento = $eventoModel->find($event_id);
+
+        $data = [
+            'titulo' => 'Concursos',
+            'concursos' => $concursos,
+            'event_id' => $event_id,
+            'evento' => $evento
+        ];
 
 
-		//dd($ingressos);
-		$data = [
-			'titulo' => 'Concursos',
-			'concursos' => $concursos
-		];
-
-
-		return view('Concursos/index', $data);
-	}
+        return view('Concursos/index', $data);
+    }
 
 	public function gerenciarold($id)
 	{
