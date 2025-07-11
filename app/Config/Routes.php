@@ -132,6 +132,30 @@ $routes->post('checkout/finalizarpix/(:num)', 'Checkout::finalizarpix/$1');
 $routes->post('checkout/finalizarcartao/(:num)', 'Checkout::finalizarcartao/$1');
 $routes->get('checkout/qrcode/(:any)', 'Checkout::qrcode/$1');
 
+// Rotas para o controller de API do carrinho
+$routes->group('api/carrinho', function ($routes) {
+    $routes->get('evento/(:num)', 'ApiCarrinho::evento/$1');
+    $routes->get('adicional/(:num)', 'ApiCarrinho::adicional/$1');
+    $routes->get('girafinhas/(:num)', 'ApiCarrinho::girafinhas/$1');
+    $routes->get('otakada/(:num)', 'ApiCarrinho::otakada/$1');
+    $routes->get('loja', 'ApiCarrinho::loja');
+    $routes->get('clube', 'ApiCarrinho::clube');
+    $routes->get('pucrs/(:num)', 'ApiCarrinho::pucrs/$1');
+    $routes->get('marista/(:num)', 'ApiCarrinho::marista/$1');
+    $routes->post('adicionar', 'ApiCarrinho::adicionar');
+});
+
+// Rotas para o controller de API do checkout
+$routes->group('api/checkout', function ($routes) {
+    $routes->get('pix/(:num)', 'ApiCheckout::pix/$1');
+    $routes->get('cartao/(:num)', 'ApiCheckout::cartao/$1');
+    $routes->get('loja', 'ApiCheckout::loja');
+    $routes->get('obrigado', 'ApiCheckout::obrigado');
+    $routes->get('qrcode/(:num)/(:any)', 'ApiCheckout::qrcode/$1/$2');
+    $routes->post('finalizarpix/(:num)', 'ApiCheckout::finalizarpix/$1');
+    $routes->post('finalizarcartao/(:num)', 'ApiCheckout::finalizarcartao/$1');
+});
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing
