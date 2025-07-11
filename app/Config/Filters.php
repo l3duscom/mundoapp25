@@ -24,6 +24,7 @@ class Filters extends BaseConfig
         'cliente' => \App\Filters\ClienteFilter::class, // Filtro cliente
         'webhook' => \App\Filters\WebhookFilter::class, // Filtro webhook
         'eventoContext' => \App\Filters\EventoContextFilter::class, // Filtro contexto de evento
+        'apiKey' => \App\Filters\ApiKeyFilter::class, // Filtro API Key
     ];
 
     /**

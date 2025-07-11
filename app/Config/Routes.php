@@ -133,7 +133,7 @@ $routes->post('checkout/finalizarcartao/(:num)', 'Checkout::finalizarcartao/$1')
 $routes->get('checkout/qrcode/(:any)', 'Checkout::qrcode/$1');
 
 // Rotas para o controller de API do carrinho
-$routes->group('api/carrinho', function ($routes) {
+$routes->group('api/carrinho', ['filter' => 'apiKey'], function ($routes) {
     $routes->get('evento/(:num)', 'ApiCarrinho::evento/$1');
     $routes->get('adicional/(:num)', 'ApiCarrinho::adicional/$1');
     $routes->get('girafinhas/(:num)', 'ApiCarrinho::girafinhas/$1');
@@ -146,7 +146,7 @@ $routes->group('api/carrinho', function ($routes) {
 });
 
 // Rotas para o controller de API do checkout
-$routes->group('api/checkout', function ($routes) {
+$routes->group('api/checkout', ['filter' => 'apiKey'], function ($routes) {
     $routes->get('pix/(:num)', 'ApiCheckout::pix/$1');
     $routes->get('cartao/(:num)', 'ApiCheckout::cartao/$1');
     $routes->get('loja', 'ApiCheckout::loja');
