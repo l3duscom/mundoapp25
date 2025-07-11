@@ -23,7 +23,6 @@
             <div class="d-flex align-items-center justify-content-between">
                 <div>
                     <h4 class="mb-0">Gerenciando Pedidos: <strong><?= esc($evento_selecionado->nome) ?></strong></h4>
-                    <small class="text-muted">ID: <?= $evento ?></small>
                 </div>
                 <div>
                     <a href="<?= site_url('/') ?>" class="btn btn-outline-secondary btn-sm">
@@ -88,7 +87,7 @@
 <div class="row">
     <!-- ... tabela, cards, etc ... -->
     <div class="col-lg-12">
-
+    
         <div class="card shadow radius-10">
             <div class="card-body">
                 <div class="table-responsive">
