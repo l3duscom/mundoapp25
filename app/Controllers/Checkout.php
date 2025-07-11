@@ -1554,8 +1554,8 @@ class Checkout extends BaseController
 			'cpf' => $post['cpf'],
 			'email' => $post['email'],
 			'telefone' => preg_replace('/[^0-9]/', '', $post['telefone']),
-			'cep' => preg_replace('/[^0-9]/', '', $post['cep']),
-			'numero' => $post['numero'],
+			'cep' => '',
+			'numero' => '',
 		];
 
 		$customer = $this->asaasService->customers($cobrar);
