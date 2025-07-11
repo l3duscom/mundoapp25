@@ -35,36 +35,58 @@
     </div>
 <?php endif; ?>
 
+<!-- Menu de abas -->
+<div class="tab-menu mb-4">
+    <a href="<?= site_url('ingressos/add'); ?>" class="tab<?= (current_url() == site_url('ingressos/add')) ? ' active' : ''; ?>">Add ingressos</a>
+    <a href="<?= site_url('pedidos/recompra/' . $evento); ?>" class="tab cyan<?= (current_url() == site_url('pedidos/recompra/' . $evento)) ? ' active' : ''; ?>">Recompra</a>
+    <a href="<?= site_url('pedidos/entrega/' . $evento); ?>" class="tab yellow<?= (current_url() == site_url('pedidos/entrega/' . $evento)) ? ' active' : ''; ?>">Aguardando Entrega</a>
+    <a href="<?= site_url('pedidos/enviados/' . $evento); ?>" class="tab gray<?= (current_url() == site_url('pedidos/enviados/' . $evento)) ? ' active' : ''; ?>">Enviados</a>
+    <a href="<?= site_url('pedidos/vip/' . $evento); ?>" class="tab black<?= (current_url() == site_url('pedidos/vip/' . $evento)) ? ' active' : ''; ?>">VIP - Aguardando</a>
+    <a href="<?= site_url('pedidos/vipentregue/' . $evento); ?>" class="tab black<?= (current_url() == site_url('pedidos/vipentregue/' . $evento)) ? ' active' : ''; ?>">VIP - Entregue</a>
+</div>
+<style>
+.tab-menu {
+    display: flex;
+    gap: 0.5rem;
+    background: #181f2c;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+}
+.tab-menu .tab {
+    padding: 0.5rem 1.2rem;
+    border-radius: 0.4rem;
+    font-weight: 500;
+    color: #bfc9db;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    outline: none;
+    white-space: nowrap;
+    text-decoration: none;
+    display: inline-block;
+}
+.tab-menu .tab.active,
+.tab-menu .tab:focus {
+    background: #2563eb;
+    color: #fff;
+}
+.tab-menu .tab:hover:not(.active) {
+    background: #232b3e;
+    color: #fff;
+}
+.tab-menu .tab.yellow { background: #facc15; color: #222; }
+.tab-menu .tab.yellow.active { background: #eab308; color: #fff; }
+.tab-menu .tab.gray { background: #6b7280; color: #fff; }
+.tab-menu .tab.cyan { background: #06b6d4; color: #fff; }
+.tab-menu .tab.cyan.active { background: #0891b2; color: #fff; }
+.tab-menu .tab.black { background: #181f2c; color: #fff; }
+</style>
+
+<!-- Conteúdo principal da página -->
 <div class="row">
-
-    <?php $id = usuario_logado()->id ?>
-    <!--breadcrumb-->
-    <div class="page-breadcrumb d-sm-flex align-items-center mb-3">
-        <div class="breadcrumb-title pe-3">Pedidos</div>
-        <div class="ps-3">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0 p-0">
-
-                    <li class="breadcrumb-item"><a href="<?php echo site_url('/'); ?>"><i class="bx bx-home-alt"></i></a></li>
-
-                </ol>
-            </nav>
-        </div>
-        <div class="ms-auto">
-            <div class="btn-group">
-                <a href="<?php echo site_url('ingressos/add'); ?>" class="btn btn-primary">Add ingressos</a>
-                <a href="<?php echo site_url('pedidos/recompra/' . $evento); ?>" class="btn btn-info">Recompra</a>
-                <a href="<?php echo site_url('pedidos/entrega/' . $evento); ?>" class="btn btn-warning">Aguardando Entrega</a>
-                <a href="<?php echo site_url('pedidos/enviados/' . $evento); ?>" class="btn btn-secondary">Enviados</a>
-                <a href="<?php echo site_url('pedidos/vip/' . $evento); ?>" class="btn btn-dark">VIP - Aguardando</a>
-                <a href="<?php echo site_url('pedidos/vipentregue/' . $evento); ?>" class="btn btn-dark">VIP - Entregue</a>
-
-
-            </div>
-        </div>
-
-    </div>
-    <!--end breadcrumb-->
+    <!-- ... tabela, cards, etc ... -->
     <div class="col-lg-12">
 
         <div class="card shadow radius-10">
