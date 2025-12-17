@@ -289,6 +289,12 @@ $routes->get('pedidos/dados-envio/(:num)', 'Pedidos::dadosEnvio/$1');
 $routes->get('pedidos/exportar-envios/(:num)', 'Pedidos::exportarEnvios/$1');
 
 // ========================================
+// ROTAS DE REEMBOLSOS DO USUÁRIO
+// ========================================
+$routes->get('pedidos/meus-refounds', 'Pedidos::meusRefounds');
+$routes->get('pedidos/meus-refounds/(:num)', 'Pedidos::meuRefoundDetalhe/$1');
+
+// ========================================
 // DASHBOARD DE VENDAS EM TEMPO REAL
 // ========================================
 $routes->group('dashboard-vendas', function ($routes) {

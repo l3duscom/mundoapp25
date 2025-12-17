@@ -110,6 +110,11 @@ class Console extends BaseController
 			'ingressos_anteriores' => $ingressos_anteriores,
 		];
 
+		// Buscar dados de refunds/solicitações
+		$refoundModel = new \App\Models\RefoundModel();
+		$data['refoundsTotal'] = count($refoundModel->listaRefoundsPorCliente($cli->id));
+		$data['refoundsPendentes'] = $refoundModel->contaRefoundsPendentesPorCliente($cli->id);
+
 		$usuario = $this->usuarioLogado();
 		$campos_obrigatorios = [
 			'nome' => $usuario->nome,

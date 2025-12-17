@@ -20,6 +20,69 @@
 <div class="row g-4 align-items-start">
     <!-- Coluna lateral esquerda -->
     <div class="col-lg-4 col-xl-3">
+
+        <?php if (isset($perfil_incompleto) && $perfil_incompleto): ?>
+        <!-- Card de Perfil Incompleto -->
+        <a href="<?= site_url('usuarios/perfil') ?>" class="card w-100 shadow-lg mb-3 text-decoration-none" style="background: linear-gradient(135deg, #dc3545 0%, #fd7e14 50%, #ffc107 100%); border-radius: 16px; overflow: hidden; position: relative;">
+            <div class="card-body py-3">
+                <div class="position-absolute" style="top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+                <div class="position-absolute" style="bottom: -30px; left: -30px; width: 100px; height: 100px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
+                <div class="d-flex align-items-center justify-content-between position-relative">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="d-flex align-items-center justify-content-center rounded-circle" style="width:50px; height:50px; background: rgba(255,255,255,0.2); backdrop-filter: blur(5px);">
+                            <i class="bi bi-exclamation-triangle-fill text-white" style="font-size: 1.4rem;"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1 text-white fw-bold">Complete seu Perfil</h6>
+                            <div>
+                                <span class="badge bg-dark shadow-sm" style="font-size: 0.75rem;">
+                                    <i class="bi bi-x-circle me-1"></i><?= count($campos_faltando) ?> campo(s) pendente(s)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center rounded-circle" style="width:36px; height:36px; background: rgba(255,255,255,0.15);">
+                        <i class="bi bi-chevron-right text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </a>
+        <?php endif; ?>
+
+        <?php if (isset($refoundsTotal) && $refoundsTotal > 0): ?>
+        <!-- Card de Solicitações em Destaque -->
+        <a href="<?= site_url('pedidos/meus-refounds') ?>" class="card w-100 shadow-lg mb-3 text-decoration-none" style="background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 50%, #a855f7 100%); border-radius: 16px; overflow: hidden; position: relative;">
+            <div class="card-body py-3">
+                <?php if ($refoundsPendentes > 0): ?>
+                <div class="position-absolute" style="top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+                <div class="position-absolute" style="bottom: -30px; left: -30px; width: 100px; height: 100px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
+                <?php endif; ?>
+                <div class="d-flex align-items-center justify-content-between position-relative">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="d-flex align-items-center justify-content-center rounded-circle" style="width:50px; height:50px; background: rgba(255,255,255,0.2); backdrop-filter: blur(5px);">
+                            <i class="bi bi-arrow-repeat text-white" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1 text-white fw-bold">Minhas Solicitações</h6>
+                            <div>
+                                <?php if ($refoundsPendentes > 0): ?>
+                                    <span class="badge bg-warning text-dark shadow-sm" style="font-size: 0.8rem;">
+                                        <i class="bi bi-hourglass-split me-1"></i><?= $refoundsPendentes ?> pendente(s)
+                                    </span>
+                                <?php else: ?>
+                                    <span class="text-white-50" style="font-size: 0.85rem;"><?= $refoundsTotal ?> solicitação(ões)</span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center rounded-circle" style="width:36px; height:36px; background: rgba(255,255,255,0.15);">
+                        <i class="bi bi-chevron-right text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </a>
+        <?php endif; ?>
+
         <div class="card w-100 shadow bg-dark radius-10">
             <div class="card-body">
                 <div class="row">
@@ -474,36 +537,7 @@
     </div>
 </div>
 
-<?php if (isset($perfil_incompleto) && $perfil_incompleto): ?>
-<!-- Modal Bootstrap -->
-<div class="modal fade" id="modalPerfilIncompleto" tabindex="-1" aria-labelledby="modalPerfilIncompletoLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow-lg">
-      <div class="modal-header bg-white border-0 justify-content-center">
-        <div class="w-100 text-center">
-          <span style="font-size:2.5rem;color:#ffc107;"><i class="bi bi-exclamation-triangle-fill"></i></span>
-          <h5 class="modal-title mt-2 mb-0 fw-bold" id="modalPerfilIncompletoLabel" style="color:#333;">Complete seu perfil</h5>
-        </div>
-      </div>
-      <div class="modal-body text-center pb-4 pt-2" style="background:#fff;">
-          <p class="mb-3" style="color:#333; font-size:1.1rem;">
-              Para acessar todos os recursos, por favor complete seu perfil:
-          </p>
-          <ul class="list-unstyled mb-4" style="color:#222; font-size:1rem;">
-              <?php foreach (
-                  $campos_faltando as $campo): ?>
-                  <li class="mb-2">
-                      <i class="bi bi-x-circle text-danger" style="font-size:1.2rem;vertical-align:middle;"></i>
-                      <span style="margin-left:6px;"><?= ucfirst($campo) ?> em branco</span>
-                  </li>
-              <?php endforeach; ?>
-          </ul>
-          <a href="<?= site_url('usuarios/perfil') ?>" class="btn btn-primary btn-lg px-4 mt-2">Editar perfil</a>
-      </div>
-    </div>
-  </div>
-</div>
-<?php endif; ?>
+
 
 <?php echo $this->endSection() ?>
 
@@ -577,12 +611,6 @@
     });
 </script>
 
-<?php if (isset($perfil_incompleto) && $perfil_incompleto): ?>
-<script>
-$(function(){
-    $('#modalPerfilIncompleto').modal('show');
-});
-</script>
-<?php endif; ?>
+
 
 <?php echo $this->endSection() ?>

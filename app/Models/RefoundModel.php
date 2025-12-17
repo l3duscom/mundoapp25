@@ -103,4 +103,25 @@ class RefoundModel extends Model
             'processado_por' => $adminId,
         ]);
     }
+
+    /**
+     * Lista todos os refunds de um cliente
+     */
+    public function listaRefoundsPorCliente($cliente_id)
+    {
+        return $this->select(['refounds.*'])
+            ->where('cliente_id', $cliente_id)
+            ->orderBy('created_at', 'DESC')
+            ->findAll();
+    }
+
+    /**
+     * Conta refunds pendentes de um cliente
+     */
+    public function contaRefoundsPendentesPorCliente($cliente_id)
+    {
+        return $this->where('cliente_id', $cliente_id)
+                    ->where('status', 'pendente')
+                    ->countAllResults();
+    }
 }

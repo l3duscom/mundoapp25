@@ -66,6 +66,12 @@ class Pedidos extends BaseController
 		}
 
 		$card = $this->cartaoModel->withDeleted(true)->where('user_id', $id)->first();
+
+		// Buscar dados de refunds/solicitações
+		$refoundModel = new \App\Models\RefoundModel();
+		$refoundsTotal = count($refoundModel->listaRefoundsPorCliente($cli->id));
+		$refoundsPendentes = $refoundModel->contaRefoundsPendentesPorCliente($cli->id);
+
 		//dd($ingressos);
 		$data = [
 			'titulo' => 'Dashboard de ' . esc($cliente->nome),
@@ -73,6 +79,8 @@ class Pedidos extends BaseController
 			'card' => $card,
 			'proximos' => $proximos,
 			'anteriores' => $anteriores,
+			'refoundsTotal' => $refoundsTotal,
+			'refoundsPendentes' => $refoundsPendentes,
 		];
 
 
@@ -1181,5 +1189,52 @@ class Pedidos extends BaseController
 		}
 
 		return null;
+	}
+
+	/**
+	 * Lista as solicitações de reembolso/upgrade do usuário logado
+	 */
+	public function meusRefounds()
+	{
+		$id = $this->usuarioLogado()->id;
+		$cli = $this->clienteModel->withDeleted(true)->where('usuario_id', $id)->first();
+
+		if (!$cli) {
+			return redirect()->back()->with('erro', 'Cliente não encontrado.');
+		}
+
+		$refoundModel = new \App\Models\RefoundModel();
+		$refounds = $refoundModel->listaRefoundsPorCliente($cli->id);
+
+		return view('Pedidos/meus_refounds', [
+			'titulo' => 'Minhas Solicitações de Reembolso',
+			'refounds' => $refounds,
+		]);
+	}
+
+	/**
+	 * Exibe detalhes de uma solicitação de reembolso específica
+	 */
+	public function meuRefoundDetalhe(int $id = null)
+	{
+		if (!$id) {
+			return redirect()->to(site_url('pedidos/meus-refounds'))->with('erro', 'ID inválido.');
+		}
+
+		$userId = $this->usuarioLogado()->id;
+		$cli = $this->clienteModel->withDeleted(true)->where('usuario_id', $userId)->first();
+
+		$refoundModel = new \App\Models\RefoundModel();
+		$refound = $refoundModel->find($id);
+
+		// SEGURANÇA: Verifica se pertence ao cliente logado
+		if (!$refound || $refound->cliente_id != $cli->id) {
+			return redirect()->to(site_url('pedidos/meus-refounds'))->with('erro', 'Solicitação não encontrada.');
+		}
+
+		return view('Pedidos/meu_refound_detalhe', [
+			'titulo' => 'Detalhes da Solicitação #' . $id,
+			'refound' => $refound,
+		]);
 	}
 }

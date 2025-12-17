@@ -23,6 +23,35 @@
             <i class="bi bi-bag-check-fill text-primary me-2" style="font-size:2rem;"></i>
             <h2 class="mb-0 fw-bold" style="letter-spacing:0.5px;">Meus Pedidos</h2>
     </div>
+
+        <?php if (isset($refoundsTotal) && $refoundsTotal > 0): ?>
+        <div class="card shadow-sm border-0 mb-4" style="border-left: 4px solid #6f42c1 !important;">
+            <div class="card-body py-3">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <div class="d-flex align-items-center justify-content-center rounded-circle" style="width:50px; height:50px; background: linear-gradient(135deg, #6f42c1, #8b5cf6);">
+                            <i class="bi bi-arrow-repeat text-white" style="font-size: 1.5rem;"></i>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <h6 class="mb-1 fw-bold">Minhas Solicitações</h6>
+                        <p class="mb-0 text-muted small">
+                            <?php if ($refoundsPendentes > 0): ?>
+                                <span class="badge bg-warning text-dark"><?= $refoundsPendentes ?> pendente(s)</span>
+                            <?php endif; ?>
+                            <?= $refoundsTotal ?> solicitação(ões) no total
+                        </p>
+                    </div>
+                    <div class="col-auto">
+                        <a href="<?= site_url('pedidos/meus-refounds') ?>" class="btn btn-outline-primary btn-sm">
+                            Ver Solicitações
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
         <div class="card shadow radius-10 border-0 mb-4">
             <div class="card-body pb-0">
                 <ul class="nav nav-tabs nav-justified nav-primary mb-4" role="tablist">
