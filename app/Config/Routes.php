@@ -41,6 +41,13 @@ $routes->get('logout', 'Login::logout');
 
 $routes->get('esqueci', 'Password::esqueci');
 
+// Página pública de cancelamento
+$routes->get('cancelamento', 'Cancelamento::index');
+$routes->post('cancelamento/localizar', 'Cancelamento::localizar');
+$routes->post('cancelamento/upgrade', 'Cancelamento::upgrade');
+$routes->post('cancelamento/processar-upgrade', 'Cancelamento::processarUpgrade');
+$routes->post('cancelamento/solicitar-reembolso', 'Cancelamento::solicitarReembolso');
+
 $routes->get('notifica', 'Declarations::notifica');
 $routes->get('notificaT', 'Declarations::notificaT');
 $routes->post('import-csv', 'DeclarationsController::importCsv');
