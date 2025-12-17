@@ -97,7 +97,7 @@ class Cancelamento extends BaseController
         // VERIFICAR SE JÁ EXISTE SOLICITAÇÃO PARA ESTE PEDIDO
         $solicitacaoExistente = $this->refoundModel
             ->where('pedido_id', $pedidoEncontrado->id)
-            ->where('deleted_at', null)
+            ->where('deleted_at IS NULL')
             ->first();
         
         if ($solicitacaoExistente) {
@@ -159,7 +159,7 @@ class Cancelamento extends BaseController
         // VERIFICAR SE JÁ EXISTE SOLICITAÇÃO PARA ESTE PEDIDO
         $solicitacaoExistente = $this->refoundModel
             ->where('pedido_id', $pedido->id)
-            ->where('deleted_at', null)
+            ->where('deleted_at IS NULL')
             ->first();
         
         if ($solicitacaoExistente) {
@@ -218,7 +218,7 @@ class Cancelamento extends BaseController
         // VERIFICAR SE JÁ EXISTE SOLICITAÇÃO PARA ESTE PEDIDO
         $solicitacaoExistente = $this->refoundModel
             ->where('pedido_id', $pedido->id)
-            ->where('deleted_at', null)
+            ->where('deleted_at IS NULL')
             ->first();
         
         if ($solicitacaoExistente) {
@@ -322,7 +322,7 @@ class Cancelamento extends BaseController
         // VERIFICAR SE JÁ EXISTE SOLICITAÇÃO PARA ESTE PEDIDO (evita duplo submit)
         $solicitacaoExistente = $this->refoundModel
             ->where('pedido_id', $pedido->id)
-            ->where('deleted_at', null)
+            ->where('deleted_at IS NULL')
             ->first();
         
         if ($solicitacaoExistente) {
