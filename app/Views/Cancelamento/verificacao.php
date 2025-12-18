@@ -367,7 +367,7 @@
 // (7 dias desde a compra e 48h antes do evento)
 // Apenas a regra de STATUS continua valendo para estes tickets
 // =================================================================
-$ticketIdsExcecao = [608, 1113, 1114, 1115, 1116, 1117, 1118, 1119, 1123, 1124]; // 608 adicionado para testes
+$ticketIdsExcecao = [1113, 1114, 1115, 1116, 1117, 1118, 1119, 1123, 1124];
 
 // Verificar se algum ingresso do pedido possui um ticket_id de exceção
 $temTicketExcecao = false;
