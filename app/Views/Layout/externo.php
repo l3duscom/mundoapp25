@@ -341,8 +341,8 @@
                 $coverUrl = 'https://backoffice.mundodream.com.br/eventos/imagem/' . $evento->cover;
             }
         ?>
-        <div class="evento-cover" style="width: 100%; max-height: 250px; overflow: hidden;">
-            <img src="<?= $coverUrl ?>" alt="<?= esc($evento->nome ?? '') ?>" style="width: 100%; height: auto; object-fit: cover;">
+        <div class="evento-cover" style="width: 100%;">
+            <img src="<?= $coverUrl ?>" alt="<?= esc($evento->nome ?? '') ?>" style="width: 100%; height: auto; display: block;">
         </div>
     <?php endif; ?>
 
