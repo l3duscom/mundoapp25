@@ -302,7 +302,13 @@
                 <?php if ($evento && $evento->nome) : ?>
                     <div style="padding:10px; text-align: center;">
                         <?php if (!empty($evento->avatar)) : ?>
-                            <img src="https://backoffice.mundodream.com.br/<?= $evento->avatar ?>" alt="<?= esc($evento->nome) ?>" style="max-height: 80px; max-width: 200px; margin-bottom: 10px; object-fit: contain;">
+                            <?php 
+                                // Verifica se o avatar já é uma URL completa
+                                $avatarUrl = (strpos($evento->avatar, 'http') === 0) 
+                                    ? $evento->avatar 
+                                    : 'https://backoffice.mundodream.com.br/' . $evento->avatar;
+                            ?>
+                            <img src="<?= $avatarUrl ?>" alt="<?= esc($evento->nome) ?>" style="max-height: 80px; max-width: 200px; margin-bottom: 10px; object-fit: contain;">
                         <?php endif; ?>
                         <h2 class="text-black mb-0" style="font-size: 16px; font-weight: bold; text-align: center;">
                             <?= esc($evento->nome) ?>
