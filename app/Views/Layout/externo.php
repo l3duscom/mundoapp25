@@ -304,9 +304,13 @@
                         <?php if (!empty($evento->avatar)) : ?>
                             <?php 
                                 // Verifica se o avatar já é uma URL completa
-                                $avatarUrl = (strpos($evento->avatar, 'http') === 0) 
-                                    ? $evento->avatar 
-                                    : 'https://backoffice.mundodream.com.br/' . $evento->avatar;
+                                if (strpos($evento->avatar, 'http') === 0) {
+                                    $avatarUrl = $evento->avatar;
+                                } elseif (strpos($evento->avatar, 'eventos/imagem/') === 0) {
+                                    $avatarUrl = 'https://backoffice.mundodream.com.br/' . $evento->avatar;
+                                } else {
+                                    $avatarUrl = 'https://backoffice.mundodream.com.br/eventos/imagem/' . $evento->avatar;
+                                }
                             ?>
                             <img src="<?= $avatarUrl ?>" alt="<?= esc($evento->nome) ?>" style="max-height: 80px; max-width: 200px; margin-bottom: 10px; object-fit: contain;">
                         <?php endif; ?>
