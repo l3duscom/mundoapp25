@@ -329,6 +329,23 @@
     </header>
     <!--end top header-->
 
+    <!-- Cover do Evento -->
+    <?php if (isset($evento) && !empty($evento->cover)) : ?>
+        <?php 
+            // Verifica se o cover já é uma URL completa
+            if (strpos($evento->cover, 'http') === 0) {
+                $coverUrl = $evento->cover;
+            } elseif (strpos($evento->cover, 'eventos/imagem/') === 0) {
+                $coverUrl = 'https://backoffice.mundodream.com.br/' . $evento->cover;
+            } else {
+                $coverUrl = 'https://backoffice.mundodream.com.br/eventos/imagem/' . $evento->cover;
+            }
+        ?>
+        <div class="evento-cover" style="width: 100%; max-height: 250px; overflow: hidden;">
+            <img src="<?= $coverUrl ?>" alt="<?= esc($evento->nome ?? '') ?>" style="width: 100%; height: auto; object-fit: cover;">
+        </div>
+    <?php endif; ?>
+
 
 
     <!--start content-->
