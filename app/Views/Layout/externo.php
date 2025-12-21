@@ -298,10 +298,14 @@
         <nav class="navbar navbar-expand gap-3 shadow">
 
             <div class="container justify-content-center mt-4 mb-4">
-                <?php if (evento_selecionado() && evento_nome()) : ?>
-                    <div style="padding:10px">
+                <?php $evento = evento_selecionado_com_validacao(); ?>
+                <?php if ($evento && $evento->nome) : ?>
+                    <div style="padding:10px; text-align: center;">
+                        <?php if (!empty($evento->avatar)) : ?>
+                            <img src="https://backoffice.mundodream.com.br/<?= $evento->avatar ?>" alt="<?= esc($evento->nome) ?>" style="max-height: 80px; max-width: 200px; margin-bottom: 10px; object-fit: contain;">
+                        <?php endif; ?>
                         <h2 class="text-black mb-0" style="font-size: 16px; font-weight: bold; text-align: center;">
-                            <?= evento_nome() ?>
+                            <?= esc($evento->nome) ?>
                         </h2>
                     </div>
                 <?php else : ?>
