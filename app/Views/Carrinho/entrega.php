@@ -8,6 +8,346 @@
 
 <link rel="stylesheet" type="text/css" href="<?php echo site_url('recursos/vendor/datatable/datatables-combinado.min.css') ?>" />
 
+<style>
+    /* === MOBILE FIRST - Estilos base para mobile === */
+    
+    /* Reduzir padding dos containers */
+    .delivery-container .card-body {
+        padding: 10px !important;
+    }
+    
+    .delivery-container .row.mt-2 {
+        margin-top: 0 !important;
+    }
+    
+    /* Cards de entrega */
+    .delivery-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        border-radius: 16px !important;
+        margin-bottom: 16px;
+        padding: 20px 16px !important;
+    }
+    
+    /* Card não selecionado */
+    .delivery-card.not-selected {
+        border: 2px solid #e0e0e0 !important;
+        background: #fafafa;
+    }
+    
+    /* Card selecionado - DESTAQUE */
+    .delivery-card.selected {
+        border: 3px solid #9c27b0 !important;
+        background: linear-gradient(135deg, #f3e5f5 0%, #ffffff 100%);
+        box-shadow: 0 4px 20px rgba(156, 39, 176, 0.25);
+    }
+    
+    .delivery-card.selected::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #9c27b0, #e91e63);
+    }
+    
+    /* Ícone de check - oculto */
+    .selection-indicator {
+        display: none;
+    }
+    
+    /* Conteúdo do card - layout em coluna no mobile */
+    .delivery-content {
+        padding-right: 0;
+    }
+    
+    /* Header com título e badge - empilhados no mobile */
+    .delivery-header {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    
+    /* Título */
+    .delivery-title {
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 1.2;
+        margin: 0;
+    }
+    
+    .selected .delivery-title {
+        color: #7b1fa2;
+    }
+    
+    .not-selected .delivery-title {
+        color: #444;
+    }
+    
+    /* Badge de preço */
+    .delivery-badge {
+        font-size: 12px !important;
+        padding: 5px 10px !important;
+        border-radius: 16px !important;
+        font-weight: 600;
+    }
+    
+    /* Descrição */
+    .delivery-description {
+        font-size: 13px;
+        color: #666;
+        line-height: 1.5;
+        margin-bottom: 16px;
+    }
+    
+    /* Botão de seleção */
+    .btn-select {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 24px;
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 25px;
+        transition: all 0.3s;
+        width: 100%;
+        text-align: center;
+    }
+    
+    .btn-select.selected-btn {
+        background: linear-gradient(135deg, #ff9800, #f57c00) !important;
+        border: none !important;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+        margin-bottom: 0;
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .btn-select.unselected-btn {
+        background: white !important;
+        border: 2px solid #9c27b0 !important;
+        color: #9c27b0 !important;
+    }
+    
+    /* Etiqueta "Recomendado" */
+    .recommended-tag {
+        position: absolute;
+        top: 0;
+        left: 16px;
+        background: linear-gradient(135deg, #ff9800, #f57c00);
+        color: white;
+        padding: 4px 10px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        border-radius: 0 0 8px 8px;
+        box-shadow: 0 2px 6px rgba(255, 152, 0, 0.4);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .recommended-tag i {
+        font-size: 12px;
+    }
+    
+    /* Ajuste para card com tag recomendado */
+    .delivery-card.has-tag .delivery-content {
+        padding-top: 10px;
+    }
+    
+    /* === TABLET e DESKTOP === */
+    @media (min-width: 576px) {
+        .delivery-card {
+            padding: 24px !important;
+        }
+        
+        .delivery-card.selected {
+            box-shadow: 0 6px 25px rgba(156, 39, 176, 0.3);
+        }
+        
+        .selection-indicator {
+            width: 32px;
+            height: 32px;
+            font-size: 18px;
+            top: 12px;
+            right: 12px;
+        }
+        
+        .delivery-content {
+            padding-right: 45px;
+        }
+        
+        /* Header em linha no tablet+ */
+        .delivery-header {
+            flex-direction: row;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .delivery-title {
+            font-size: 20px;
+        }
+        
+        .delivery-badge {
+            font-size: 13px !important;
+            padding: 6px 12px !important;
+        }
+        
+        .delivery-description {
+            font-size: 14px;
+        }
+        
+        .btn-select {
+            width: auto;
+            padding: 12px 30px;
+        }
+        
+        .recommended-tag {
+            font-size: 11px;
+            padding: 5px 12px;
+        }
+    }
+    
+    /* === DESKTOP LARGE === */
+    @media (min-width: 992px) {
+        .delivery-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .delivery-card.not-selected:hover {
+            border-color: #9c27b0 !important;
+            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.15);
+        }
+        
+        .btn-select.unselected-btn:hover {
+            background: #9c27b0 !important;
+            color: white !important;
+        }
+    }
+    
+    /* === BOTÕES DE PAGAMENTO DENTRO DO CARD === */
+    .payment-buttons {
+        margin-top: 0;
+        padding: 16px;
+        background: linear-gradient(180deg, #fff3e0 0%, #ffffff 100%);
+        border-radius: 0 0 16px 16px;
+    }
+    
+    .payment-title {
+        font-size: 12px;
+        color: #e65100;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 600;
+    }
+    
+    .payment-title i {
+        color: #ff9800;
+        font-size: 14px;
+    }
+    
+    .payment-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn-payment {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 14px 20px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 15px;
+        transition: all 0.3s;
+        text-decoration: none;
+        width: 100%;
+    }
+    
+    .btn-payment-pix {
+        background: linear-gradient(135deg, #00b894, #00a381) !important;
+        color: white !important;
+        border: none;
+    }
+    
+    .btn-payment-pix:hover {
+        background: linear-gradient(135deg, #00a381, #009673) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 184, 148, 0.4);
+    }
+    
+    .btn-payment-card {
+        background: linear-gradient(135deg, #9c27b0, #7b1fa2) !important;
+        color: white !important;
+        border: none;
+    }
+    
+    .btn-payment-card:hover {
+        background: linear-gradient(135deg, #7b1fa2, #6a1b9a) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(156, 39, 176, 0.4);
+    }
+    
+    .btn-payment .payment-label {
+        font-size: 11px;
+        opacity: 0.9;
+    }
+    
+    .btn-payment .payment-icon {
+        font-size: 20px;
+    }
+    
+    .pix-discount {
+        background: #ffd700;
+        color: #333;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 10px;
+        margin-left: 5px;
+    }
+    
+    .total-payment {
+        text-align: center;
+        margin-top: 12px;
+        padding: 12px;
+        background: linear-gradient(135deg, #fff8e1, #ffecb3);
+        border-radius: 10px;
+        border: 1px solid #ffcc80;
+    }
+    
+    .total-payment-label {
+        font-size: 11px;
+        color: #e65100;
+        font-weight: 500;
+    }
+    
+    .total-payment-value {
+        font-size: 22px;
+        font-weight: 700;
+        color: #e65100;
+    }
+    
+    @media (min-width: 576px) {
+        .payment-grid {
+            flex-direction: row;
+        }
+        
+        .btn-payment {
+            flex: 1;
+        }
+    }
+</style>
 
 <?php echo $this->endSection() ?>
 
@@ -19,13 +359,13 @@
 
 <?php
 if (!isset($_SESSION['frete'])) {
-    $_SESSION['frete'] = 1;
-    $_SESSION['valor_frete'] = 0;
+    $_SESSION['frete'] = 'casa';
+    $_SESSION['valor_frete'] = 25;
 };
 if (!isset($_SESSION['casa'])) {
-    $_SESSION['casa'] = '';
-    $_SESSION['btn_texto_casa'] = 'Selecionar';
-    $_SESSION['btn_color_casa'] = 'muted';
+    $_SESSION['casa'] = 'disabled';
+    $_SESSION['btn_texto_casa'] = 'Selecionado';
+    $_SESSION['btn_color_casa'] = 'success';
 };
 if (!isset($_SESSION['impressao'])) {
     $_SESSION['impressao'] = '';
@@ -58,8 +398,8 @@ if (!isset($_SESSION['impressao'])) {
                         <?php
                         $entregas = array(
 
-                           // ['tipo' => 'casa', 'valor' => 25, 'descricao' => 'Receba seu kit com ingresso, credencial + cordão colecionável, pulseiras e guia no conforto da sua casa (máximo de 4 ingressos por pacote)', 'titulo' => 'Disponível para entrega', 'badge' => '+ R$ 25,00', 'icone' => '<i class="fa-solid fa-truck-fast"></i>', 'classe' => 'badge bg-warning text-dark font-13'],
-                            ['tipo' => 'impressao', 'valor' => 0, 'descricao' => 'Seu ingresso vai estar disponível na sua área de membros.', 'titulo' => 'Disponível no formato digital', 'badge' => 'GRÁTIS', 'classe' => 'badge bg-success  font-13']
+                            ['tipo' => 'casa', 'valor' => 25, 'descricao' => 'Receba seu kit com ingresso, credencial + cordão colecionável, pulseiras e guia no conforto da sua casa (máximo de 4 ingressos por pacote)', 'titulo' => 'Receber em casa', 'badge' => '+ R$ 25,00', 'icone' => '<i class="fa-solid fa-truck-fast"></i>', 'classe' => 'badge bg-warning text-dark font-13'],
+                            ['tipo' => 'impressao', 'valor' => 0, 'descricao' => 'Seu ingresso vai estar disponível na sua área de membros.', 'titulo' => 'Retirar na loja', 'badge' => 'GRÁTIS', 'classe' => 'badge bg-success  font-13']
 
                         );
 
@@ -72,18 +412,14 @@ if (!isset($_SESSION['impressao'])) {
                             $entrega = (int) $_GET['escolher'];
 
                             $_SESSION['frete'] =  $entregas[$entrega]['tipo'];
-                            if ($_SESSION['valor_frete'] == 0) {
-                                $_SESSION['valor_frete'] =  $entregas[$entrega]['valor'];
-                            } else {
-                                $_SESSION['valor_frete'] =  0;
-                            }
+                            $_SESSION['valor_frete'] = $entregas[$entrega]['valor'];
 
                             if ($entregas[$entrega]['tipo'] == 'casa') {
                                 $_SESSION['casa'] = 'disabled';
                                 $_SESSION['impressao'] = '';
-                                $_SESSION['btn_texto_casa'] = 'selecionado';
+                                $_SESSION['btn_texto_casa'] = 'Selecionado';
                                 $_SESSION['btn_color_casa'] = 'success';
-                                $_SESSION['btn_texto_impressao'] = 'selecionar';
+                                $_SESSION['btn_texto_impressao'] = 'Selecionar';
                                 $_SESSION['btn_color_impressao'] = 'muted';
                             } else {
                                 $_SESSION['casa'] = '';
@@ -101,52 +437,78 @@ if (!isset($_SESSION['impressao'])) {
                         ?>
 
 
-
-                        <div class=" mt-1"></div>
-                        <div class="d-flex align-items-center">
+                        <div class="delivery-container">
                             <div class="card shadow-none w-100">
-                                <div class="card-body ">
-                                    <div class="d-flex align-items-center ">
-                                        <div class="">
-                                            <h4 class="mb-0"><i class='bx bxs-package'></i> Selecione uma forma de entrega </h4>
-                                        </div>
+                                <div class="card-body p-2">
 
+                                                <?php foreach ($entregas as $key => $value) : 
+                                                    $isSelected = $_SESSION['btn_color_' . $value['tipo']] === 'success';
+                                                    $cardClass = $isSelected ? 'selected' : 'not-selected';
+                                                    $btnClass = $isSelected ? 'selected-btn' : 'unselected-btn';
+                                                    $hasTag = $value['tipo'] === 'casa';
+                                                ?>
 
-                                    </div>
-                                    <div class="row mt-2">
-                                        <div class="col-lg-12">
-
-                                            <div class="card-body ">
-
-                                                <?php foreach ($entregas as $key => $value) : ?>
-
-
-                                                    <div class="card border border-<?= $_SESSION['btn_color_' . $value['tipo']] ?>">
-                                                        <div class="form-check mt-3 mb-3">
-
-                                                            <a href="?escolher=<?= $key ?>" id="<?= $value['tipo'] ?>" class=" btn btn-sm btn-primary mb-3 <?= $_SESSION[$value['tipo']] ?>" style="background-color: purple; border-color: purple; color: white;"><?= $_SESSION['btn_texto_' . $value['tipo']] ?></a>
-                                                            <label class="form-check-label ml-5 font-20" for="flexRadioDefault1" style="padding-left: 10px;"><?= $value['titulo'] ?> <span class="<?= $value['classe'] ?>" style="margin-left: 7px;"> <?= $value['badge'] ?></span>
-                                                                <br>
-                                                                <span class="font-14 mt-0"> <?= $value['descricao'] ?></span>
-                                                            </label>
-
+                                                    <div class="card delivery-card <?= $cardClass ?> <?= $hasTag ? 'has-tag' : '' ?>">
+                                                        <?php if ($hasTag): ?>
+                                                            <div class="recommended-tag"><i class="bx bx-star"></i> Recomendado</div>
+                                                        <?php endif; ?>
+                                                        
+                                                        <div class="selection-indicator">
+                                                            <i class="bx <?= $isSelected ? 'bx-check' : 'bx-circle' ?>"></i>
+                                                        </div>
+                                                        
+                                                        <div class="delivery-content">
+                                                            <div class="delivery-header">
+                                                                <h3 class="delivery-title"><?= $value['titulo'] ?></h3>
+                                                                <span class="<?= $value['classe'] ?> delivery-badge"><?= $value['badge'] ?></span>
+                                                            </div>
+                                                            
+                                                            <p class="delivery-description"><?= $value['descricao'] ?></p>
+                                                            
+                                                            <?php if (!$isSelected): ?>
+                                                                <a href="?escolher=<?= $key ?>" class="btn btn-select <?= $btnClass ?>">
+                                                                    <i class="bx bx-check-circle me-1"></i> Selecionar
+                                                                </a>
+                                                            <?php else: ?>
+                                                                <span class="btn btn-select <?= $btnClass ?>">
+                                                                    <i class="bx bx-check-circle me-1"></i> Selecionado
+                                                                </span>
+                                                                
+                                                                <?php if ($_SESSION['total'] != 0): ?>
+                                                                <!-- Botões de Pagamento -->
+                                                                <div class="payment-buttons">
+                                                                    <div class="payment-title">
+                                                                        <i class="bx bx-lock-alt"></i>
+                                                                        <span>Escolha a forma de pagamento:</span>
+                                                                    </div>
+                                                                    
+                                                                    <div class="payment-grid">
+                                                                        <a href="<?= site_url('/checkout/pix/' . ($event_id ?? '')) ?>" class="btn-payment btn-payment-pix">
+                                                                            <i class="fa-brands fa-pix payment-icon"></i>
+                                                                            <span>PIX</span>
+                                                                            <span class="pix-discount">10% OFF</span>
+                                                                        </a>
+                                                                        
+                                                                        <a href="<?= site_url('/checkout/cartao/' . ($event_id ?? '')) ?>" class="btn-payment btn-payment-card">
+                                                                            <i class="bx bx-credit-card payment-icon"></i>
+                                                                            <span>Cartão</span>
+                                                                        </a>
+                                                                    </div>
+                                                                    
+                                                                    <div class="total-payment">
+                                                                        <div class="total-payment-label">Total a pagar:</div>
+                                                                        <div class="total-payment-value">R$ <?= number_format($_SESSION['total'] + $_SESSION['valor_frete'], 2, ',', '.') ?></div>
+                                                                    </div>
+                                                                </div>
+                                                                <?php endif; ?>
+                                                            <?php endif; ?>
                                                         </div>
                                                     </div>
                                                 <?php endforeach; ?>
 
-                                                <div class="d-flex align-items-center ">
-
-
-                                                    <div class="ms-auto fs-3 mb-0">
-                                                        <p class="mb-0" style="font-size: 10px;">Total a pagar:</p>
-                                                        <strong>R$ <?= number_format($_SESSION['total'] + $_SESSION['valor_frete'], 2, ',', '') ?></strong>
-                                                    </div>
-
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                                     <hr>
                                     <center>
@@ -169,41 +531,7 @@ if (!isset($_SESSION['impressao'])) {
 
 
 
-                        <?php if ($_SESSION['total'] != 0) : ?>
-                            <!--  <div class="ms-auto fs-3 mb-0">
-                                    <p class="mb-0" style="font-size: 10px;">Total a pagar:</p>
-                                    <strong>R$ <?= number_format($_SESSION['total'] + $_SESSION['valor_frete'], 2, ',', '') ?></strong>
-                                </div> -->
-                            <div id="areaBotoes" class="row g-1">
-                                <div class="col-lg-6">
-                                    <a href="<?= site_url('/checkout/cartao/' . ($event_id ?? '')) ?>" class="w-100 btn btn-lg " style="background-color: purple; border-color: purple; color: white;"><span class="text-white" style="font-size: 12px;">Pagar com:</span><i class="bi bi-credit-card-fill me-2 font-16"></i>Cartão</a>
-                                </div>
-                                <div class="col-lg-6">
-                                    <a id="btn-pix" href="<?= site_url('/checkout/pix/' . ($event_id ?? '')) ?>" class="w-100 btn btn-lg " style="background-color: purple; border-color: purple; color: white;"><span class="text-white" style="font-size: 12px;">Pagar com:</span><i class="fa-brands fa-pix"></i> PIX <span class="badge bg-warning text-dark font-13" style="margin-left: 7px;">10% OFF</span></a>
-<script>
-    $(document).ready(function() {
-        // ...outros códigos existentes...
 
-        // Atualiza o valor total na URL do PIX ao clicar
-        $('#btn-pix').on('click', function(e) {
-            e.preventDefault();
-            var href = $(this).attr('href').split('?')[0]; // Limpa qualquer parâmetro antigo
-            var valorTotal = $('.valor-total').text().replace('R$', '').replace(/\./g, '').replace(',', '.').trim();
-            valorTotal = parseFloat(valorTotal).toFixed(2);
-            window.location.href = href + '?valor_total=' + valorTotal;
-        });
-    });
-</script>
-                                </div>
-                                <!--
-                                <div class="col-lg-4">
-                                    <a href="<?= site_url('/checkout/boleto') ?>" class="w-100 btn btn-primary btn-lg disabled"><span class="text-white" style="font-size: 12px;">Pagar com:</span><i class="bx bx-barcode-reader me-2 font-24"></i>Boleto</a>
-                                </div>
-                            -->
-
-                            </div>
-
-                        <?php endif ?>
                     </div>
                 </div>
             </div>
