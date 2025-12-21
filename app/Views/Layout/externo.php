@@ -313,10 +313,11 @@
                                 }
                             ?>
                             <img src="<?= $avatarUrl ?>" alt="<?= esc($evento->nome) ?>" style="max-height: 80px; max-width: 200px; margin-bottom: 10px; object-fit: contain;">
+                        <?php else : ?>
+                            <h2 class="text-black mb-0" style="font-size: 16px; font-weight: bold; text-align: center;">
+                                <?= esc($evento->nome) ?>
+                            </h2>
                         <?php endif; ?>
-                        <h2 class="text-black mb-0" style="font-size: 16px; font-weight: bold; text-align: center;">
-                            <?= esc($evento->nome) ?>
-                        </h2>
                     </div>
                 <?php else : ?>
                     <a href="https://dreamfest.com.br" target="_blank"><img src="<?php echo site_url('recursos/front/'); ?>images/logo-25-2-negativo.png" alt="" width="180px" height="auto" style="padding:10px"></a>
