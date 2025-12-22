@@ -30,6 +30,7 @@ class Ingressos extends BaseController
 	private $enderecoModel;
 	private $credencialModel;
 	private $eventolModel;
+	private $bonusModel;
 	private $resendService;
 
 
@@ -43,6 +44,7 @@ class Ingressos extends BaseController
 		$this->enderecoModel = new \App\Models\EnderecoModel();
 		$this->credencialModel = new \App\Models\CredencialModel();
 		$this->eventoModel = new \App\Models\EventoModel();
+		$this->bonusModel = new \App\Models\BonusModel();
 		$this->resendService = new ResendService();
 	}
 
@@ -62,13 +64,24 @@ class Ingressos extends BaseController
 		foreach ($ingressos as $key => $value) {
 			$ingressos[$key]->qr = (new QRCode)->render($ingressos[$key]->codigo);
 		}
-		//dd($ingressos);
+		
+		// Buscar bônus do usuário e criar mapa por ingresso_id
+		$bonusUsuario = $this->bonusModel->getBonusPorUsuario($id);
+		$bonusPorIngresso = [];
+		foreach ($bonusUsuario as $bonus) {
+			if (!isset($bonusPorIngresso[$bonus->ingresso_id])) {
+				$bonusPorIngresso[$bonus->ingresso_id] = [];
+			}
+			$bonusPorIngresso[$bonus->ingresso_id][] = $bonus;
+		}
+		
 		$data = [
 			'titulo' => 'Dashboard de ' . esc($cliente->nome),
 			'cliente' => $cliente,
 			'card' => $card,
 			'ingressos' => $ingressos,
-			'ingressos_encerrados' => $ingressos_encerrados
+			'ingressos_encerrados' => $ingressos_encerrados,
+			'bonus_por_ingresso' => $bonusPorIngresso,
 		];
 
 
@@ -141,20 +154,35 @@ class Ingressos extends BaseController
 		// Envio o hash do token do form
 		$retorno['token'] = csrf_hash();
 
-
-
-
 		// Recupero o post da requisição
 		$post = $this->request->getPost();
 
-		$credencial = $this->ingressoModel->find($post['ingresso_id']);
-
-		$credencial->fill($post);
-
-
-
-		if ($this->ingressoModel->save($credencial)) {
-			session()->setFlashdata('sucesso', 'Credencial vinculada com sucesso!');
+		$ingresso = $this->ingressoModel->find($post['ingresso_id']);
+		
+		if (!$ingresso) {
+			$retorno['erro'] = 'Ingresso não encontrado';
+			return $this->response->setJSON($retorno);
+		}
+			
+		// Insere na tabela bonus (não altera mais a coluna cinemark no ingresso)
+		$bonusData = [
+			'ingresso_id' => $post['ingresso_id'],
+			'user_id' => $ingresso->user_id,
+			'tipo_bonus' => 'cinemark',
+			'instrucoes' => 'Como usar o Cinemark Voucher:
+1 - Atualize ou baixe o APP Cinemark no Google Play ou APP Store.
+2 - Faça seu login, selecione o cinema, filme de sua preferência.
+3 - Selecione o horário da sessão e os assentos.
+4 - Selecione o tipo de ingresso como Voucher e quantidade de ingressos que irá utilizar.
+5 - Após isso, digite o código do voucher que irá utilizar.
+6 - Apresente seu voucher online no celular diretamente na entrada da sala do cinema.
+Validade de 20 dias.',
+			'codigo' => $post['cinemark'],
+		];
+		
+		if ($this->bonusModel->insert($bonusData)) {
+			
+			session()->setFlashdata('sucesso', 'Bônus Cinemark adicionado com sucesso!');
 
 			$atributos = [
 				'clientes.id',
@@ -166,21 +194,18 @@ class Ingressos extends BaseController
 				'clientes.usuario_id'
 			];
 			$cliente = $this->clienteModel->select($atributos)
-				->where('usuario_id', $credencial->user_id)
+				->where('usuario_id', $ingresso->user_id)
 				->first();
-
-
-
-
 
 			$this->enviaEmailCinemark($cliente);
 
 			$retorno['id'] = $post['pedido_id'];
 
-
-
 			return $this->response->setJSON($retorno);
 		}
+		
+		$retorno['erro'] = 'Erro ao salvar o bônus';
+		return $this->response->setJSON($retorno);
 	}
 
 	public function gerarIngressoPdf($id)

@@ -62,7 +62,7 @@
                                 <th>Nome</th>
                                 <th>Email</th>
                                 <th>Whatsapp</th>
-                                <th>Cinemark</th>
+                                <th>Bonus</th>
                                 <th>Rastreio</th>
                             </tr>
                         </thead>
@@ -150,7 +150,7 @@
                     "data": "telefone"
                 },
                 {
-                    "data": "cinemark"
+                    "data": "bonus"
                 },
 
                 {

@@ -19,6 +19,7 @@ class Pedidos extends BaseController
 	private $ingressoModel;
 	private $credencialModel;
 	private $eventoModel;
+	private $bonusModel;
 	private $resendService;
 	private $dadosEnvioModel;
 
@@ -34,6 +35,7 @@ class Pedidos extends BaseController
 		$this->ingressoModel = new \App\Models\IngressoModel();
 		$this->credencialModel = new \App\Models\CredencialModel();
 		$this->eventoModel = new \App\Models\EventoModel();
+		$this->bonusModel = new \App\Models\BonusModel();
 		$this->resendService = new ResendService();
 		$this->dadosEnvioModel = new \App\Models\DadosEnvioModel();
 	}
@@ -441,6 +443,13 @@ class Pedidos extends BaseController
 			$telefone_limpo = $this->limparTelefone($pedido->telefone);
 			$whatsapp_link = $telefone_limpo ? "https://wa.me/55" . $telefone_limpo : $pedido->telefone;
 			
+			// Buscar bonus do tipo cinemark para este pedido
+			$bonus_info = '';
+			$bonus = $this->bonusModel->where('pedido_id', $pedido->id)->where('tipo_bonus', 'cinemark')->first();
+			if ($bonus) {
+				$bonus_info = '<span class="badge bg-warning">Aguardando</span>';
+			}
+			
 			$data[] = [
 
 				'cod_pedido' => anchor("pedidos/ingressos/" . $pedido->id, esc($pedido->cod_pedido), 'title="Exibir usuário ' . esc($pedido->cod_pedido) . ' "'),
@@ -448,7 +457,7 @@ class Pedidos extends BaseController
 				'email' => esc($pedido->email),
 				'telefone' => $telefone_limpo ? anchor($whatsapp_link, esc($pedido->telefone), 'target="_blank" title="Abrir WhatsApp"') : esc($pedido->telefone),
 				'status' => esc($pedido->status),
-				'cinemark' => esc($pedido->cinemark),
+				'bonus' => $bonus_info,
 				'frete' => $pedido->frete,
 				'status_entrega' => esc($pedido->status_entrega),
 				'rastreio' => esc($pedido->rastreio),
@@ -478,6 +487,13 @@ class Pedidos extends BaseController
 			$telefone_limpo = $this->limparTelefone($pedido->telefone);
 			$whatsapp_link = $telefone_limpo ? "https://wa.me/55" . $telefone_limpo : $pedido->telefone;
 			
+			// Buscar bonus do tipo cinemark para este pedido
+			$bonus_info = '';
+			$bonus = $this->bonusModel->where('pedido_id', $pedido->id)->where('tipo_bonus', 'cinemark')->first();
+			if ($bonus && $bonus->codigo) {
+				$bonus_info = '<span class="badge bg-success">Entregue</span>';
+			}
+			
 			$data[] = [
 
 				'cod_pedido' => anchor("pedidos/ingressos/" . $pedido->id, esc($pedido->cod_pedido), 'title="Exibir usuário ' . esc($pedido->cod_pedido) . ' "'),
@@ -485,7 +501,7 @@ class Pedidos extends BaseController
 				'email' => esc($pedido->email),
 				'telefone' => $telefone_limpo ? anchor($whatsapp_link, esc($pedido->telefone), 'target="_blank" title="Abrir WhatsApp"') : esc($pedido->telefone),
 				'status' => esc($pedido->status),
-				'cinemark' => esc($pedido->cinemark),
+				'bonus' => $bonus_info,
 				'frete' => $pedido->frete,
 				'status_entrega' => esc($pedido->status_entrega),
 				'rastreio' => esc($pedido->rastreio),
@@ -698,6 +714,17 @@ class Pedidos extends BaseController
 		$ingressos = $this->ingressoModel->recuperaIngressosPorPedido($pedido_id);
 
 		$credenciais = $this->credencialModel->withDeleted(true)->where('pedido_id', $pedido_id)->findAll();
+		
+		// Buscar bônus do usuário e criar mapa por ingresso_id
+		$bonusUsuario = $this->bonusModel->getBonusPorUsuario($pedido->user_id);
+		$bonusPorIngresso = [];
+		foreach ($bonusUsuario as $bonus) {
+			if (!isset($bonusPorIngresso[$bonus->ingresso_id])) {
+				$bonusPorIngresso[$bonus->ingresso_id] = [];
+			}
+			$bonusPorIngresso[$bonus->ingresso_id][] = $bonus;
+		}
+		
 		$data = [
 			'titulo' => 'Ingressos do pedido' . esc($pedido->cod_pedido),
 			'todos' => $todos,
@@ -705,7 +732,8 @@ class Pedidos extends BaseController
 			'pedido' => $pedido,
 			'cliente' => $cliente,
 			'endereco' => $endereco,
-			'credenciais' => $credenciais
+			'credenciais' => $credenciais,
+			'bonus_por_ingresso' => $bonusPorIngresso,
 		];
 
 

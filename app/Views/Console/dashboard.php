@@ -8,8 +8,74 @@
 
 <link rel="stylesheet" type="text/css" href="<?php echo site_url('recursos/vendor/datatable/datatables-combinado.min.css') ?>" />
 
-
-
+<style>
+/* Card de ingresso com cortes laterais */
+.ticket-card {
+    position: relative;
+    max-width: 500px;
+    border: none;
+    border-radius: 16px;
+    overflow: visible;
+    background: transparent;
+}
+.ticket-card-header {
+    position: relative;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    height: 150px;
+    border-radius: 16px 16px 0 0;
+}
+.ticket-card-body {
+    background: #212529;
+    border-radius: 0 0 16px 16px;
+    position: relative;
+}
+/* Cortes laterais */
+.ticket-notch {
+    position: relative;
+    height: 0;
+    z-index: 30;
+}
+.ticket-notch::before,
+.ticket-notch::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: #1a2232;
+    border-radius: 50%;
+    top: -8px;
+}
+.ticket-notch::before {
+    left: -8px;
+}
+.ticket-notch::after {
+    right: -8px;
+}
+.ticket-card-buttons {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    z-index: 10;
+    display: flex;
+    gap: 8px;
+}
+.ticket-card-buttons a {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border-radius: 50%;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    color: #333;
+    text-decoration: none;
+}
+.ticket-card-buttons a:hover {
+    background: #f0f0f0;
+}
+</style>
 <?php echo $this->endSection() ?>
 
 
@@ -22,68 +88,46 @@
     <div class="col-lg-4 col-xl-3">
 
         <?php if (isset($perfil_incompleto) && $perfil_incompleto): ?>
-        <!-- Card de Perfil Incompleto -->
-        <a href="<?= site_url('usuarios/perfil') ?>" class="card w-100 shadow-lg mb-3 text-decoration-none" style="background: linear-gradient(135deg, #dc3545 0%, #fd7e14 50%, #ffc107 100%); border-radius: 16px; overflow: hidden; position: relative;">
-            <div class="card-body py-3">
-                <div class="position-absolute" style="top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
-                <div class="position-absolute" style="bottom: -30px; left: -30px; width: 100px; height: 100px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
-                <div class="d-flex align-items-center justify-content-between position-relative">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="d-flex align-items-center justify-content-center rounded-circle" style="width:50px; height:50px; background: rgba(255,255,255,0.2); backdrop-filter: blur(5px);">
-                            <i class="bi bi-exclamation-triangle-fill text-white" style="font-size: 1.4rem;"></i>
-                        </div>
+        <!-- Card de Perfil Incompleto (Compacto) -->
+        <a href="<?= site_url('usuarios/perfil') ?>" class="card w-100 shadow-lg mb-2 text-decoration-none" style="background: linear-gradient(135deg, #dc3545 0%, #fd7e14 50%, #ffc107 100%); border-radius: 12px; overflow: hidden;">
+            <div class="card-body py-2 px-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-exclamation-triangle-fill text-white" style="font-size: 1.1rem;"></i>
                         <div>
-                            <h6 class="mb-1 text-white fw-bold">Complete seu Perfil</h6>
-                            <div>
-                                <span class="badge bg-dark shadow-sm" style="font-size: 0.75rem;">
-                                    <i class="bi bi-x-circle me-1"></i><?= count($campos_faltando) ?> campo(s) pendente(s)
-                                </span>
-                            </div>
+                            <span class="text-white fw-bold" style="font-size: 0.9rem;">Complete seu Perfil</span>
+                            <span class="badge bg-dark ms-2" style="font-size: 0.7rem;"><?= count($campos_faltando) ?> pendente(s)</span>
                         </div>
                     </div>
-                    <div class="d-flex align-items-center justify-content-center rounded-circle" style="width:36px; height:36px; background: rgba(255,255,255,0.15);">
-                        <i class="bi bi-chevron-right text-white"></i>
-                    </div>
+                    <i class="bi bi-chevron-right text-white-50"></i>
                 </div>
             </div>
         </a>
         <?php endif; ?>
 
         <?php if (isset($refoundsTotal) && $refoundsTotal > 0): ?>
-        <!-- Card de Solicitações em Destaque -->
-        <a href="<?= site_url('pedidos/meus-refounds') ?>" class="card w-100 shadow-lg mb-3 text-decoration-none" style="background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 50%, #a855f7 100%); border-radius: 16px; overflow: hidden; position: relative;">
-            <div class="card-body py-3">
-                <?php if ($refoundsPendentes > 0): ?>
-                <div class="position-absolute" style="top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
-                <div class="position-absolute" style="bottom: -30px; left: -30px; width: 100px; height: 100px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
-                <?php endif; ?>
-                <div class="d-flex align-items-center justify-content-between position-relative">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="d-flex align-items-center justify-content-center rounded-circle" style="width:50px; height:50px; background: rgba(255,255,255,0.2); backdrop-filter: blur(5px);">
-                            <i class="bi bi-arrow-repeat text-white" style="font-size: 1.5rem;"></i>
-                        </div>
+        <!-- Card de Solicitações (Compacto) -->
+        <a href="<?= site_url('pedidos/meus-refounds') ?>" class="card w-100 shadow-lg mb-2 text-decoration-none" style="background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 50%, #a855f7 100%); border-radius: 12px; overflow: hidden;">
+            <div class="card-body py-2 px-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-arrow-repeat text-white" style="font-size: 1.1rem;"></i>
                         <div>
-                            <h6 class="mb-1 text-white fw-bold">Minhas Solicitações</h6>
-                            <div>
-                                <?php if ($refoundsPendentes > 0): ?>
-                                    <span class="badge bg-warning text-dark shadow-sm" style="font-size: 0.8rem;">
-                                        <i class="bi bi-hourglass-split me-1"></i><?= $refoundsPendentes ?> pendente(s)
-                                    </span>
-                                <?php else: ?>
-                                    <span class="text-white-50" style="font-size: 0.85rem;"><?= $refoundsTotal ?> solicitação(ões)</span>
-                                <?php endif; ?>
-                            </div>
+                            <span class="text-white fw-bold" style="font-size: 0.9rem;">Minhas Solicitações</span>
+                            <?php if ($refoundsPendentes > 0): ?>
+                                <span class="badge bg-warning text-dark ms-2" style="font-size: 0.7rem;"><?= $refoundsPendentes ?> pendente(s)</span>
+                            <?php else: ?>
+                                <span class="text-white-50 ms-2" style="font-size: 0.75rem;"><?= $refoundsTotal ?> total</span>
+                            <?php endif; ?>
                         </div>
                     </div>
-                    <div class="d-flex align-items-center justify-content-center rounded-circle" style="width:36px; height:36px; background: rgba(255,255,255,0.15);">
-                        <i class="bi bi-chevron-right text-white"></i>
-                    </div>
+                    <i class="bi bi-chevron-right text-white-50"></i>
                 </div>
             </div>
         </a>
         <?php endif; ?>
 
-        <div class="card w-100 shadow bg-dark radius-10">
+        <div class="card w-100 shadow bg-dark radius-10 mb-2">
             <div class="card-body">
                 <div class="row">
                     <div class="col-lg-12">
@@ -106,119 +150,27 @@
                 </div>
             </div>
         </div>
-        <div class="d-grid mb-3">
-            <a href="#meus-ingressos" class="btn btn-primary btn-lg fw-bold text-white shadow rounded-pill d-flex align-items-center justify-content-center gap-2 mb-2" style="letter-spacing:0.5px; font">
-                <i class="bi bi-ticket-fill" style="font-size:1.2em;"></i> Ver meus ingressos
-            </a>
-            
-            
-            
-        </div>
-        <!-- Card Conquistas (mover para cima) -->
-        <div class="card w-100 shadow bg-dark radius-10">
-            <div class="card-body">
-<div class="row">
-                    <div class="col-lg-8">
-                        <h5>Conquistas </h5>
-                    </div>
-                    <div class="col-lg-4">
-                        <a href="javascript:;" class="btn btn-sm btn-outline-dark mb-3"></i>Todos</a>
-                    </div>
-                    <div class="row" style="margin: 5px;">
-                    <?php if (usuario_logado()->is_membro) : ?>
-                            <div class="col-3 font-35 shadow"> <i class=" bx bx-mouse-alt" style="color: #ffd700" title="Cadastro realizado"></i></div>
-                            <div class="col-3 font-35 shadow"> <i class="bx bx-face" style="color: #ffd700" title="Pioneiro"></i></div>
-                            <div class="col-3 font-35 shadow"> <i class="bx bx-crown" style="color: #ffd700" title="Premium"></i></div>
-                    <?php else : ?>
-                            <div class="col-3 font-35 shadow"> <i class=" bx bx-mouse-alt" style="color: #ffd700" title="Cadastro realizado"></i></div>
-                    <?php endif; ?>
+
+        <!-- Card Conquistas Compacto -->
+        <div class="card w-100 shadow bg-dark radius-10 mb-2">
+            <div class="card-body py-2 px-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <span class="text-muted small">Conquistas</span>
+                    <div class="d-flex gap-2">
+                        <?php if (usuario_logado()->is_membro) : ?>
+                            <i class="bx bx-mouse-alt" style="color: #ffd700; font-size: 1.3rem;" title="Cadastro realizado"></i>
+                            <i class="bx bx-face" style="color: #ffd700; font-size: 1.3rem;" title="Pioneiro"></i>
+                            <i class="bx bx-crown" style="color: #ffd700; font-size: 1.3rem;" title="Premium"></i>
+                        <?php else : ?>
+                            <i class="bx bx-mouse-alt" style="color: #ffd700; font-size: 1.3rem;" title="Cadastro realizado"></i>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card w-100 shadow bg-dark radius-10 mb-3">
-            <div class="card-body">
-                <h5 class="mb-3 d-flex align-items-center">Endereços cadastrados
-                    <a href="https://dreamfest.com.br/central-de-ajuda/como-alterar-o-endereco-de-entrega-da-minha-credencial/" target="_blank" rel="noopener noreferrer" class="ms-2 small fw-normal text-muted saiba-mais-link" style="text-decoration:none;">Saiba mais</a>
-                </h5>
-                <style>
-                .saiba-mais-link:hover { text-decoration: underline; color:rgb(185, 13, 253) !important; }
-                </style>
-                <?php foreach ($enderecos_lista as $idx => $end): ?>
-                    <div class="p-3 mb-2 rounded" style="background:<?= $idx === 0 ? '#232b3b' : 'transparent' ?>; border:1px solid #232b3b;">
-                        <div class="d-flex align-items-center mb-1">
-                            <span class="me-2" style="font-size:1.2rem;color:#0d6efd;"><i class="bi bi-geo-alt-fill"></i></span>
-                            <span class="fw-semibold" style="font-size:1.05rem;">
-                                <?= esc($end['endereco']) ?>
-                                <?php if (!empty($end['numero'])): ?>, <?= esc($end['numero']) ?><?php endif; ?>
-                                <?php if (!empty($end['bairro'])): ?> - <?= esc($end['bairro']) ?><?php endif; ?>
-                                <?php if (!empty($end['cidade'])): ?>, <?= ucfirst(esc($end['cidade'])) ?><?php endif; ?>
-                                <?php if (!empty($end['estado'])): ?>/<?= strtoupper(esc($end['estado'])) ?><?php endif; ?>
-                                <?php if (!empty($end['cep'])): ?> - <?= esc($end['cep']) ?><?php endif; ?>
-                            </span>
-                            <?php if (!empty($end['default'])): ?>
-                                <span class="badge bg-primary ms-2"><i class="bi bi-star-fill me-1"></i>Padrão</span>
-                            <?php endif; ?>
-                        </div>
-                        <?php if ($idx === 0): ?>
-                            <div class="text-muted small mt-1 ms-4">
-                                <i class="bi bi-info-circle"></i>
-                                Se nenhum endereço for vinculado ao pedido, ele será enviado para o endereço padrão.
-                                <a href="<?= site_url('usuarios/perfil') ?>" class="ms-1">Editar perfil</a>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
-        <div id="meus-ingressos"></div>
-        <?php if ($card == null) : ?>
-            <div class="card w-100 shadow bg-dark radius-10">
-                <div class="card-body">
-                    <h5>Seu DreamCard </h5>
-                    Você ainda não solicitou o seu cartão de membro!
-                </div>
-                <div class="d-grid" style="padding: 10px;">
-                    <a href="#" target="_blank" class="btn btn-primary disabled">Solicitar cartão</a>
-                </div>
-            </div>
-        <?php else : ?>
-            <div class="card w-100 shadow bg-purple radius-10">
-                <div class="card-body">
-                    <h5>Seu DreamCard <span class="badge bg-success"><?= $card->status ?></span></h5>
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="fs-1">
-                            <i class="bi bi-credit-card-2-back-fill"></i>
-                        </div>
-                        <div class="">
-                            <p class="mb-0 fs-6"><strong><?= $card->matricula ?></strong> </p>
-                        </div>
-                    </div>
-                    <?php echo esc(usuario_logado()->nome); ?><br>
-                    Expira em: <?= date("d/m/Y", strtotime($card->expiration)) ?>
-                </div>
-            </div>
-            <?php if ($card->status == 'Confecção') : ?>
-                <div class="col-lg-12">
-                    <div class="row" style="padding-left: 20px; padding-right: 20px; padding-bottom: 20px; margin-top: -16px">
-                        <a href="<?= site_url('/pedidos/recebercartao') ?>" class="btn btn-outline-danger bt-sm btn-block">Receber meu cartão em casa!</a>
-                    </div>
-                </div>
-            <?php elseif ($card->status == 'Enviado') : ?>
-                <div class="col-lg-12">
-                    <div class="row" style="padding-left: 20px; padding-right: 20px; padding-bottom: 20px; margin-top: -16px">
-                        <a href="https://melhorrastreio.com.br/rastreio/<?= $card->rastreio ?>" target="_blank" class="btn btn-outline-success bt-sm btn-block">Acompanhe a entrega</a>
-                    </div>
-                </div>
-            <?php elseif ($card->status == 'Preparando') : ?>
-                <div class="col-lg-12">
-                    <div class="row" style="padding-left: 20px; padding-right: 20px; padding-bottom: 20px; margin-top: -16px">
-                        <a href="<?= site_url('/pedidos/recebercartao') ?>" class="btn btn-outline-success bt-sm btn-block disabled">Aguardando rastreio</a>
-                    </div>
-    </div>
-            <?php endif; ?>
-        <?php endif; ?>
+
+
 
     </div>
     
@@ -255,10 +207,7 @@
                 </div>
             
         
-            <div class="d-flex align-items-center">
-                <div class="flex-grow-1" style="padding-right: 20px;">
-                <div class="col-lg-9">
-            
+        
         <!-- Nav tabs -->
         <ul class="nav nav-tabs mb-3" id="ingressosTabs" role="tablist">
             <li class="nav-item" role="presentation">
@@ -272,146 +221,189 @@
             <div class="tab-pane fade show active" id="atuais" role="tabpanel" aria-labelledby="atuais-tab">
                 <?php if (!empty($ingressos_atuais)) : ?>
                     <?php foreach ($ingressos_atuais as $i) : ?>
-                        <?php /* Card de ingresso (código já existente) */ ?>
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div class="card shadow radius-10">
-                                        <div class="card-body">
-                                            <div class="page-breadcrumb d-sm-flex align-items-center mb-3">
-                                                <div>
-                                                    <?php if ($i->tipo == 'produto') : ?>
-                                                        <strong class="font-20">Produto - Não válido para acesso</strong>
-                                                        <hr>
-                                                    <?php endif ?>
-                                                    <strong class="font-20"><?= $i->nome_evento ?></strong><br>
-                                                    <span class="text-muted font-13 mt-0"> Data do Evento: <?= ($i->data_inicio instanceof DateTimeInterface)
-    ? $i->data_inicio->format('d/m/Y')
-    : (($dt = DateTime::createFromFormat('!Y-m-d', (string)$i->data_inicio)) ? $dt->format('d/m/Y') : '') ?>
- - <?= ($i->data_inicio instanceof DateTimeInterface)
-    ? $i->data_inicio->format('d/m/Y')
-    : (($dt = DateTime::createFromFormat('!Y-m-d', (string)$i->data_fim)) ? $dt->format('d/m/Y') : '') ?>
- das 11h às 20h
-                                                    </span>
-                                                </div>
-                                                <?php if ($i->tipo != 'produto') : ?>
-                                                <div class="ms-auto">
-                                                    <div class="btn-group mt-2 w-100">
-                                                        <a href="<?= site_url('/ingressos/gerarIngressoPdf/' . $i->id) ?>" target="_blank" class="btn btn-sm btn-warning mt-0 shadow"><i class="bx bx-printer"></i></a>
-                                                        <a href="#" class="btn btn-sm btn-primary mt-0 shadow w-100" data-bs-toggle="modal" data-bs-target="#participante<?= $i->id; ?>Modal"><i class="bx bx-user" style="padding-right: 5px;"></i> Editar participante</a>
-                                                    </div>
-                                                
-                                                </div>
-                                                <?php endif ?>
-                                            </div>
-                                            <div class="row">
-                                                <hr class="mt-2">
-                                                <div class="col-lg-9">
-                                                        <div class="col-lg-8">
-                                                            <?php if ($i->tipo == 'produto') : ?>
-                                                                <p class="mb-0 text-muted" style="font-size: 10px;">Produto</p>
-                                                            <?php else : ?>
-                                                                <p class="mb-0 text-muted" style="font-size: 10px;">Ingresso</p>
-                                                            <?php endif ?>
-                                                            <strong><?= $i->nome ?></strong>
-                                                        </div>
-                                                        <div class="col-lg-3">
-                                                            <?php if ($i->tipo == 'produto') : ?>
-                                                                <p class="mb-0 text-muted" style="font-size: 10px;">Código do produto</p>
-                                                            <?php else : ?>
-                                                                <p class="mb-0 text-muted" style="font-size: 10px;">Código do ingresso</p>
-                                                            <?php endif ?>
-                                                            <strong><?= $i->codigo ?></strong>
-                                                        </div>
-                                                        <div class="col-lg-12 mt-3"></div>
-                                                        <div class="col-lg-3">
-                                                            <p class="mb-0 text-muted" style="font-size: 10px;">Nome</p>
-                                                            <?php if ($i->participante == null) : ?>
-                                                                <strong><?= $cliente->nome ?></strong>
-                                                            <?php else : ?>
-                                                                <strong><?= $i->participante ?></strong>
-                                                            <?php endif ?>
-                                                        </div>
-                                                        <div class="col-lg-3">
-                                                            <p class="mb-0 text-muted" style="font-size: 10px;">Acesso</p>
-                                                            <strong><?= $i->frete == null || $i->frete == 0 ? "Retirar no local" : "Receber em casa" ?></strong>
-                                                        </div>
-                                                        <div class="col-lg-3">
-                                                            <p class="mb-0 text-muted" style="font-size: 10px;">Comprovante</p>
-                                                            <strong>
-                                                                <?php if ($i->comprovante != null) : ?>
-                                                                    <strong><a href="<?= $i->comprovante ?>" target="_blank">Baixar comprovante</a></strong>
-                                                                <?php else : ?>
-                                                                    <strong>Indiponível</strong>
-                                                                <?php endif ?>
-                                                            </strong>
-                                                        </div>
-                                                        <hr class="mt-2">
-                                                        <div class="col-lg-12">
-                                                            <?php if ($i->cinemark != null) : ?>
-                                                                <strong style="color: #ffcc00">Seu ingresso CINEMARK já está disponível!</strong><br>
-                                                                Como usar o Cinemark Voucher:<br>
-                                                                1 - Atualize ou baixe o APP Cinemark no Google Play ou APP Store.<br>
-                                                                2 - Faça seu login, selecione o cinema, filme de sua preferência.<br>
-                                                                3 - Selecione o horário da sessão e os assentos;<br>
-                                                                4 - Selecione o tipo de ingresso como Voucher e quantidade de ingressos que irá utilizar;<br>
-                                                                5 - Após isso, digite o código <strong style="font-size: 16px; color: #ffcc00"> <?= $i->cinemark ?></strong> do voucher que irá utilizar.<br>
-                                                                6 - Apresente seu voucher online no celular diretamente na entrada da sala do cinema.<br>
-                                                                <span class="badge bg-warning text-dark" style="font-size: 14px;"><i class="bi bi-clock me-1"></i>Validade de 20 dias</span>
-                                                                <hr class="mt-2">
-                                                            <?php endif ?>
-                                                            <?php if ($i->frete == 1) : ?>
-                                                                <p class="mb-1">Incrível, você optou por receber seus ingressos em casa! Acompanhe a entrega:</p>
-                                                                <div class="btn-group mt-2">
-                                                                    <?php if ($i->rastreio != null) : ?>
-                                                                        <a href="https://rastreamento.correios.com.br/app/index.php?objetos=<?= $i->rastreio ?>" target="_blank" class="btn bt-sm btn btn-sm btn-outline-success mt-0 shadow ">Acompanhe a entrega</a>
-                                                                    <?php else : ?>
-                                                                        <a href="https://rastreamento.correios.com.br/app/index.php?objetos=<?= $i->rastreio ?>" target="_blank" class="btn bt-sm btn btn-sm btn-outline-white mt-0 shadow disabled">Seu pedido está sendo preparado!</a>
-                                                                    <?php endif ?>
-                                                                    <a href="<?= site_url('/pedidos/gerenciarendereco/' . $i->pedido_id) ?>" class="btn btn-sm btn-primary mt-0 shadow">Gerenciar endereços</a>
-                                                                </div>
-                                                                <?php if ($i->rastreio == null) : ?>
-                                                                    <p class="mb-0 text-muted" style="font-size: 10px; padding-left:10px; padding-top: 2px"><a href="https://dreamfest.com.br/central-de-ajuda/quando-eu-vou-receber-minhas-credenciais/" target="_blank">Quando vou receber minhas credenciais?</a></p>
-                                                                <?php endif ?>
-                                                    <?php endif ?>
-                                                </div>
-                                                </div>
-                                                <div class="col-lg-3 mt-3">
-                                                    <?php if ($i->tipo == 'produto') : ?>
-                                                        <center><strong class="font-20" style="color:red;">Não válido para acesso</strong></center>
-                                                    <?php endif ?>
-                                                    <img src="<?= $i->qr ?>" style="background-color:#fff; padding:0px" width="100%">
-                                                </div>
-                                        </div>
+                    <!-- Card de Ingresso - Novo Design -->
+                    <div class="ticket-card card mb-4">
+                        <!-- Header com imagem/capa do evento -->
+                        <div class="ticket-card-header">
+                            <?php if (!empty($i->imagem_evento)): ?>
+                                <img src="<?= $i->imagem_evento ?>" class="w-100 h-100" style="object-fit: cover; opacity: 0.8;">
+                            <?php endif; ?>
+                            <div class="ticket-card-buttons">
+                                <a href="<?= site_url('/ingressos/gerarIngressoPdf/' . $i->id) ?>" target="_blank" title="Baixar">
+                                    <i class="bi bi-download"></i>
+                                </a>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#participante<?= $i->id; ?>Modal" title="Favoritar">
+                                    <i class="bi bi-heart"></i>
+                                </a>
+                            </div>
+                            <?php if ($i->tipo == 'produto') : ?>
+                                <div class="position-absolute top-0 start-0 m-2" style="z-index: 10;">
+                                    <span class="badge bg-danger">Produto - Não válido para acesso</span>
+                                </div>
+                            <?php endif ?>
+                        </div>
+                        
+                        <!-- Cortes laterais -->
+                        <div class="ticket-notch"></div>
+                        
+                        <!-- Conteúdo do Card -->
+                        <div class="ticket-card-body p-3">
+                            <!-- Nome do Evento -->
+                            <h4 class="fw-bold text-white mb-3"><?= $i->nome_evento ?></h4>
+                            
+                            <!-- Data, Horário e Local do Evento -->
+                            <div class="row mb-2">
+                                <div class="col-6 col-md-4 mb-2">
+                                    <small class="text-muted text-uppercase d-block" style="font-size: 0.7rem;"><i class="bi bi-calendar3 me-1"></i>DATA</small>
+                                    <p class="mb-0 text-white">
+                                        <?php 
+                                        // Prioriza data do ticket, se não existir usa ticket_dia
+                                        if (!empty($i->ticket_data_inicio)) {
+                                            $data_inicio = ($i->ticket_data_inicio instanceof DateTimeInterface) 
+                                                ? $i->ticket_data_inicio->format('d/m/Y') 
+                                                : (($dt = DateTime::createFromFormat('!Y-m-d', (string)$i->ticket_data_inicio)) ? $dt->format('d/m/Y') : '');
+                                            $data_fim = !empty($i->ticket_data_fim) 
+                                                ? (($i->ticket_data_fim instanceof DateTimeInterface) 
+                                                    ? $i->ticket_data_fim->format('d/m/Y') 
+                                                    : (($dt = DateTime::createFromFormat('!Y-m-d', (string)$i->ticket_data_fim)) ? $dt->format('d/m/Y') : ''))
+                                                : $data_inicio;
+                                        } elseif (!empty($i->ticket_dia)) {
+                                            // Se não tem data específica, usa o campo dia (texto)
+                                            $data_inicio = esc($i->ticket_dia);
+                                            $data_fim = null;
+                                        } else {
+                                            // Fallback: usa data do evento
+                                            $data_inicio = ($i->data_inicio instanceof DateTimeInterface) 
+                                                ? $i->data_inicio->format('d/m/Y') 
+                                                : (($dt = DateTime::createFromFormat('!Y-m-d', (string)$i->data_inicio)) ? $dt->format('d/m/Y') : '');
+                                            $data_fim = ($i->data_fim instanceof DateTimeInterface) 
+                                                ? $i->data_fim->format('d/m/Y') 
+                                                : (($dt = DateTime::createFromFormat('!Y-m-d', (string)$i->data_fim)) ? $dt->format('d/m/Y') : '');
+                                        }
+                                        ?>
+                                        <?php if (empty($data_fim) || $data_inicio === $data_fim) : ?>
+                                            <?= $data_inicio ?>
+                                        <?php else : ?>
+                                            <?= $data_inicio ?> - <?= $data_fim ?>
+                                        <?php endif ?>
+                                    </p>
+                                </div>
+                                <div class="col-6 col-md-4 mb-2">
+                                    <small class="text-muted text-uppercase d-block" style="font-size: 0.7rem;"><i class="bi bi-clock me-1"></i>HORÁRIO</small>
+                                    <p class="mb-0 text-white">
+                                        <?php 
+                                        $hora_inicio = !empty($i->hora_inicio) ? substr($i->hora_inicio, 0, 5) : '';
+                                        $hora_fim = !empty($i->hora_fim) ? substr($i->hora_fim, 0, 5) : '';
+                                        ?>
+                                        <?php if (!empty($hora_inicio)) : ?>
+                                            <?= $hora_inicio ?><?php if (!empty($hora_fim) && $hora_fim !== $hora_inicio) : ?> - <?= $hora_fim ?><?php endif ?>
+                                        <?php else : ?>
+                                            --:--
+                                        <?php endif ?>
+                                    </p>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <small class="text-muted text-uppercase d-block" style="font-size: 0.7rem;"><i class="bi bi-geo-alt me-1"></i>LOCAL</small>
+                                    <p class="mb-0 text-white" style="font-size: 0.95rem;"><?= !empty($i->local) ? esc($i->local) : 'Não informado' ?></p>
+                                </div>
+                            </div>
+                            
+                            <hr class="border-secondary my-3">
+                            
+                            <!-- Código + QR Code e Informações -->
+                            <div class="d-flex gap-3">
+                                <!-- QR Code -->
+                                <div class="flex-shrink-0">
+                                    <small class="text-muted d-block mb-1" style="font-size: 0.7rem;"><?= $i->codigo ?></small>
+                                    <img src="<?= $i->qr ?>" style="width: 100px; height: 100px; background-color:#fff; padding: 4px; border-radius: 8px;">
+                                </div>
+                                
+                                <!-- Informações do Ingresso -->
+                                <div class="flex-grow-1">
+                                    <div class="mb-2">
+                                        <small class="text-muted text-uppercase" style="font-size: 0.65rem;">INGRESSO</small>
+                                        <p class="mb-0 text-white fw-semibold"><?= $i->nome ?></p>
+                                    </div>
+                                    <div class="mb-2">
+                                        <small class="text-muted text-uppercase" style="font-size: 0.65rem;">PARTICIPANTE</small>
+                                        <p class="mb-0 text-white"><?= $i->participante ?? $cliente->nome ?></p>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted text-uppercase" style="font-size: 0.65rem;">ACESSO</small>
+                                        <p class="mb-0 text-white"><?= $i->frete == null || $i->frete == 0 ? "Retirar no local" : "Receber em casa" ?></p>
                                     </div>
                                 </div>
+                            </div>
+                            
+                            <?php 
+                            // Bonus Cinemark
+                            $bonus_cinemark = null;
+                            if (isset($bonus_por_ingresso[$i->id])) {
+                                foreach ($bonus_por_ingresso[$i->id] as $bonus) {
+                                    if ($bonus->tipo_bonus === 'cinemark') {
+                                        $bonus_cinemark = $bonus;
+                                        break;
+                                    }
+                                }
+                            }
+                            ?>
+                            
+                            <?php if ($bonus_cinemark != null) : ?>
+                                <hr class="border-secondary my-3">
+                                <div class="p-3 rounded" style="background: rgba(255, 204, 0, 0.1); border: 1px solid rgba(255, 204, 0, 0.3);">
+                                    <strong style="color: #ffcc00"><i class="bi bi-film me-1"></i>Seu ingresso CINEMARK!</strong><br>
+                                    <small class="text-muted"><?= nl2br(esc($bonus_cinemark->instrucoes)) ?></small><br>
+                                    <span class="badge bg-warning text-dark mt-2" style="font-size: 0.9rem;"><?= esc($bonus_cinemark->codigo) ?></span>
+                                    <span class="badge bg-success ms-1">Validade: 20 dias</span>
+                                </div>
+                            <?php endif ?>
+                            
+                            <?php if ($i->frete == 1) : ?>
+                                <hr class="border-secondary my-3">
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <?php if ($i->rastreio != null) : ?>
+                                        <a href="https://rastreamento.correios.com.br/app/index.php?objetos=<?= $i->rastreio ?>" target="_blank" class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-truck me-1"></i>Rastrear entrega
+                                        </a>
+                                    <?php else : ?>
+                                        <span class="btn btn-sm btn-outline-secondary disabled">
+                                            <i class="bi bi-hourglass-split me-1"></i>Preparando envio...
+                                        </span>
+                                    <?php endif ?>
+                                    <a href="<?= site_url('/pedidos/gerenciarendereco/' . $i->pedido_id) ?>" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-geo-alt me-1"></i>Endereço
+                                    </a>
+                                </div>
+                            <?php endif ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Modal participante -->
+                    <div class="modal fade bd-example-modal-lg" id="participante<?= $i->id; ?>Modal" tabindex="-1" role="dialog" aria-labelledby="participante<?= $i->id; ?>Modal" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="participante<?= $i->id; ?>Modal">Gerenciamento de ingresso</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <?php echo form_open("ingressos/atualizar/$i->id") ?>
+                                    <?= csrf_field() ?>
+                                    <div class="form-group col-md-12">
+                                        <label class="form-control-label">Informe o nome do novo participante</label>
+                                        <input type="text" name="participante" class="form-control">
+                                    </div>
+                                    <p class="text-muted font-13"> Este é o nome que aparecerá no seu ingresso!</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                                    <input id="btn-salvar" type="submit" value="Alterar" class="btn btn-primary btn-sm">
+                                </div>
+                                <?php echo form_close(); ?>
                             </div>
                         </div>
-                        <!-- Modal participante -->
-                            <div class="modal fade bd-example-modal-lg" id="participante<?= $i->id; ?>Modal" tabindex="-1" role="dialog" aria-labelledby="participante<?= $i->id; ?>Modal" aria-hidden="true">
-                                <div class="modal-dialog modal-lg" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="participante<?= $i->id; ?>Modal">Gerenciamento de ingresso</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <?php echo form_open("ingressos/atualizar/$i->id") ?>
-                                            <?= csrf_field() ?>
-                                            <div class="form-group col-md-12">
-                                                <label class="form-control-label">Informe o nome do novo participante</label>
-                                                <input type="text" name="participante" class="form-control">
-                                            </div>
-                                            <p class="text-muted font-13"> Este é o nome que aparecerá no seu ingresso!</p>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
-                                            <input id="btn-salvar" type="submit" value="Alterar" class="btn btn-primary btn-sm">
-                                        </div>
-                                        <?php echo form_close(); ?>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
+                    </div>
+                <?php endforeach; ?>
                     <?php else : ?>
                         <center>
                             <hr>
@@ -423,107 +415,127 @@
             </div>
             <div class="tab-pane fade" id="anteriores" role="tabpanel" aria-labelledby="anteriores-tab">
                 <?php if (!empty($ingressos_anteriores)) : ?>
-                    <?php foreach ($ingressos_anteriores as $i) : ?>
-                        <!-- Card de ingresso igual ao de atuais -->
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div class="card shadow radius-10">
-                                    <div class="card-body">
-                                        <div class="page-breadcrumb d-sm-flex align-items-center mb-3">
-                                            <div>
-                                                <?php if ($i->tipo == 'produto') : ?>
-                                                    <strong class="font-20">Produto - Não válido para acesso</strong>
-                                                    <hr>
-                                                <?php endif ?>
-                                                <strong class="font-20"><?= $i->nome_evento ?></strong><br>
-                                                <span class="text-muted font-13 mt-0"> Data do Evento: <?= date('d/m/Y', strtotime($i->data_inicio)) ?> - <?= date('d/m/Y', strtotime($i->data_fim)) ?> das 10h às 19h
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <hr class="mt-2">
-                                            <div class="col-lg-9">
-                                                <div class="col-lg-8">
-                                                    <?php if ($i->tipo == 'produto') : ?>
-                                                        <p class="mb-0 text-muted" style="font-size: 10px;">Produto</p>
-                                                    <?php else : ?>
-                                                        <p class="mb-0 text-muted" style="font-size: 10px;">Ingresso</p>
-                                                    <?php endif ?>
-                                                    <strong><?= $i->nome ?></strong>
-        </div>
-        <div class="col-lg-3">
-                                                    <?php if ($i->tipo == 'produto') : ?>
-                                                        <p class="mb-0 text-muted" style="font-size: 10px;">Código do produto</p>
-                                                    <?php else : ?>
-                                                        <p class="mb-0 text-muted" style="font-size: 10px;">Código do ingresso</p>
-                                                    <?php endif ?>
-                                                    <strong><?= $i->codigo ?></strong>
+                <?php foreach ($ingressos_anteriores as $i) : ?>
+                    <!-- Card de Ingresso Anterior - Mesmo Design dos Atuais -->
+                    <div class="ticket-card card mb-4" style="opacity: 0.85;">
+                        <!-- Header com imagem/capa do evento -->
+                        <div class="ticket-card-header" style="background: linear-gradient(135deg, #2d2d2d 0%, #3d3d3d 50%, #4d4d4d 100%);">
+                            <?php if (!empty($i->imagem_evento)): ?>
+                                <img src="<?= $i->imagem_evento ?>" class="w-100 h-100" style="object-fit: cover; opacity: 0.6;">
+                            <?php endif; ?>
+                            <div class="position-absolute top-0 end-0 m-2" style="z-index: 10;">
+                                <span class="badge bg-secondary">Evento encerrado</span>
+                            </div>
+                            <?php if ($i->tipo == 'produto') : ?>
+                                <div class="position-absolute top-0 start-0 m-2" style="z-index: 10;">
+                                    <span class="badge bg-danger">Produto</span>
+                                </div>
+                            <?php endif ?>
                         </div>
-                                                <div class="col-lg-12 mt-3"></div>
-                                                <div class="col-lg-3">
-                                                    <p class="mb-0 text-muted" style="font-size: 10px;">Nome</p>
-                                                    <?php if ($i->participante == null) : ?>
-                                                        <strong><?= $cliente->nome ?></strong>
-                                                    <?php else : ?>
-                                                        <strong><?= $i->participante ?></strong>
-                                                    <?php endif ?>
+                        
+                        <!-- Cortes laterais -->
+                        <div class="ticket-notch"></div>
+                        
+                        <!-- Conteúdo do Card -->
+                        <div class="ticket-card-body p-3">
+                            <!-- Nome do Evento -->
+                            <h4 class="fw-bold text-white mb-3"><?= $i->nome_evento ?></h4>
+                            
+                            <!-- Data, Horário e Local do Evento -->
+                            <div class="row mb-2">
+                                <div class="col-6 col-md-4 mb-2">
+                                    <small class="text-muted text-uppercase d-block" style="font-size: 0.7rem;"><i class="bi bi-calendar3 me-1"></i>DATA</small>
+                                    <p class="mb-0 text-white">
+                                        <?php 
+                                        // Prioriza data do ticket, se não existir usa ticket_dia
+                                        if (!empty($i->ticket_data_inicio)) {
+                                            $data_inicio = date('d/m/Y', strtotime($i->ticket_data_inicio));
+                                            $data_fim = !empty($i->ticket_data_fim) 
+                                                ? date('d/m/Y', strtotime($i->ticket_data_fim))
+                                                : $data_inicio;
+                                        } elseif (!empty($i->ticket_dia)) {
+                                            $data_inicio = esc($i->ticket_dia);
+                                            $data_fim = null;
+                                        } else {
+                                            $data_inicio = date('d/m/Y', strtotime($i->data_inicio));
+                                            $data_fim = date('d/m/Y', strtotime($i->data_fim));
+                                        }
+                                        ?>
+                                        <?php if (empty($data_fim) || $data_inicio === $data_fim) : ?>
+                                            <?= $data_inicio ?>
+                                        <?php else : ?>
+                                            <?= $data_inicio ?> - <?= $data_fim ?>
+                                        <?php endif ?>
+                                    </p>
+                                </div>
+                                <div class="col-6 col-md-4 mb-2">
+                                    <small class="text-muted text-uppercase d-block" style="font-size: 0.7rem;"><i class="bi bi-clock me-1"></i>HORÁRIO</small>
+                                    <p class="mb-0 text-white">
+                                        <?php 
+                                        $hora_inicio = !empty($i->hora_inicio) ? substr($i->hora_inicio, 0, 5) : '';
+                                        $hora_fim = !empty($i->hora_fim) ? substr($i->hora_fim, 0, 5) : '';
+                                        ?>
+                                        <?php if (!empty($hora_inicio)) : ?>
+                                            <?= $hora_inicio ?><?php if (!empty($hora_fim) && $hora_fim !== $hora_inicio) : ?> - <?= $hora_fim ?><?php endif ?>
+                                        <?php else : ?>
+                                            --:--
+                                        <?php endif ?>
+                                    </p>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <small class="text-muted text-uppercase d-block" style="font-size: 0.7rem;"><i class="bi bi-geo-alt me-1"></i>LOCAL</small>
+                                    <p class="mb-0 text-white" style="font-size: 0.95rem;"><?= !empty($i->local) ? esc($i->local) : 'Não informado' ?></p>
+                                </div>
                             </div>
-                                                <div class="col-lg-3">
-                                                    <p class="mb-0 text-muted" style="font-size: 10px;">Acesso</p>
-                                                    <strong><?= $i->frete == null || $i->frete == 0 ? "Retirar no local" : "Receber em casa" ?></strong>
+                            
+                            <hr class="border-secondary my-3">
+                            
+                            <!-- Código + QR Code e Informações -->
+                            <div class="d-flex gap-3">
+                                <!-- QR Code -->
+                                <div class="flex-shrink-0">
+                                    <small class="text-muted d-block mb-1" style="font-size: 0.7rem;"><?= $i->codigo ?></small>
+                                    <img src="<?= $i->qr ?>" style="width: 100px; height: 100px; background-color:#fff; padding: 4px; border-radius: 8px; opacity: 0.7;">
+                                </div>
+                                
+                                <!-- Informações do Ingresso -->
+                                <div class="flex-grow-1">
+                                    <div class="mb-2">
+                                        <small class="text-muted text-uppercase" style="font-size: 0.65rem;">INGRESSO</small>
+                                        <p class="mb-0 text-white fw-semibold"><?= $i->nome ?></p>
+                                    </div>
+                                    <div class="mb-2">
+                                        <small class="text-muted text-uppercase" style="font-size: 0.65rem;">PARTICIPANTE</small>
+                                        <p class="mb-0 text-white"><?= $i->participante ?? $cliente->nome ?></p>
+                                    </div>
+                                </div>
                             </div>
-                                                <div class="col-lg-3">
-                                                    <p class="mb-0 text-muted" style="font-size: 10px;">Comprovante</p>
-                                                    <strong>
-                                                        <?php if ($i->comprovante != null) : ?>
-                                                            <strong><a href="<?= $i->comprovante ?>" target="_blank">Baixar comprovante</a></strong>
-                                                        <?php else : ?>
-                                                            <strong>Indiponível</strong>
-                                                        <?php endif ?>
-                                                    </strong>
-                            </div>
-                                                <hr class="mt-2">
-                                                <div class="col-lg-12">
-                                                    <?php if ($i->cinemark != null) : ?>
-                                                        <strong style="color: #ffcc00">Seu ingresso CINEMARK já está disponível!</strong><br>
-                                                        Como usar o Cinemark Voucher:<br>
-                                                        1 - Atualize ou baixe o APP Cinemark no Google Play ou APP Store.<br>
-                                                        2 - Faça seu login, selecione o cinema, filme de sua preferência.<br>
-                                                        3 - Selecione o horário da sessão e os assentos;<br>
-                                                        4 - Selecione o tipo de ingresso como Voucher e quantidade de ingressos que irá utilizar;<br>
-                                                        5 - Após isso, digite o código <strong style="font-size: 16px; color: #ffcc00"> <?= $i->cinemark ?></strong> do voucher que irá utilizar.<br>
-                                                        6 - Apresente seu voucher online no celular diretamente na entrada da sala do cinema.<br>
-                                                        <span class="badge bg-warning text-dark" style="font-size: 14px;"><i class="bi bi-clock me-1"></i>Validade de 20 dias</span>
-                                                        <hr class="mt-2">
-                                                    <?php endif ?>
-                                                    <?php if ($i->frete == 1) : ?>
-                                                        <p class="mb-1">Incrível, você optou por receber seus ingressos em casa! Acompanhe a entrega:</p>
-                                                        <div class="btn-group mt-2">
-                                                            <?php if ($i->rastreio != null) : ?>
-                                                                <a href="https://rastreamento.correios.com.br/app/index.php?objetos=<?= $i->rastreio ?>" target="_blank" class="btn bt-sm btn btn-sm btn-outline-success mt-0 shadow ">Acompanhe a entrega</a>
-                                                            <?php else : ?>
-                                                                <a href="https://rastreamento.correios.com.br/app/index.php?objetos=<?= $i->rastreio ?>" target="_blank" class="btn bt-sm btn btn-sm btn-outline-white mt-0 shadow disabled">Seu pedido está sendo preparado!</a>
-                                                            <?php endif ?>
-                                                            <a href="<?= site_url('/pedidos/gerenciarendereco/' . $i->pedido_id) ?>" class="btn btn-sm btn-primary mt-0 shadow">Gerenciar endereços</a>
-                    </div>
-                                                        <?php if ($i->rastreio == null) : ?>
-                                                            <p class="mb-0 text-muted" style="font-size: 10px; padding-left:10px; padding-top: 2px"><a href="https://dreamfest.com.br/central-de-ajuda/quando-eu-vou-receber-minhas-credenciais/" target="_blank">Quando vou receber minhas credenciais?</a></p>
-                                                        <?php endif ?>
-                                                    <?php endif ?>
-                </div>
-            </div>
-                                            <div class="col-lg-3 mt-3">
-                                                <?php if ($i->tipo == 'produto') : ?>
-                                                    <center><strong class="font-20" style="color:red;">Não válido para acesso</strong></center>
-                                                <?php endif ?>
-                                                <img src="<?= $i->qr ?>" style="background-color:#fff; padding:0px" width="100%">
-                    </div>
-                    </div>
-                </div>
-                            </div>
-                            </div>
+                            
+                            <?php 
+                            // Bonus Cinemark
+                            $bonus_cinemark = null;
+                            if (isset($bonus_por_ingresso[$i->id])) {
+                                foreach ($bonus_por_ingresso[$i->id] as $bonus) {
+                                    if ($bonus->tipo_bonus === 'cinemark') {
+                                        $bonus_cinemark = $bonus;
+                                        break;
+                                    }
+                                }
+                            }
+                            ?>
+                            
+                            <?php if ($bonus_cinemark != null) : ?>
+                                <hr class="border-secondary my-3">
+                                <div class="p-3 rounded" style="background: rgba(255, 204, 0, 0.1); border: 1px solid rgba(255, 204, 0, 0.3);">
+                                    <strong style="color: #ffcc00"><i class="bi bi-film me-1"></i>Seu ingresso CINEMARK!</strong><br>
+                                    <small class="text-muted"><?= nl2br(esc($bonus_cinemark->instrucoes)) ?></small><br>
+                                    <span class="badge bg-warning text-dark mt-2" style="font-size: 0.9rem;"><?= esc($bonus_cinemark->codigo) ?></span>
+                                    <span class="badge bg-success ms-1">Validade: 20 dias</span>
+                                </div>
+                            <?php endif ?>
                         </div>
-                    <?php endforeach; ?>
+                    </div>
+                <?php endforeach; ?>
                 <?php else : ?>
                     <center>
                         <hr>
@@ -534,8 +546,52 @@
                 <?php endif; ?>
             </div>
         </div>
+        
+        <!-- Card DreamCard -->
+        <div class="mt-4" style="max-width: 500px;">
+            <?php if ($card == null) : ?>
+                <div class="card w-100 shadow bg-dark radius-10">
+                    <div class="card-body">
+                        <h5>Seu DreamCard </h5>
+                        Você ainda não solicitou o seu cartão de membro!
+                    </div>
+                    <div class="d-grid" style="padding: 10px;">
+                        <a href="#" target="_blank" class="btn btn-primary disabled">Solicitar cartão</a>
+                    </div>
+                </div>
+            <?php else : ?>
+                <div class="card w-100 shadow bg-purple radius-10">
+                    <div class="card-body">
+                        <h5>Seu DreamCard <span class="badge bg-success"><?= $card->status ?></span></h5>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="fs-1">
+                                <i class="bi bi-credit-card-2-back-fill"></i>
+                            </div>
+                            <div class="">
+                                <p class="mb-0 fs-6"><strong><?= $card->matricula ?></strong> </p>
+                            </div>
+                        </div>
+                        <?php echo esc(usuario_logado()->nome); ?><br>
+                        Expira em: <?= date("d/m/Y", strtotime($card->expiration)) ?>
+                    </div>
+                </div>
+                <?php if ($card->status == 'Confecção') : ?>
+                    <div class="d-grid mt-2">
+                        <a href="<?= site_url('/pedidos/recebercartao') ?>" class="btn btn-outline-danger">Receber meu cartão em casa!</a>
+                    </div>
+                <?php elseif ($card->status == 'Enviado') : ?>
+                    <div class="d-grid mt-2">
+                        <a href="https://melhorrastreio.com.br/rastreio/<?= $card->rastreio ?>" target="_blank" class="btn btn-outline-success">Acompanhe a entrega</a>
+                    </div>
+                <?php elseif ($card->status == 'Preparando') : ?>
+                    <div class="d-grid mt-2">
+                        <a href="<?= site_url('/pedidos/recebercartao') ?>" class="btn btn-outline-success disabled">Aguardando rastreio</a>
+                    </div>
+                <?php endif; ?>
+            <?php endif; ?>
+        </div>
     </div>
-</div>
+
 
 
 

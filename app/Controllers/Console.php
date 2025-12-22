@@ -26,6 +26,7 @@ class Console extends BaseController
 	private $queueModel;
 	private $eventoModel;
 	private $ticketModel;
+	private $bonusModel;
 	
 
 
@@ -41,6 +42,7 @@ class Console extends BaseController
 		$this->queueModel = new \App\Models\QueueModel();
 		$this->eventoModel = new \App\Models\EventoModel();
 		$this->ticketModel = new \App\Models\TicketModel();
+		$this->bonusModel = new \App\Models\BonusModel();
 	}
 
 	public function dashboard()
@@ -97,7 +99,15 @@ class Console extends BaseController
 
 
 
-
+		// Buscar bônus do usuário e criar mapa por ingresso_id
+		$bonusUsuario = $this->bonusModel->getBonusPorUsuario($id);
+		$bonusPorIngresso = [];
+		foreach ($bonusUsuario as $bonus) {
+			if (!isset($bonusPorIngresso[$bonus->ingresso_id])) {
+				$bonusPorIngresso[$bonus->ingresso_id] = [];
+			}
+			$bonusPorIngresso[$bonus->ingresso_id][] = $bonus;
+		}
 
 		$data = [
 			'titulo' => 'Dashboard de ' . esc($cliente->nome),
@@ -108,6 +118,7 @@ class Console extends BaseController
 			'indicacoes' => $indicacoes,
 			'ingressos_atuais' => $ingressos_atuais,
 			'ingressos_anteriores' => $ingressos_anteriores,
+			'bonus_por_ingresso' => $bonusPorIngresso,
 		];
 
 		// Buscar dados de refunds/solicitações

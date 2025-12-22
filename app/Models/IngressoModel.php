@@ -156,13 +156,18 @@ class IngressoModel extends Model
             'eventos.data_fim',
             'eventos.hora_inicio',
             'eventos.hora_fim',
-            'eventos.local'
+            'eventos.local',
+            // Campos de data do ticket específico
+            'tickets.dia as ticket_dia',
+            'tickets.data_inicio as ticket_data_inicio',
+            'tickets.data_fim as ticket_data_fim'
         ];
 
         $retorno = $this->select($atributos)
             ->join('pedidos', 'pedidos.id = ingressos.pedido_id')
             ->join('usuarios', 'usuarios.id = ingressos.user_id')
             ->join('eventos', 'eventos.id = pedidos.evento_id')
+            ->join('tickets', 'tickets.id = ingressos.ticket_id', 'left')
             ->where('usuarios.id', $usuario_id)
             //->where('eventos.data_fim >= NOW()')
             ->whereIn('pedidos.status', ['CONFIRMED', 'RECEIVED', 'paid', 'RECEIVED_IN_CASH'])
