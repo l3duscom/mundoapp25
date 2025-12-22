@@ -20,15 +20,15 @@
 }
 .ticket-card-header {
     position: relative;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #ffffff 20%, #16213e 80%, #0f3460 100%);
     height: 150px;
     border-radius: 16px 16px 0 0;
 }
 .ticket-card-header.header-dream {
-    background: linear-gradient(135deg, #4a1d8c 0%, #672eba 50%, #8b4ecf 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #ffffff 20%, #672eba 80%, #8b4ecf 100%);
 }
 .ticket-card-header.header-anime {
-    background: linear-gradient(135deg, #b30045 0%, #ff0063 50%, #ff3385 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #ffffff 20%, #ff0063 80%, #ff3385 100%);
 }
 .ticket-card-body {
     background: #212529;
