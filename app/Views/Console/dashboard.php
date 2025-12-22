@@ -364,9 +364,15 @@
                             <!-- Código + QR Code e Informações -->
                             <div class="d-flex gap-3">
                                 <!-- QR Code -->
-                                <div class="flex-shrink-0">
+                                <div class="flex-shrink-0 text-center">
                                     <small class="text-muted d-block mb-1" style="font-size: 0.7rem;"><?= $i->codigo ?></small>
-                                    <img src="<?= $i->qr ?>" class="qr-zoom" style="width: 100px; height: 100px; background-color:#fff; padding: 4px; border-radius: 8px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#qrModal" data-qr="<?= $i->qr ?>" data-codigo="<?= $i->codigo ?>" title="Clique para ampliar">
+                                    <?php 
+                                    $ultimoAcesso = isset($ultimo_acesso_por_ingresso[$i->id]) ? $ultimo_acesso_por_ingresso[$i->id] : null;
+                                    ?>
+                                    <img src="<?= $i->qr ?>" class="qr-zoom" style="width: 100px; height: 100px; background-color:#fff; padding: 4px; border-radius: 8px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#qrModal" data-qr="<?= $i->qr ?>" data-codigo="<?= $i->codigo ?>" data-acesso="<?= $ultimoAcesso ? date('d/m/Y H:i', strtotime($ultimoAcesso)) : '' ?>" title="Clique para ampliar">
+                                    <?php if ($ultimoAcesso): ?>
+                                        <span class="badge bg-success mt-2 d-block" style="font-size: 0.65rem;"><i class="bi bi-check-circle me-1"></i><?= date('d/m/Y H:i', strtotime($ultimoAcesso)) ?></span>
+                                    <?php endif; ?>
                                 </div>
                                 
                                 <!-- Informações do Ingresso -->
@@ -567,9 +573,15 @@
                             <!-- Código + QR Code e Informações -->
                             <div class="d-flex gap-3">
                                 <!-- QR Code -->
-                                <div class="flex-shrink-0">
+                                <div class="flex-shrink-0 text-center">
                                     <small class="text-muted d-block mb-1" style="font-size: 0.7rem;"><?= $i->codigo ?></small>
-                                    <img src="<?= $i->qr ?>" class="qr-zoom" style="width: 100px; height: 100px; background-color:#fff; padding: 4px; border-radius: 8px; opacity: 0.7; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#qrModal" data-qr="<?= $i->qr ?>" data-codigo="<?= $i->codigo ?>" title="Clique para ampliar">
+                                    <?php 
+                                    $ultimoAcesso = isset($ultimo_acesso_por_ingresso[$i->id]) ? $ultimo_acesso_por_ingresso[$i->id] : null;
+                                    ?>
+                                    <img src="<?= $i->qr ?>" class="qr-zoom" style="width: 100px; height: 100px; background-color:#fff; padding: 4px; border-radius: 8px; opacity: 0.7; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#qrModal" data-qr="<?= $i->qr ?>" data-codigo="<?= $i->codigo ?>" data-acesso="<?= $ultimoAcesso ? date('d/m/Y H:i', strtotime($ultimoAcesso)) : '' ?>" title="Clique para ampliar">
+                                    <?php if ($ultimoAcesso): ?>
+                                        <span class="badge bg-success mt-2 d-block" style="font-size: 0.65rem;"><i class="bi bi-check-circle me-1"></i><?= date('d/m/Y H:i', strtotime($ultimoAcesso)) ?></span>
+                                    <?php endif; ?>
                                 </div>
                                 
                                 <!-- Informações do Ingresso -->
@@ -678,7 +690,10 @@
             </div>
             <div class="modal-body text-center py-4">
                 <img id="qrModalImage" src="" style="width: 280px; height: 280px; background-color:#fff; padding: 12px; border-radius: 12px;">
-                <p class="mt-3 mb-0 text-muted" id="qrModalCodigo"></p>
+                <p class="mt-3 mb-1 text-muted" id="qrModalCodigo"></p>
+                <div id="qrModalAcesso" class="mt-2" style="display: none;">
+                    <span class="badge bg-success" style="font-size: 0.85rem;"><i class="bi bi-check-circle me-1"></i>Último acesso: <span id="qrModalAcessoData"></span></span>
+                </div>
             </div>
         </div>
     </div>
@@ -762,9 +777,19 @@
         var button = event.relatedTarget;
         var qrSrc = button.getAttribute('data-qr');
         var codigo = button.getAttribute('data-codigo');
+        var acesso = button.getAttribute('data-acesso');
         
         document.getElementById('qrModalImage').src = qrSrc;
         document.getElementById('qrModalCodigo').textContent = 'Código: ' + codigo;
+        
+        var acessoDiv = document.getElementById('qrModalAcesso');
+        var acessoData = document.getElementById('qrModalAcessoData');
+        if (acesso && acesso !== '') {
+            acessoData.textContent = acesso;
+            acessoDiv.style.display = 'block';
+        } else {
+            acessoDiv.style.display = 'none';
+        }
     });
 </script>
 

@@ -109,6 +109,19 @@ class Console extends BaseController
 			$bonusPorIngresso[$bonus->ingresso_id][] = $bonus;
 		}
 
+		// Buscar último acesso por ingresso
+		$checkModel = new \App\Models\CheckModel();
+		$ultimoAcessoPorIngresso = [];
+		$todosIngressos = array_merge($ingressos_atuais, $ingressos_anteriores);
+		foreach ($todosIngressos as $ing) {
+			$ultimoAcesso = $checkModel->where('ingresso_id', $ing->id)
+				->orderBy('created_at', 'DESC')
+				->first();
+			if ($ultimoAcesso) {
+				$ultimoAcessoPorIngresso[$ing->id] = $ultimoAcesso->created_at;
+			}
+		}
+
 		$data = [
 			'titulo' => 'Dashboard de ' . esc($cliente->nome),
 			'cliente' => $cliente,
@@ -119,6 +132,7 @@ class Console extends BaseController
 			'ingressos_atuais' => $ingressos_atuais,
 			'ingressos_anteriores' => $ingressos_anteriores,
 			'bonus_por_ingresso' => $bonusPorIngresso,
+			'ultimo_acesso_por_ingresso' => $ultimoAcessoPorIngresso,
 		];
 
 		// Buscar dados de refunds/solicitações
