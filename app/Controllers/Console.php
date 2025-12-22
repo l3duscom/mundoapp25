@@ -112,6 +112,7 @@ class Console extends BaseController
 		// Buscar último acesso por ingresso
 		$checkModel = new \App\Models\CheckModel();
 		$ultimoAcessoPorIngresso = [];
+		$totalAcessosPorIngresso = [];
 		$todosIngressos = array_merge($ingressos_atuais, $ingressos_anteriores);
 		foreach ($todosIngressos as $ing) {
 			$ultimoAcesso = $checkModel->where('ingresso_id', $ing->id)
@@ -120,6 +121,9 @@ class Console extends BaseController
 			if ($ultimoAcesso) {
 				$ultimoAcessoPorIngresso[$ing->id] = $ultimoAcesso->created_at;
 			}
+			// Contar total de acessos
+			$totalAcessos = $checkModel->where('ingresso_id', $ing->id)->countAllResults();
+			$totalAcessosPorIngresso[$ing->id] = $totalAcessos;
 		}
 
 		$data = [
@@ -133,6 +137,7 @@ class Console extends BaseController
 			'ingressos_anteriores' => $ingressos_anteriores,
 			'bonus_por_ingresso' => $bonusPorIngresso,
 			'ultimo_acesso_por_ingresso' => $ultimoAcessoPorIngresso,
+			'total_acessos_por_ingresso' => $totalAcessosPorIngresso,
 		];
 
 		// Buscar dados de refunds/solicitações
