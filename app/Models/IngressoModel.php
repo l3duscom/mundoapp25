@@ -157,6 +157,7 @@ class IngressoModel extends Model
             'eventos.hora_inicio',
             'eventos.hora_fim',
             'eventos.local',
+            'eventos.avatar as evento_avatar',
             // Campos de data do ticket específico
             'tickets.dia as ticket_dia',
             'tickets.data_inicio as ticket_data_inicio',

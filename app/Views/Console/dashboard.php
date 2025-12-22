@@ -24,6 +24,12 @@
     height: 150px;
     border-radius: 16px 16px 0 0;
 }
+.ticket-card-header.header-dream {
+    background: linear-gradient(135deg, #4a1d8c 0%, #672eba 50%, #8b4ecf 100%);
+}
+.ticket-card-header.header-anime {
+    background: linear-gradient(135deg, #b30045 0%, #ff0063 50%, #ff3385 100%);
+}
 .ticket-card-body {
     background: #212529;
     border-radius: 0 0 16px 16px;
@@ -224,9 +230,19 @@
                     <!-- Card de Ingresso - Novo Design -->
                     <div class="ticket-card card mb-4">
                         <!-- Header com imagem/capa do evento -->
-                        <div class="ticket-card-header">
-                            <?php if (!empty($i->imagem_evento)): ?>
-                                <img src="<?= $i->imagem_evento ?>" class="w-100 h-100" style="object-fit: cover; opacity: 0.8;">
+                        <?php 
+                        $header_class = 'ticket-card-header';
+                        if (stripos($i->nome_evento, 'Dream') !== false) {
+                            $header_class .= ' header-dream';
+                        } elseif (stripos($i->nome_evento, 'Anime') !== false) {
+                            $header_class .= ' header-anime';
+                        }
+                        ?>
+                        <div class="<?= $header_class ?>">
+                            <?php if (!empty($i->evento_avatar)): ?>
+                                <div class="position-absolute" style="bottom: -30px; left: 15px; z-index: 20;">
+                                    <img src="<?= $i->evento_avatar ?>" class="rounded-circle border border-3 border-dark" style="width: 60px; height: 60px; object-fit: cover; background: #212529;">
+                                </div>
                             <?php endif; ?>
                             <div class="ticket-card-buttons">
                                 <a href="<?= site_url('/ingressos/gerarIngressoPdf/' . $i->id) ?>" target="_blank" title="Baixar">
@@ -249,7 +265,7 @@
                         <!-- Conteúdo do Card -->
                         <div class="ticket-card-body p-3">
                             <!-- Nome do Evento -->
-                            <h4 class="fw-bold text-white mb-3"><?= $i->nome_evento ?></h4>
+                            <h4 class="fw-bold text-white mb-3" <?php if (!empty($i->evento_avatar)) : ?>style="margin-left: 70px;"<?php endif ?>><?= $i->nome_evento ?></h4>
                             
                             <!-- Data, Horário e Local do Evento -->
                             <div class="row mb-2">
@@ -419,9 +435,22 @@
                     <!-- Card de Ingresso Anterior - Mesmo Design dos Atuais -->
                     <div class="ticket-card card mb-4" style="opacity: 0.85;">
                         <!-- Header com imagem/capa do evento -->
-                        <div class="ticket-card-header" style="background: linear-gradient(135deg, #2d2d2d 0%, #3d3d3d 50%, #4d4d4d 100%);">
-                            <?php if (!empty($i->imagem_evento)): ?>
-                                <img src="<?= $i->imagem_evento ?>" class="w-100 h-100" style="object-fit: cover; opacity: 0.6;">
+                        <?php 
+                        $header_class = 'ticket-card-header';
+                        $header_style = '';
+                        if (stripos($i->nome_evento, 'Dream') !== false) {
+                            $header_style = 'background: linear-gradient(135deg, #3a1766 0%, #4e2390 50%, #5c2ba5 100%);';
+                        } elseif (stripos($i->nome_evento, 'Anime') !== false) {
+                            $header_style = 'background: linear-gradient(135deg, #7a0030 0%, #a30042 50%, #b8004d 100%);';
+                        } else {
+                            $header_style = 'background: linear-gradient(135deg, #2d2d2d 0%, #3d3d3d 50%, #4d4d4d 100%);';
+                        }
+                        ?>
+                        <div class="<?= $header_class ?>" style="<?= $header_style ?>">
+                            <?php if (!empty($i->evento_avatar)): ?>
+                                <div class="position-absolute" style="bottom: -30px; left: 15px; z-index: 20;">
+                                    <img src="<?= $i->evento_avatar ?>" class="rounded-circle border border-3 border-dark" style="width: 60px; height: 60px; object-fit: cover; background: #212529; opacity: 0.8;">
+                                </div>
                             <?php endif; ?>
                             <div class="position-absolute top-0 end-0 m-2" style="z-index: 10;">
                                 <span class="badge bg-secondary">Evento encerrado</span>
@@ -439,7 +468,7 @@
                         <!-- Conteúdo do Card -->
                         <div class="ticket-card-body p-3">
                             <!-- Nome do Evento -->
-                            <h4 class="fw-bold text-white mb-3"><?= $i->nome_evento ?></h4>
+                            <h4 class="fw-bold text-white mb-3" <?php if (!empty($i->evento_avatar)) : ?>style="margin-left: 70px;"<?php endif ?>><?= $i->nome_evento ?></h4>
                             
                             <!-- Data, Horário e Local do Evento -->
                             <div class="row mb-2">
