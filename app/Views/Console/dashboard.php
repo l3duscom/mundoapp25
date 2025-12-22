@@ -449,11 +449,11 @@
                         $header_class = 'ticket-card-header';
                         $header_style = '';
                         if (stripos($i->nome_evento, 'Dream') !== false) {
-                            $header_style = 'background: linear-gradient(135deg, #3a1766 0%, #4e2390 50%, #5c2ba5 100%);';
+                            $header_style = 'background: linear-gradient(135deg, #ffffff 0%, #ffffff 20%, #672eba 80%, #8b4ecf 100%);';
                         } elseif (stripos($i->nome_evento, 'Anime') !== false) {
-                            $header_style = 'background: linear-gradient(135deg, #7a0030 0%, #a30042 50%, #b8004d 100%);';
+                            $header_style = 'background: linear-gradient(135deg, #ffffff 0%, #ffffff 20%, #ff0063 80%, #ff3385 100%);';
                         } else {
-                            $header_style = 'background: linear-gradient(135deg, #2d2d2d 0%, #3d3d3d 50%, #4d4d4d 100%);';
+                            $header_style = 'background: linear-gradient(135deg, #ffffff 0%, #ffffff 20%, #16213e 80%, #0f3460 100%);';
                         }
                         ?>
                         <div class="<?= $header_class ?>" style="<?= $header_style ?>">
