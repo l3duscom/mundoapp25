@@ -366,7 +366,7 @@
                                 <!-- QR Code -->
                                 <div class="flex-shrink-0">
                                     <small class="text-muted d-block mb-1" style="font-size: 0.7rem;"><?= $i->codigo ?></small>
-                                    <img src="<?= $i->qr ?>" style="width: 100px; height: 100px; background-color:#fff; padding: 4px; border-radius: 8px;">
+                                    <img src="<?= $i->qr ?>" class="qr-zoom" style="width: 100px; height: 100px; background-color:#fff; padding: 4px; border-radius: 8px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#qrModal" data-qr="<?= $i->qr ?>" data-codigo="<?= $i->codigo ?>" title="Clique para ampliar">
                                 </div>
                                 
                                 <!-- Informações do Ingresso -->
@@ -569,7 +569,7 @@
                                 <!-- QR Code -->
                                 <div class="flex-shrink-0">
                                     <small class="text-muted d-block mb-1" style="font-size: 0.7rem;"><?= $i->codigo ?></small>
-                                    <img src="<?= $i->qr ?>" style="width: 100px; height: 100px; background-color:#fff; padding: 4px; border-radius: 8px; opacity: 0.7;">
+                                    <img src="<?= $i->qr ?>" class="qr-zoom" style="width: 100px; height: 100px; background-color:#fff; padding: 4px; border-radius: 8px; opacity: 0.7; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#qrModal" data-qr="<?= $i->qr ?>" data-codigo="<?= $i->codigo ?>" title="Clique para ampliar">
                                 </div>
                                 
                                 <!-- Informações do Ingresso -->
@@ -668,6 +668,21 @@
 
 
 
+<!-- Modal QR Code Ampliado -->
+<div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="qrModalLabel">QR Code</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <img id="qrModalImage" src="" style="width: 280px; height: 280px; background-color:#fff; padding: 12px; border-radius: 12px;">
+                <p class="mt-3 mb-0 text-muted" id="qrModalCodigo"></p>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php echo $this->endSection() ?>
 
@@ -738,6 +753,18 @@
             "responsive": true,
             "pagingType": $(window).width() < 768 ? "simple" : "simple_numbers",
         });
+    });
+</script>
+
+<script>
+    // Modal do QR Code
+    document.getElementById('qrModal').addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var qrSrc = button.getAttribute('data-qr');
+        var codigo = button.getAttribute('data-codigo');
+        
+        document.getElementById('qrModalImage').src = qrSrc;
+        document.getElementById('qrModalCodigo').textContent = 'Código: ' + codigo;
     });
 </script>
 
