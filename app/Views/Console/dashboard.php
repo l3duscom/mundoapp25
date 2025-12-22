@@ -81,6 +81,31 @@
 .ticket-card-buttons a:hover {
     background: #f0f0f0;
 }
+
+/* Tabs customizadas para o layout dark */
+#ingressosTabs {
+    border-bottom: none;
+    gap: 8px;
+}
+#ingressosTabs .nav-link {
+    background: transparent;
+    border: 1px solid #343a40;
+    border-radius: 8px;
+    color: #adb5bd;
+    padding: 10px 20px;
+    transition: all 0.2s ease;
+}
+#ingressosTabs .nav-link:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: #495057;
+    color: #fff;
+}
+#ingressosTabs .nav-link.active {
+    background: linear-gradient(135deg, #672eba 0%, #8b4ecf 100%);
+    border-color: transparent;
+    color: #fff;
+    font-weight: 500;
+}
 </style>
 <?php echo $this->endSection() ?>
 
@@ -250,8 +275,8 @@
                                     $avatarUrl = 'https://backoffice.mundodream.com.br/eventos/imagem/' . $i->evento_avatar;
                                 }
                                 ?>
-                                <div class="position-absolute" style="top: 15px; left: 15px; z-index: 20;">
-                                    <img src="<?= $avatarUrl ?>" style="max-height: 60px; max-width: 180px; object-fit: contain;">
+                                <div class="position-absolute" style="top: 50%; left: 15px; transform: translateY(-50%); z-index: 20;">
+                                    <img src="<?= $avatarUrl ?>" style="max-height: 80px; max-width: 200px; object-fit: contain;">
                                 </div>
                             <?php endif; ?>
                             <div class="ticket-card-buttons">
@@ -468,8 +493,8 @@
                                     $avatarUrl = 'https://backoffice.mundodream.com.br/eventos/imagem/' . $i->evento_avatar;
                                 }
                                 ?>
-                                <div class="position-absolute" style="top: 15px; left: 15px; z-index: 20;">
-                                    <img src="<?= $avatarUrl ?>" style="max-height: 60px; max-width: 180px; object-fit: contain; opacity: 0.8;">
+                                <div class="position-absolute" style="top: 50%; left: 15px; transform: translateY(-50%); z-index: 20;">
+                                    <img src="<?= $avatarUrl ?>" style="max-height: 80px; max-width: 200px; object-fit: contain; opacity: 0.8;">
                                 </div>
                             <?php endif; ?>
                             <div class="position-absolute top-0 end-0 m-2" style="z-index: 10;">
