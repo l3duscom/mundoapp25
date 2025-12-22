@@ -279,17 +279,6 @@
                 padding: 15px 20px !important;
             }
         }
-
-        /* Cover do evento - garantir exibição em todos os dispositivos */
-        .evento-cover {
-            margin-top: 120px; /* Compensar navbar fixo (60px) + container do logo (~60px) */
-        }
-        
-        @media (max-width: 768px) {
-            .evento-cover {
-                margin-top: 100px; /* Menor no mobile devido ao navbar mais compacto */
-            }
-        }
     </style>
 
     <?php echo $this->renderSection('estilos'); ?>
@@ -339,23 +328,6 @@
         </nav>
     </header>
     <!--end top header-->
-
-    <!-- Cover do Evento -->
-    <?php if (isset($evento) && !empty($evento->cover)) : ?>
-        <?php 
-            // Verifica se o cover já é uma URL completa
-            if (strpos($evento->cover, 'http') === 0) {
-                $coverUrl = $evento->cover;
-            } elseif (strpos($evento->cover, 'eventos/imagem/') === 0) {
-                $coverUrl = 'https://backoffice.mundodream.com.br/' . $evento->cover;
-            } else {
-                $coverUrl = 'https://backoffice.mundodream.com.br/eventos/imagem/' . $evento->cover;
-            }
-        ?>
-        <div class="evento-cover" style="width: 100%; position: relative; z-index: 1; margin-top: 0;">
-            <img src="<?= $coverUrl ?>" alt="<?= esc($evento->nome ?? '') ?>" style="width: 100%; height: auto; display: block;">
-        </div>
-    <?php endif; ?>
 
 
 
