@@ -283,8 +283,8 @@
                                 <a href="<?= site_url('/ingressos/gerarIngressoPdf/' . $i->id) ?>" target="_blank" title="Baixar">
                                     <i class="bi bi-download"></i>
                                 </a>
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#participante<?= $i->id; ?>Modal" title="Favoritar">
-                                    <i class="bi bi-heart"></i>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#participante<?= $i->id; ?>Modal" title="Editar participante" style="width: auto; padding: 0 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 500;">
+                                    <i class="bi bi-pencil me-1"></i>Editar
                                 </a>
                             </div>
                             <?php if ($i->tipo == 'produto') : ?>
