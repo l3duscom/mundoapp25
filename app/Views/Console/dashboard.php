@@ -240,8 +240,18 @@
                         ?>
                         <div class="<?= $header_class ?>">
                             <?php if (!empty($i->evento_avatar)): ?>
-                                <div class="position-absolute" style="bottom: -30px; left: 15px; z-index: 20;">
-                                    <img src="<?= $i->evento_avatar ?>" class="rounded-circle border border-3 border-dark" style="width: 60px; height: 60px; object-fit: cover; background: #212529;">
+                                <?php 
+                                // Composição da URL do avatar (mesma lógica do externo.php)
+                                if (strpos($i->evento_avatar, 'http') === 0) {
+                                    $avatarUrl = $i->evento_avatar;
+                                } elseif (strpos($i->evento_avatar, 'eventos/imagem/') === 0) {
+                                    $avatarUrl = 'https://backoffice.mundodream.com.br/' . $i->evento_avatar;
+                                } else {
+                                    $avatarUrl = 'https://backoffice.mundodream.com.br/eventos/imagem/' . $i->evento_avatar;
+                                }
+                                ?>
+                                <div class="position-absolute" style="top: 15px; left: 15px; z-index: 20;">
+                                    <img src="<?= $avatarUrl ?>" style="max-height: 60px; max-width: 180px; object-fit: contain;">
                                 </div>
                             <?php endif; ?>
                             <div class="ticket-card-buttons">
@@ -265,7 +275,7 @@
                         <!-- Conteúdo do Card -->
                         <div class="ticket-card-body p-3">
                             <!-- Nome do Evento -->
-                            <h4 class="fw-bold text-white mb-3" <?php if (!empty($i->evento_avatar)) : ?>style="margin-left: 70px;"<?php endif ?>><?= $i->nome_evento ?></h4>
+                            <h4 class="fw-bold text-white mb-3"><?= $i->nome_evento ?></h4>
                             
                             <!-- Data, Horário e Local do Evento -->
                             <div class="row mb-2">
@@ -448,8 +458,18 @@
                         ?>
                         <div class="<?= $header_class ?>" style="<?= $header_style ?>">
                             <?php if (!empty($i->evento_avatar)): ?>
-                                <div class="position-absolute" style="bottom: -30px; left: 15px; z-index: 20;">
-                                    <img src="<?= $i->evento_avatar ?>" class="rounded-circle border border-3 border-dark" style="width: 60px; height: 60px; object-fit: cover; background: #212529; opacity: 0.8;">
+                                <?php 
+                                // Composição da URL do avatar (mesma lógica do externo.php)
+                                if (strpos($i->evento_avatar, 'http') === 0) {
+                                    $avatarUrl = $i->evento_avatar;
+                                } elseif (strpos($i->evento_avatar, 'eventos/imagem/') === 0) {
+                                    $avatarUrl = 'https://backoffice.mundodream.com.br/' . $i->evento_avatar;
+                                } else {
+                                    $avatarUrl = 'https://backoffice.mundodream.com.br/eventos/imagem/' . $i->evento_avatar;
+                                }
+                                ?>
+                                <div class="position-absolute" style="top: 15px; left: 15px; z-index: 20;">
+                                    <img src="<?= $avatarUrl ?>" style="max-height: 60px; max-width: 180px; object-fit: contain; opacity: 0.8;">
                                 </div>
                             <?php endif; ?>
                             <div class="position-absolute top-0 end-0 m-2" style="z-index: 10;">
@@ -468,7 +488,7 @@
                         <!-- Conteúdo do Card -->
                         <div class="ticket-card-body p-3">
                             <!-- Nome do Evento -->
-                            <h4 class="fw-bold text-white mb-3" <?php if (!empty($i->evento_avatar)) : ?>style="margin-left: 70px;"<?php endif ?>><?= $i->nome_evento ?></h4>
+                            <h4 class="fw-bold text-white mb-3"><?= $i->nome_evento ?></h4>
                             
                             <!-- Data, Horário e Local do Evento -->
                             <div class="row mb-2">
