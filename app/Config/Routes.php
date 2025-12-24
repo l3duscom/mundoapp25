@@ -240,6 +240,10 @@ $routes->post('checkout/finalizarcartao/(:num)', 'Checkout::finalizarcartao/$1')
 $routes->get('checkout/qrcode/(:any)', 'Checkout::qrcode/$1');
 $routes->get('checkout/check-status/(:any)', 'Checkout::checkTransactionStatus/$1');
 
+// Rotas para validação de cupons
+$routes->post('carrinho/validar', 'Carrinho::validar');
+$routes->post('carrinho/removerCupom', 'Carrinho::removerCupom');
+
 // Rotas para o controller de API do carrinho
 $routes->group('api/carrinho', ['filter' => 'apiKey'], function ($routes) {
     $routes->get('evento/(:num)', 'ApiCarrinho::evento/$1');

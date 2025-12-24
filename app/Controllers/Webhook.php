@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\AuditoriaModel;
 use App\Models\PedidoModel;
+use App\Models\CupomModel;
 
 class Webhook extends BaseController
 {
@@ -55,6 +56,10 @@ class Webhook extends BaseController
             // Atualiza pedido diretamente
             $pedidosModel = new PedidoModel();
             
+            // Busca o pedido antes de atualizar para verificar se tem cupom
+            $pedido = $pedidosModel->where('charge_id', $payment_id)->first();
+            $statusAnterior = $pedido ? $pedido->status : null;
+            
             $result = $pedidosModel
                 ->where('charge_id', $payment_id)
                 ->set([
@@ -63,6 +68,30 @@ class Webhook extends BaseController
                     'updated_at' => date('Y-m-d H:i:s')
                 ])
                 ->update();
+
+            // Se o pagamento foi confirmado e o pedido tem cupom, incrementa o uso
+            if ($result && $pedido && $pedido->cupom_id) {
+                $cupomModel = new CupomModel();
+                
+                $statusConfirmados = ['CONFIRMED', 'RECEIVED', 'paid', 'RECEIVED_IN_CASH'];
+                $statusCancelados = ['REFUNDED', 'CHARGEBACK', 'REFUND_REQUESTED', 'REFUND_IN_PROGRESS'];
+                
+                $eraConfirmado = in_array($statusAnterior, $statusConfirmados);
+                $agoraConfirmado = in_array($payment_status, $statusConfirmados);
+                $agoraCancelado = in_array($payment_status, $statusCancelados);
+                
+                // Incrementa se mudou de não-confirmado para confirmado
+                if (!$eraConfirmado && $agoraConfirmado) {
+                    $cupomModel->incrementarUso($pedido->cupom_id);
+                    log_message('info', 'Uso do cupom #' . $pedido->cupom_id . ' incrementado para pedido charge_id: ' . $payment_id);
+                }
+                
+                // Decrementa se estava confirmado e agora foi reembolsado/cancelado
+                if ($eraConfirmado && $agoraCancelado) {
+                    $cupomModel->decrementarUso($pedido->cupom_id);
+                    log_message('info', 'Uso do cupom #' . $pedido->cupom_id . ' decrementado (reembolso/cancelamento) para pedido charge_id: ' . $payment_id);
+                }
+            }
 
             if ($result) {
                 log_message('info', 'Pedido atualizado com sucesso: ' . $payment_id);

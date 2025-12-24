@@ -60,14 +60,16 @@ if (isset($_GET['valor_total']) && !empty($_GET['valor_total'])) {
     $total = floatval($valorGet);
 }
 
-// Adiciona o valor do frete ao total
-if (isset($_SESSION['valor_frete'])) {
-    $total += floatval($_SESSION['valor_frete']);
-}
+// Separa o frete do total dos ingressos
+$valorFrete = isset($_SESSION['valor_frete']) ? floatval($_SESSION['valor_frete']) : 0;
+$subtotalIngressos = $total; // Valor original dos ingressos (sem frete)
 
-// Cálculo do desconto
-$descontoPix = $total * 0.10;
-$totalComDesconto = $total - $descontoPix;
+// Cálculo do desconto PIX (10% sobre os ingressos, não sobre o frete)
+$descontoPix = $subtotalIngressos * 0.10;
+$totalIngressosComDesconto = $subtotalIngressos - $descontoPix;
+
+// Total final = ingressos com desconto + frete (frete não tem desconto)
+$totalComDesconto = $totalIngressosComDesconto + $valorFrete;
 ?>
 <input type="hidden" name="valor_total" id="valor_total" value="<?= $totalComDesconto * 100 ?>" required>
 <input type="hidden" name="frete" id="frete" value="<?= $_SESSION['frete'] ?>" required>
@@ -169,32 +171,89 @@ $totalComDesconto = $total - $descontoPix;
 
                         </div>
 
-
-
-                        <div class="d-grid gap-2 mb-0" style="padding:7px">
-                            <center>
-                                <span style="padding-top: 5px; margin-bottom: -5px">
-                                    Resumo da compra: <strong>R$ <?= number_format($total, 2, ',', '') ?></strong>
-                                </span>
-                                <div class="text-success" style="font-size: 12px;">
-                                    <i class="bi bi-check-circle-fill"></i> Desconto PIX: <strong>R$ <?= number_format($descontoPix, 2, ',', '') ?></strong>
+                        <!-- Seção de Cupom de Desconto -->
+                        <div class="card border shadow-none w-100 mt-3">
+                            <div class="card-header py-3">
+                                <h6 class="mb-0"><i class="bx bx-purchase-tag-alt me-2"></i>Cupom de desconto</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-2 align-items-end">
+                                    <div class="col-8 col-md-9">
+                                        <input type="text" 
+                                               id="codigo-cupom" 
+                                               name="codigo_cupom"
+                                               class="form-control" 
+                                               placeholder="Digite seu cupom"
+                                               style="text-transform: uppercase;">
+                                    </div>
+                                    <div class="col-4 col-md-3">
+                                        <button type="button" 
+                                                id="btn-validar-cupom" 
+                                                class="btn w-100"
+                                                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; font-weight: 600;">
+                                            Aplicar
+                                        </button>
+                                    </div>
                                 </div>
-                                <span style="font-size: 14px; color: #6C038F;">
-                                    <strong>Total com desconto: R$ <?= number_format($totalComDesconto, 2, ',', '') ?></strong>
-                                </span>
-                            </center>
-                            <input id="btn-salvar" type="submit" value="Comprar agora" class="btn btn-lg mt-0" style="background-color: purple; border-color: purple; color: white;">
-
+                                
+                                <!-- Área de resultado do cupom -->
+                                <div id="cupom-resultado" class="mt-3"></div>
+                                
+                                <!-- Campos hidden para armazenar o cupom validado -->
+                                <input type="hidden" name="cupom_id" id="cupom_id" value="">
+                                <input type="hidden" name="cupom_desconto" id="cupom_desconto" value="0">
+                            </div>
                         </div>
+
+                        <!-- Resumo do Pedido -->
+                        <div class="card border shadow-none w-100 mt-3">
+                            <div class="card-header py-2" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <h6 class="mb-0 text-white"><i class="bx bx-receipt me-2"></i>Resumo do Pedido</h6>
+                            </div>
+                            <div class="card-body py-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Subtotal (ingressos)</span>
+                                    <strong class="resumo-subtotal">R$ <?= number_format($subtotalIngressos, 2, ',', '.') ?></strong>
+                                </div>
+                                
+                                <?php if ($valorFrete > 0): ?>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted"><i class="bx bx-package me-1"></i>Entrega</span>
+                                    <strong class="resumo-frete">R$ <?= number_format($valorFrete, 2, ',', '.') ?></strong>
+                                </div>
+                                <?php endif; ?>
+                                
+                                <div id="linha-desconto-cupom" class="d-flex justify-content-between mb-2" style="display: none !important;">
+                                    <span class="text-success"><i class="bx bx-purchase-tag me-1"></i>Desconto Cupom</span>
+                                    <strong class="text-success resumo-desconto-cupom">- R$ 0,00</strong>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-success"><i class="bx bx-check-circle me-1"></i>Desconto PIX (10%)</span>
+                                    <strong class="text-success resumo-desconto-pix">- R$ <?= number_format($descontoPix, 2, ',', '.') ?></strong>
+                                </div>
+                                
+                                <hr class="my-2">
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold" style="font-size: 1.1rem;">Total a pagar</span>
+                                    <span class="fw-bold resumo-total-final" style="font-size: 1.3rem; color: #6C038F;">R$ <?= number_format($totalComDesconto, 2, ',', '.') ?></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-3">
+                            <button id="btn-salvar" type="submit" class="btn btn-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; padding: 15px; font-size: 1.1rem; font-weight: 600; border-radius: 10px;">
+                                <i class="bx bx-lock-alt me-2"></i>Finalizar Compra
+                            </button>
+                        </div>
+                        
                         <?php echo form_close(); ?>
 
-
-
-
-                        <center>
-                            <span class="text-muted mb-5" style="font-size: 9px;">Processado por:</span><br>
-                            <img class="mt-1" src="<?php echo site_url('recursos/front/images/asaas.png'); ?>" width="100px" height="auto">
-                        </center>
+                        <div class="text-center mt-3">
+                            <span class="text-muted" style="font-size: 10px;">Pagamento processado com segurança por</span><br>
+                            <img class="mt-1" src="<?php echo site_url('recursos/front/images/asaas.png'); ?>" width="80px" height="auto" style="opacity: 0.7;">
+                        </div>
 
 
                     </div>
@@ -340,6 +399,138 @@ function trackInitiateCheckoutPix() {
             <?php if (isset($evento) && !empty($evento->meta_pixel_id)): ?>
             trackInitiateCheckoutPix();
             <?php endif; ?>
+        });
+
+        // ========================================
+        // VALIDAÇÃO DE CUPOM DE DESCONTO
+        // ========================================
+        
+        // Valor dos ingressos (sem frete)
+        var subtotalIngressos = <?= $subtotalIngressos ?? 0 ?>;
+        var valorFrete = <?= $valorFrete ?? 0 ?>;
+        var cupomAplicado = false;
+        var valorDescontoCupom = 0;
+
+        // Função para atualizar valores na tela
+        function atualizarValores() {
+            // Desconto cupom sobre ingressos
+            var ingressosComDesconto = subtotalIngressos - valorDescontoCupom;
+            
+            // Desconto PIX (10%) sobre ingressos já com desconto do cupom
+            var novoDescontoPix = ingressosComDesconto * 0.10;
+            var ingressosFinal = ingressosComDesconto - novoDescontoPix;
+            
+            // Total final = ingressos com descontos + frete (frete não tem desconto)
+            var novoTotalFinal = ingressosFinal + valorFrete;
+            
+            // Função para formatar valor em Real
+            function formatarReal(valor) {
+                return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+            
+            // Mostra/esconde linha de desconto do cupom
+            if (valorDescontoCupom > 0) {
+                $('#linha-desconto-cupom').css('display', 'flex');
+                $('.resumo-desconto-cupom').text('- R$ ' + formatarReal(valorDescontoCupom));
+            } else {
+                $('#linha-desconto-cupom').css('display', 'none');
+            }
+            
+            // Atualiza os spans de resumo
+            $('.resumo-subtotal').text('R$ ' + formatarReal(subtotalIngressos));
+            $('.resumo-desconto-pix').text('- R$ ' + formatarReal(novoDescontoPix));
+            $('.resumo-total-final').text('R$ ' + formatarReal(novoTotalFinal));
+            
+            // Atualiza o hidden do valor total (em centavos)
+            $('#valor_total').val(Math.round(novoTotalFinal * 100));
+        }
+
+        // Evento de clique no botão Aplicar
+        $('#btn-validar-cupom').on('click', function() {
+            var codigo = $('#codigo-cupom').val().trim().toUpperCase();
+            var btn = $(this);
+            
+            if (!codigo) {
+                $('#cupom-resultado').html(
+                    '<div class="alert alert-warning mb-0 py-2"><small><i class="bx bx-error-circle me-1"></i>Digite um código de cupom</small></div>'
+                );
+                return;
+            }
+
+            // Desabilita o botão durante a requisição
+            btn.prop('disabled', true).text('...');
+
+            // Pega o token CSRF atualizado do formulário
+            var csrfName = '<?= csrf_token() ?>';
+            var csrfToken = $('input[name="' + csrfName + '"]').val();
+
+            $.ajax({
+                url: '<?php echo site_url('carrinho/validar'); ?>',
+                type: 'POST',
+                data: {
+                    codigo: codigo,
+                    evento_id: '<?= $event_id ?? '' ?>',
+                    valor_pedido: subtotalIngressos,
+                    [csrfName]: csrfToken
+                },
+                dataType: 'json',
+                success: function(response) {
+                    // Atualiza token CSRF
+                    if (response.token) {
+                        $('input[name="<?= csrf_token() ?>"]').val(response.token);
+                    }
+
+                    if (response.erro) {
+                        // Cupom inválido
+                        $('#cupom-resultado').html(
+                            '<div class="alert alert-danger mb-0 py-2"><small><i class="bx bx-x-circle me-1"></i>' + response.erro + '</small></div>'
+                        );
+                        cupomAplicado = false;
+                        valorDescontoCupom = 0;
+                        $('#cupom_id').val('');
+                        $('#cupom_desconto').val('0');
+                    } else {
+                        // Cupom válido
+                        cupomAplicado = true;
+                        valorDescontoCupom = response.cupom.valor_desconto;
+                        
+                        $('#cupom-resultado').html(
+                            '<div class="alert alert-success mb-0 py-2">' +
+                                '<small><i class="bx bx-check-circle me-1"></i>' +
+                                    'Cupom <strong>' + response.cupom.codigo + '</strong> aplicado! ' +
+                                    'Desconto: <strong>' + response.cupom.valor_desconto_formatado + '</strong>' +
+                                '</small>' +
+                            '</div>'
+                        );
+
+                        // Atualiza campos hidden
+                        $('#cupom_id').val(response.cupom.id);
+                        $('#cupom_desconto').val(response.cupom.valor_desconto);
+
+                        // Desabilita o campo de cupom
+                        $('#codigo-cupom').prop('disabled', true);
+                        
+                        // Atualiza valores na tela
+                        atualizarValores();
+                    }
+                },
+                error: function() {
+                    $('#cupom-resultado').html(
+                        '<div class="alert alert-danger mb-0 py-2"><small><i class="bx bx-error me-1"></i>Erro ao validar. Tente novamente.</small></div>'
+                    );
+                },
+                complete: function() {
+                    btn.prop('disabled', cupomAplicado).text('Aplicar');
+                }
+            });
+        });
+
+        // Permite aplicar cupom com Enter
+        $('#codigo-cupom').on('keypress', function(e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                $('#btn-validar-cupom').click();
+            }
         });
 
     });

@@ -18,6 +18,7 @@ class Carrinho extends BaseController
 	private $cartaoModel;
 	private $ticketModel;
 	private $eventoModel;
+	private $cupomModel;
 
 
 
@@ -28,6 +29,7 @@ class Carrinho extends BaseController
 		$this->cartaoModel = new \App\Models\CartaoModel();
 		$this->ticketModel = new \App\Models\TicketModel();
 		$this->eventoModel = new \App\Models\EventoModel();
+		$this->cupomModel = new \App\Models\CupomModel();
 	}
 
 	public function evento($event_id)
@@ -364,6 +366,105 @@ class Carrinho extends BaseController
 
 
 		return view('Carrinho/puc', $data);
+	}
+
+	
+	/**
+	 * Valida um cupom de desconto via AJAX
+	 * POST /carrinho/validar
+	 *
+	 * @return \CodeIgniter\HTTP\Response JSON response
+	 */
+	public function validar()
+	{
+		// Verifica se é requisição AJAX
+		if (!$this->request->isAJAX()) {
+			return redirect()->back();
+		}
+
+		// Prepara resposta com novo token CSRF
+		$retorno = ['token' => csrf_hash()];
+
+		// Recupera parâmetros do POST
+		$codigo = $this->request->getPost('codigo');
+		$eventoId = $this->request->getPost('evento_id') ? (int) $this->request->getPost('evento_id') : null;
+		$userId = $this->request->getPost('user_id') ? (int) $this->request->getPost('user_id') : null;
+		$valorPedido = $this->request->getPost('valor_pedido') ? (float) $this->request->getPost('valor_pedido') : null;
+
+		// Valida se código foi informado
+		if (empty($codigo)) {
+			$retorno['erro'] = 'Digite um código de cupom.';
+			return $this->response->setJSON($retorno);
+		}
+
+		// Converte para maiúsculas e remove espaços
+		$codigo = strtoupper(trim($codigo));
+
+		// Valida o cupom
+		$resultado = $this->cupomModel->validarCupom($codigo, $eventoId, $userId, $valorPedido);
+
+		if (!$resultado['valido']) {
+			$retorno['erro'] = $resultado['erro'];
+			return $this->response->setJSON($retorno);
+		}
+
+		// Cupom válido - calcula desconto
+		$cupom = $resultado['cupom'];
+		$valorDesconto = 0;
+		$valorFinal = $valorPedido ?? 0;
+
+		if ($valorPedido) {
+			$valorDesconto = $this->cupomModel->calcularDesconto($cupom, $valorPedido);
+			$valorFinal = $valorPedido - $valorDesconto;
+		}
+
+		// Armazena cupom na sessão
+		$session = session();
+		$session->set('cupom_id', $cupom->id);
+		$session->set('cupom_codigo', $cupom->codigo);
+		$session->set('cupom_desconto', $valorDesconto);
+
+		// Monta resposta de sucesso
+		$retorno['sucesso'] = 'Cupom válido!';
+		$retorno['cupom'] = [
+			'id' => $cupom->id,
+			'codigo' => $cupom->codigo,
+			'nome' => $cupom->nome,
+			'desconto_formatado' => $cupom->getDescontoFormatado(),
+			'valor_desconto' => $valorDesconto,
+			'valor_desconto_formatado' => 'R$ ' . number_format($valorDesconto, 2, ',', '.'),
+			'valor_final' => $valorFinal,
+			'valor_final_formatado' => 'R$ ' . number_format($valorFinal, 2, ',', '.'),
+		];
+
+		return $this->response->setJSON($retorno);
+	}
+
+	/**
+	 * Remove cupom aplicado da sessão
+	 * POST /carrinho/removerCupom
+	 *
+	 * @return \CodeIgniter\HTTP\Response JSON response
+	 */
+	public function removerCupom()
+	{
+		// Verifica se é requisição AJAX
+		if (!$this->request->isAJAX()) {
+			return redirect()->back();
+		}
+
+		// Prepara resposta com novo token CSRF
+		$retorno = ['token' => csrf_hash()];
+
+		// Remove cupom da sessão
+		$session = session();
+		$session->remove('cupom_id');
+		$session->remove('cupom_codigo');
+		$session->remove('cupom_desconto');
+
+		$retorno['sucesso'] = 'Cupom removido com sucesso.';
+
+		return $this->response->setJSON($retorno);
 	}
 
 	
