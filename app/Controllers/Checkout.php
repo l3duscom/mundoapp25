@@ -40,6 +40,7 @@ class Checkout extends BaseController
 	private $eventoModel;
 	private $ticketModel;
 	private $resendService;
+	private $cupomModel;
 
 
 
@@ -61,6 +62,7 @@ class Checkout extends BaseController
 		$this->eventoModel = new \App\Models\EventoModel();
 		$this->ticketModel = new \App\Models\TicketModel();
 		$this->resendService = new ResendService();
+		$this->cupomModel = new \App\Models\CupomModel();
 
 	}
 
@@ -1421,6 +1423,11 @@ class Checkout extends BaseController
 	{
 		$frete = ($post['frete'] ?? '') === 'casa' ? 1 : 0;
 
+		// Recupera dados do cupom da sessão (se existir)
+		$session = session();
+		$cupomId = $session->get('cupom_id');
+		$valorDesconto = $session->get('cupom_desconto') ?? 0;
+
 		$data = [
 			'evento_id' => $event_id,
 			'user_id' => $user_id,
@@ -1429,9 +1436,22 @@ class Checkout extends BaseController
 			'convite' => $post['convite'] ?? '',
 			'frete' => $frete,
 			'forma_pagamento' => 'CREDIT_CARD',
+			'cupom_id' => $cupomId,
+			'valor_desconto' => $valorDesconto,
 		];
 
 		$this->pedidoModel->skipValidation(true)->protect(false)->insert($data);
+		
+		// Incrementa uso do cupom (independente do pagamento)
+		if ($cupomId) {
+			$this->cupomModel->incrementarUso($cupomId);
+		}
+		
+		// Limpa cupom da sessão após usar
+		$session->remove('cupom_id');
+		$session->remove('cupom_codigo');
+		$session->remove('cupom_desconto');
+		
 		return $this->pedidoModel->getInsertID();
 	}
 
@@ -1601,6 +1621,11 @@ class Checkout extends BaseController
 		];
 
 		$this->pedidoModel->skipValidation(true)->protect(false)->insert($data);
+		
+		// Incrementa uso do cupom (independente do pagamento)
+		if ($cupomId) {
+			$this->cupomModel->incrementarUso($cupomId);
+		}
 		
 		// Limpa cupom da sessão após usar
 		$session->remove('cupom_id');

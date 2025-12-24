@@ -69,27 +69,21 @@ class Webhook extends BaseController
                 ])
                 ->update();
 
-            // Se o pagamento foi confirmado e o pedido tem cupom, incrementa o uso
+            // Se o pedido tem cupom, verifica se precisa decrementar (expirado/cancelado/reembolsado)
             if ($result && $pedido && $pedido->cupom_id) {
                 $cupomModel = new CupomModel();
                 
-                $statusConfirmados = ['CONFIRMED', 'RECEIVED', 'paid', 'RECEIVED_IN_CASH'];
-                $statusCancelados = ['REFUNDED', 'CHARGEBACK', 'REFUND_REQUESTED', 'REFUND_IN_PROGRESS'];
+                // Status que indicam que o pagamento não foi efetivado ou foi cancelado/reembolsado
+                $statusQueDevemDecrementar = [
+                    'REFUNDED', 'CHARGEBACK', 'REFUND_REQUESTED', 'REFUND_IN_PROGRESS',
+                    'OVERDUE', 'EXPIRED', 'PENDING', 'CANCELED', 'overdue', 'expired', 'canceled'
+                ];
                 
-                $eraConfirmado = in_array($statusAnterior, $statusConfirmados);
-                $agoraConfirmado = in_array($payment_status, $statusConfirmados);
-                $agoraCancelado = in_array($payment_status, $statusCancelados);
-                
-                // Incrementa se mudou de não-confirmado para confirmado
-                if (!$eraConfirmado && $agoraConfirmado) {
-                    $cupomModel->incrementarUso($pedido->cupom_id);
-                    log_message('info', 'Uso do cupom #' . $pedido->cupom_id . ' incrementado para pedido charge_id: ' . $payment_id);
-                }
-                
-                // Decrementa se estava confirmado e agora foi reembolsado/cancelado
-                if ($eraConfirmado && $agoraCancelado) {
+                // Decrementa se o status indica que o pagamento foi cancelado/expirado/reembolsado
+                // Isso libera o cupom para ser usado novamente
+                if (in_array($payment_status, $statusQueDevemDecrementar)) {
                     $cupomModel->decrementarUso($pedido->cupom_id);
-                    log_message('info', 'Uso do cupom #' . $pedido->cupom_id . ' decrementado (reembolso/cancelamento) para pedido charge_id: ' . $payment_id);
+                    log_message('info', 'Uso do cupom #' . $pedido->cupom_id . ' decrementado (status: ' . $payment_status . ') para pedido charge_id: ' . $payment_id);
                 }
             }
 
