@@ -16,6 +16,7 @@ use App\Entities\Evento;
 use App\Traits\ValidacoesTrait;
 use App\Services\PagarMeService;
 use App\Services\ResendService;
+use App\Services\PontosCompraService;
 
 
 $session = session();
@@ -1405,6 +1406,10 @@ class Checkout extends BaseController
 				$this->enviaEmailPedidoCartao($cliente, $event_id);
 
 				if (in_array($status, ['CONFIRMED', 'RECEIVED'])) {
+					// Atribui pontos pela compra
+					$pontosService = new PontosCompraService();
+					$pontosService->atribuirPontosDoPedido($pedido_id);
+					
 					unset($_SESSION['carrinho']);
 					return redirect()->to(site_url("checkout/obrigado/"));
 				} else {
@@ -1880,8 +1885,9 @@ class Checkout extends BaseController
 
 		$this->enviaEmailCortesia((object)$montaemail, $event_id);
 
-
-
+		// Atribui pontos pela compra (se valor > 0)
+		$pontosService = new PontosCompraService();
+		$pontosService->atribuirPontosDoPedido($pedido_id);
 
 		unset($_SESSION['carrinho']);
 

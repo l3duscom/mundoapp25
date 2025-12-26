@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\AuditoriaModel;
 use App\Models\PedidoModel;
 use App\Models\CupomModel;
+use App\Services\PontosCompraService;
 
 class Webhook extends BaseController
 {
@@ -84,6 +85,26 @@ class Webhook extends BaseController
                 if (in_array($payment_status, $statusQueDevemDecrementar)) {
                     $cupomModel->decrementarUso($pedido->cupom_id);
                     log_message('info', 'Uso do cupom #' . $pedido->cupom_id . ' decrementado (status: ' . $payment_status . ') para pedido charge_id: ' . $payment_id);
+                }
+            }
+
+            // Atribui pontos se o pagamento foi confirmado
+            // Só atribui se o status anterior não era confirmado (evita duplicatas em múltiplos webhooks)
+            if ($result && $pedido) {
+                $statusConfirmados = ['RECEIVED', 'CONFIRMED', 'paid', 'RECEIVED_IN_CASH'];
+                $statusAnteriorConfirmado = in_array($statusAnterior, $statusConfirmados);
+                $statusAtualConfirmado = in_array($payment_status, $statusConfirmados);
+                
+                // Só atribui se mudou de não-confirmado para confirmado
+                if (!$statusAnteriorConfirmado && $statusAtualConfirmado) {
+                    $pontosService = new PontosCompraService();
+                    $pontosResult = $pontosService->atribuirPontosDoPedido($pedido->id);
+                    
+                    if ($pontosResult['success']) {
+                        log_message('info', 'Pontos atribuídos para pedido #' . $pedido->id . ': ' . ($pontosResult['data']['pontos'] ?? 0) . ' pontos');
+                    } else {
+                        log_message('warning', 'Falha ao atribuir pontos para pedido #' . $pedido->id . ': ' . ($pontosResult['message'] ?? 'Erro desconhecido'));
+                    }
                 }
             }
 
