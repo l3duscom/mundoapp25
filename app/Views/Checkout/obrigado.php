@@ -70,108 +70,6 @@ if ($_SESSION['convite'] == 'x') {
 $event_id = session()->get('event_id');
 ?>
 
-<!-- OVERLAY DE UPSELL -->
-<?php if (!empty($upsells)): ?>
-<?php $upsell = $upsells[0]; // Pega o primeiro upsell disponível ?>
-<div id="upsellOverlay" style="
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.7);
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-">
-    <div style="
-        background: linear-gradient(135deg, #6c038f 0%, #9b4dca 100%);
-        border-radius: 20px;
-        max-width: 500px;
-        width: 100%;
-        padding: 30px;
-        color: white;
-        text-align: center;
-        box-shadow: 0 10px 50px rgba(108,3,143,0.5);
-        animation: slideUp 0.5s ease-out;
-    ">
-        <style>
-            @keyframes slideUp {
-                from { transform: translateY(50px); opacity: 0; }
-                to { transform: translateY(0); opacity: 1; }
-            }
-            @keyframes pulse {
-                0%, 100% { transform: scale(1); }
-                50% { transform: scale(1.05); }
-            }
-        </style>
-        
-        <div style="margin-bottom: 15px;">
-            <i class="bx bx-star" style="font-size: 50px; color: #ffd700;"></i>
-        </div>
-        
-        <h3 style="margin-bottom: 10px; font-weight: bold;">
-            🎉 OFERTA ESPECIAL! 🎉
-        </h3>
-        
-        <h4 style="margin-bottom: 20px;">
-            <?php echo esc($upsell->titulo ?: 'Faça upgrade do seu ingresso!'); ?>
-        </h4>
-        
-        <div style="background: rgba(255,255,255,0.2); border-radius: 10px; padding: 15px; margin-bottom: 20px;">
-            <p style="margin-bottom: 10px; font-size: 14px;">
-                <strong>Upgrade para:</strong><br>
-                <span style="font-size: 18px;"><?php echo esc($upsell->ticket_destino_nome); ?></span>
-            </p>
-            
-            <?php if (!empty($upsell->descricao)): ?>
-            <p style="font-size: 12px; opacity: 0.9; margin-bottom: 0;">
-                <?php echo esc($upsell->descricao); ?>
-            </p>
-            <?php endif; ?>
-        </div>
-        
-        <div style="margin-bottom: 20px;">
-            <p style="margin-bottom: 5px; font-size: 14px; opacity: 0.8;">
-                Pague apenas a diferença:
-            </p>
-            <span style="font-size: 36px; font-weight: bold; color: #ffd700;">
-                <?php echo $upsell->getValorFinalFormatado(); ?>
-            </span>
-            <?php if ($upsell->temDesconto()): ?>
-            <br><span style="font-size: 12px; background: #ff6b6b; padding: 3px 10px; border-radius: 10px;">
-                <?php echo $upsell->desconto_percentual; ?>% de desconto!
-            </span>
-            <?php endif; ?>
-        </div>
-        
-        <a href="<?php echo site_url('checkout/upsell/' . $upsell->id); ?>" 
-           class="btn btn-lg" 
-           style="
-               background: #ffd700;
-               color: #333;
-               font-weight: bold;
-               padding: 15px 40px;
-               border-radius: 30px;
-               animation: pulse 2s infinite;
-               display: inline-block;
-               margin-bottom: 15px;
-           ">
-            <i class="bx bx-rocket me-2"></i>QUERO FAZER UPGRADE!
-        </a>
-        
-        <br>
-        
-        <button onclick="document.getElementById('upsellOverlay').style.display='none'" 
-                style="background: none; border: none; color: rgba(255,255,255,0.6); cursor: pointer; font-size: 14px; text-decoration: underline;">
-            Não, obrigado. Continuar sem upgrade
-        </button>
-    </div>
-</div>
-<?php endif; ?>
-
 <div class="row">
     <div class="col-lg-12">
         <div class="block">
@@ -189,15 +87,24 @@ $event_id = session()->get('event_id');
 </div>
 
 
-                        <div style="padding-left: 30px; padding-right: 30px;padding-top: 5px">
-                            <center>
-                                <i class="bx bx-check-circle" style="font-size: 80px; color:green"></i>
-                                <p>Parabéns! Sua compra foi realizada com sucesso!, <strong>mas não feche essa página, você vai amar as novidades!</strong> <span style="font-size: 14px; color: red">Os emails de dado de acesso são enviados automaticamente, porém, notamos uma demora no envio para caixas do GMAIL. </span></p>
-                                <hr>
-                               
-                               
-                            </center>
+                        <!-- Success Header Section -->
+                        <div style="padding: 40px 30px 20px; text-align: center;">
+                            <!-- Animated Success Icon -->
+                            <div style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); box-shadow: 0 10px 40px rgba(40, 167, 69, 0.3); margin-bottom: 25px; animation: pulse 2s infinite;">
+                                <i class="bx bx-check" style="font-size: 55px; color: white;"></i>
+                            </div>
+                            
+                            <h2 style="color: #2d3748; font-size: 26px; font-weight: 700; margin-bottom: 10px;">Compra Realizada com Sucesso!</h2>
+                            <p style="color: #718096; font-size: 15px; margin-bottom: 0;">Seus ingressos já estão disponíveis para acesso</p>
                         </div>
+                        
+                        <style>
+                            @keyframes pulse {
+                                0% { box-shadow: 0 10px 40px rgba(40, 167, 69, 0.3); }
+                                50% { box-shadow: 0 10px 60px rgba(40, 167, 69, 0.5); }
+                                100% { box-shadow: 0 10px 40px rgba(40, 167, 69, 0.3); }
+                            }
+                        </style>
 
                         <?php
                         if (isset($_GET['adicionar'])) {
@@ -270,21 +177,50 @@ $event_id = session()->get('event_id');
                             <?php endforeach; ?>
 
 
-                            <div style="padding-left: 30px; padding-right: 30px; padding-bottom: 30px; padding-top: 5px">
-                            <center>
-
-                                <p>O Universo mágico do Dreamfest está te esperando! <strong>Sua compra foi realizada com sucesso e seus ingressos já estão disponíveis no link abaixo!</strong> O comprovante foi enviado para seu email e você deve favoritar esse email para não perder nenhum detalhe!</p>
-                                <a href="<?= site_url('/console/dashboard/') ?>" class="btn btn-lg btn-primary mt-0 shadow">Ver meus ingressos</a>
-                                <hr>
-                                <p style="padding-top: 5px"><strong>Essa é sua primeira compra de ingressos para o Dream?</strong> Fique ligado! Você receberá <strong>automaticamente uma senha de acesso em seu email!</strong> Ao receber o email (confira no spam), favorite o mesmo para não perder nenhum detalhe da sua participação!</p>
-
-                                <p>Use seu e-mail para acessar seu ingresso! </p>
-                                <hr class="mt-5">
+                            <!-- Info Cards Section -->
+                            <div style="padding: 20px 30px 30px;">
+                                <!-- Main Action Card -->
+                                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; padding: 25px; margin-bottom: 20px; box-shadow: 0 8px 32px rgba(102, 126, 234, 0.25);">
+                                    <div style="text-align: center;">
+                                        <p style="color: white; font-size: 18px; font-weight: 600; margin-bottom: 8px;">
+                                            <?= isset($evento) ? 'O universo mágico do ' . esc($evento->nome) . ' te espera!' : 'Estamos te esperando!' ?>
+                                        </p>
+                                        <p style="color: rgba(255,255,255,0.9); font-size: 15px; margin-bottom: 20px; line-height: 1.6;">
+                                            Sua compra foi realizada com sucesso e seus ingressos já estão disponíveis! 
+                                            O comprovante foi enviado para seu email.
+                                        </p>
+                                        <a href="<?= site_url('/console/dashboard/') ?>" class="btn btn-lg shadow" style="background: white; color: #667eea; font-weight: 600; padding: 14px 40px; border-radius: 50px; text-decoration: none; display: inline-block; transition: all 0.3s ease;">
+                                            <i class='bx bx-ticket' style="margin-right: 8px;"></i>Ver meus ingressos
+                                        </a>
+                                    </div>
+                                </div>
                                 
-                            </center>
+                                <!-- Info Cards Grid -->
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
+                                    <!-- First Purchase Card -->
+                                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; display: flex; align-items: flex-start; gap: 15px;">
+                                        <div style="min-width: 45px; width: 45px; height: 45px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                            <i class='bx bx-user-plus' style="font-size: 22px; color: white;"></i>
+                                        </div>
+                                        <div>
+                                            <h4 style="color: #2d3748; font-size: 14px; font-weight: 600; margin: 0 0 6px 0;">Primeira compra?</h4>
+                                            <p style="color: #718096; font-size: 13px; margin: 0; line-height: 1.5;">Você receberá automaticamente uma senha de acesso em seu email. Confira também a caixa de spam.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Email Access Card -->
+                                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; display: flex; align-items: flex-start; gap: 15px;">
+                                        <div style="min-width: 45px; width: 45px; height: 45px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                            <i class='bx bx-envelope' style="font-size: 22px; color: white;"></i>
+                                        </div>
+                                        <div>
+                                            <h4 style="color: #2d3748; font-size: 14px; font-weight: 600; margin: 0 0 6px 0;">Acesso rápido</h4>
+                                            <p style="color: #718096; font-size: 13px; margin: 0; line-height: 1.5;">Use seu e-mail cadastrado para acessar seus ingressos a qualquer momento.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-
-                        </div>
 
                             <?php if (isset($_SESSION['carrinho'])) : ?>
 
