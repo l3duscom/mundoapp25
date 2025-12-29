@@ -56,6 +56,7 @@
                                 <th>Referência</th>
                                 <th>Música</th>
                                 <th>Video LED</th>
+                                <th>Histórico</th>
                                 <th>Inscrito em</th>
                             </tr>
                         </thead>
@@ -159,6 +160,9 @@
                 },
                 {
                     "data": "video_led"
+                },
+                {
+                    "data": "historico"
                 },
                 {
                     "data": "created_at"
