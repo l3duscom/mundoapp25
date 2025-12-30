@@ -898,7 +898,7 @@ class Concursos extends BaseController
 
 
 				// Envia dados de acesso ao clente
-				$this->enviaEmailCriacaoEmailAcesso($cliente);
+				$this->enviaEmailCriacaoEmailAcesso($cliente, $newuser);
 
 				if ($cliente->telefone) {
 					$mensagem = "Saudações " . $cliente->nome . "\n\nSua conta no Mundo Dream foi criada com sucesso e você já pode adquirir seus ingressos para o Dreamfest e desfrutar de tudo o que temos a te oferecer! \n\nSeja muito bem vindo(a), seus dados de acesso são: \n*link:* " . esc(site_url("/")) . "\n*E-mail de acesso:* " . $cliente->email . "\n*Senha:*  " . $newuser . "\n\nAtenciosamente, \nDepartamento de Relacionamento";
@@ -1084,7 +1084,7 @@ class Concursos extends BaseController
 
 
 				// Envia dados de acesso ao clente
-				$this->enviaEmailCriacaoEmailAcesso($cliente);
+				$this->enviaEmailCriacaoEmailAcesso($cliente, $newuser);
 
 				if ($cliente->telefone) {
 					$mensagem = "Saudações " . $cliente->nome . "\n\nSua conta no Mundo Dream foi criada com sucesso e você já pode adquirir seus ingressos para o Dreamfest e desfrutar de tudo o que temos a te oferecer! \n\nSeja muito bem vindo(a), seus dados de acesso são: \n*link:* " . esc(site_url("/")) . "\n*E-mail de acesso:* " . $cliente->email . "\n*Senha:*  " . $newuser . "\n\nAtenciosamente, \nDepartamento de Relacionamento";
@@ -1248,7 +1248,7 @@ class Concursos extends BaseController
 
 
 				// Envia dados de acesso ao clente
-				$this->enviaEmailCriacaoEmailAcesso($cliente);
+				$this->enviaEmailCriacaoEmailAcesso($cliente, $newuser);
 
 				if ($cliente->telefone) {
 					$mensagem = "Saudações " . $cliente->nome . "\n\nSua conta no Mundo Dream foi criada com sucesso e você já pode adquirir seus ingressos para o Dreamfest e desfrutar de tudo o que temos a te oferecer! \n\nSeja muito bem vindo(a), seus dados de acesso são: \n*link:* " . esc(site_url("/")) . "\n*E-mail de acesso:* " . $cliente->email . "\n*Senha:*  " . $newuser . "\n\nAtenciosamente, \nDepartamento de Relacionamento";
@@ -2027,10 +2027,11 @@ class Concursos extends BaseController
 	 * @param object $usuario
 	 * @return void
 	 */
-	private function enviaEmailCriacaoEmailAcesso(object $cliente): void
+	private function enviaEmailCriacaoEmailAcesso(object $cliente, string $newuser = ''): void
 	{
 		$data = [
 			'cliente' => $cliente,
+			'newuser' => $newuser,
 		];
 
 		$mensagem = view('Clientes/email_dados_acesso', $data);
