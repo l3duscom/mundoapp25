@@ -1982,14 +1982,16 @@ class Concursos extends BaseController
 		}
 	}
 
-	private function criaUsuarioParaCliente(object $cliente): void
+	private function criaUsuarioParaCliente(object $cliente): string
 	{
+		// Gera senha aleatória
+		$senha = random_string('alnum', 8);
 
 		// Montamos os dados do usuário do cliente
 		$usuario = [
 			'nome' => $cliente->nome,
 			'email' => $cliente->email,
-			'password' => '123456',
+			'password' => $senha,
 			'ativo' => true,
 		];
 
@@ -2011,6 +2013,8 @@ class Concursos extends BaseController
 			->where('id', $this->clienteModel->getInsertID())
 			->set('usuario_id', $this->usuarioModel->getInsertID())
 			->update();
+
+		return $senha;
 	}
 
 	/**
