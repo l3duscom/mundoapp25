@@ -827,9 +827,9 @@ class Concursos extends BaseController
 
 	public function registrar_inscricao_kpop_open()
 	{
-
-		// Envio o hash do token do form
-		$retorno['token'] = csrf_hash();
+		try {
+			// Envio o hash do token do form
+			$retorno['token'] = csrf_hash();
 
 
 		// Recupero o post da requisição
@@ -1000,6 +1000,11 @@ class Concursos extends BaseController
 		}
 
 		return redirect()->to(site_url("concursos/inscricao_kpop/" . $post['concurso_id']))->with('atencao', "Erro ao realizar inscrição, contate o suporte!");
+		} catch (\Exception $e) {
+			log_message('error', 'Erro na inscrição K-POP: ' . $e->getMessage() . ' - ' . $e->getTraceAsString());
+			$concurso_id = $this->request->getPost('concurso_id') ?? '15';
+			return redirect()->to(site_url("concursos/inscricao_kpop/" . $concurso_id))->with('atencao', "Erro interno: " . $e->getMessage());
+		}
 	}
 
 	public function registrar_inscricao_cosplay_open()
