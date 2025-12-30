@@ -8,11 +8,11 @@ class Login extends BaseController
 {
 	public function novo()
 	{
-		// Buscar próximos eventos ativos
+		// Buscar próximos eventos ativos (apenas eventos futuros)
 		$eventoModel = new \App\Models\EventoModel();
 		$eventos = $eventoModel
 			->where('ativo', 1)
-			->where('data_inicio >=', date('Y-m-d'))
+			->where('data_inicio >', date('Y-m-d'))
 			->orderBy('data_inicio', 'ASC')
 			->limit(6)
 			->findAll();
