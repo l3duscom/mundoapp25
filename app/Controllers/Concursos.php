@@ -978,6 +978,9 @@ class Concursos extends BaseController
 		}
 
 
+		// Remove campo tipo_midia que é apenas controle do frontend
+		unset($post['tipo_midia']);
+		
 		$inscricao = new Inscricao($post);
 		$inscricao->referencia = $imagem->getName();
 		$inscricao->musica = $nomeMusica;
