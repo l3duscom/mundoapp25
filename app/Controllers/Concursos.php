@@ -999,7 +999,11 @@ class Concursos extends BaseController
 			return redirect()->to(site_url("concursos/inscricao_kpop/" . $post['concurso_id']))->with('sucesso', "Inscrição realizada com sucesso! Confirma os dados em seu e-mail!");
 		}
 
-		return redirect()->to(site_url("concursos/inscricao_kpop/" . $post['concurso_id']))->with('atencao', "Erro ao realizar inscrição, contate o suporte!");
+		// Falha ao salvar - exibir erro do model para debug
+		$erros = $this->inscricaoModel->errors();
+		$mensagemErro = !empty($erros) ? implode(', ', $erros) : 'Erro desconhecido';
+		log_message('error', 'Erro ao salvar inscrição K-POP: ' . $mensagemErro);
+		return redirect()->to(site_url("concursos/inscricao_kpop/" . $post['concurso_id']))->with('atencao', "Erro: " . $mensagemErro);
 		} catch (\Exception $e) {
 			log_message('error', 'Erro na inscrição K-POP: ' . $e->getMessage() . ' - ' . $e->getTraceAsString());
 			$concurso_id = $this->request->getPost('concurso_id') ?? '15';
