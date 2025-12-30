@@ -8,8 +8,42 @@ class Login extends BaseController
 {
 	public function novo()
 	{
+		// Buscar próximos eventos ativos
+		$eventoModel = new \App\Models\EventoModel();
+		$eventos = $eventoModel
+			->where('ativo', 1)
+			->where('data_inicio >=', date('Y-m-d'))
+			->orderBy('data_inicio', 'ASC')
+			->limit(6)
+			->findAll();
+
+		// Buscar cupons de desconto ativos
+		$cupomModel = new \App\Models\CupomModel();
+		$cupons = $cupomModel
+			->where('ativo', 1)
+			->where('(data_fim IS NULL OR data_fim >= "' . date('Y-m-d') . '")')
+			->orderBy('desconto', 'DESC')
+			->limit(4)
+			->findAll();
+
+		// Backgrounds aleatórios locais
+		$backgrounds = [
+			site_url('recursos/theme/images/login/1.JPG'),
+			site_url('recursos/theme/images/login/2.JPG'),
+			site_url('recursos/theme/images/login/3.JPG'),
+			site_url('recursos/theme/images/login/4.JPG'),
+			site_url('recursos/theme/images/login/5.JPG'),
+			site_url('recursos/theme/images/login/6.JPG'),
+			site_url('recursos/theme/images/login/7.JPG'),
+			site_url('recursos/theme/images/login/8.JPG'),
+		];
+		$backgroundAleatorio = $backgrounds[array_rand($backgrounds)];
+
 		$data = [
-			'titulo' => 'Realize o login',
+			'titulo' => 'Acesse sua conta',
+			'eventos' => $eventos,
+			'cupons' => $cupons,
+			'background' => $backgroundAleatorio,
 		];
 
 		return view('Login/novo', $data);

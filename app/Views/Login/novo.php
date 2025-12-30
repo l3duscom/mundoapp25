@@ -1,191 +1,200 @@
 <?php echo $this->extend('Layout/Autenticacao/principal_autenticacao'); ?>
 
-
 <?php echo $this->section('titulo') ?> <?php echo $titulo; ?> <?php echo $this->endSection() ?>
 
-
 <?php echo $this->section('estilos') ?>
-
-<!-- Aqui coloco os estilos da view-->
-
+<link rel="stylesheet" href="<?php echo site_url('recursos/auth/css/login-modern.css'); ?>">
 <?php echo $this->endSection() ?>
-
-
 
 <?php echo $this->section('conteudo') ?>
 
-<!-- Aqui coloco o conteudo da view-->
+<div class="login-page">
+  <!-- Background Fullscreen -->
+  <div class="bg-container">
+    <img src="<?php echo $background; ?>" alt="Background" class="bg-image" loading="eager">
+  </div>
+  <div class="bg-overlay"></div>
 
-<div class="limiter">
-  <div class="container-login100">
-    <div class="wrap-login100">
-      <div class="login100-pic js-tilt" data-tilt>
-        <img src="<?php echo site_url('recursos/auth/images/img-01.png'); ?>" alt="IMG">
+  <!-- Card de Login Glassmorphism -->
+  <div class="glass-card">
+    <div class="brand-section">
+      <h1 class="brand-title">Mundo Dream</h1>
+      <p class="brand-subtitle">Acesse sua conta para continuar</p>
+    </div>
+
+    <?php echo form_open('/', ['id' => 'form', 'class' => 'form-modern']); ?>
+
+    <div id="response"></div>
+
+    <?php if (session()->getFlashdata('sucesso')): ?>
+      <div class="alert-modern alert-success-modern">
+        <i class="fa fa-check-circle"></i> <?php echo session()->getFlashdata('sucesso'); ?>
       </div>
+    <?php endif; ?>
 
-
-      <div class="login100-form validate-form">
-        <center>
-
-          <h4 class="text-primary" style="padding-top:20px">
-            Acesse sua conta
-          </h4>
-        </center>
-        <hr>
-
-
-        <?php echo form_open('/', ['id' => 'form', 'class' => 'form-validate']); ?>
-
-        <div id="response">
-
-        </div>
-
-
-        <?php echo $this->include('Layout/_mensagens'); ?>
-        <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
-
-          <input id="login-username" class="input100" type="text" name="email" placeholder="Seu e-mail de acesso">
-          <span class="focus-input100"></span>
-          <span class="symbol-input100">
-            <i class="fa fa-envelope" aria-hidden="true"></i>
-          </span>
-        </div>
-
-        <div class="wrap-input100 validate-input" data-validate="Password is required">
-          <input id="login-password" class="input100" type="password" name="password" placeholder="Password">
-          <span class="focus-input100"></span>
-          <span class="symbol-input100">
-            <i class="fa fa-lock" aria-hidden="true"></i>
-          </span>
-        </div>
-
-        <div class="container-login100-form-btn">
-          <input id="btn-login" type="submit" class="login100-form-btn" value="Entrar">
-
-        </div>
-        <?php echo form_close(); ?>
-        <hr>
-
-        <div class="text-center " style="padding-top: 5px;">
-          <a class="login100-form-btn" style="background-color: #666; font-size: 12px; heigth: 10px; !important" href="<?php echo site_url('esqueci'); ?>">
-            Esqueceu a senha?
-          </a>
-        </div>
-
-        <div class="text-center p-t-20">
-          <span class="txt2">
-            <p>Ainda não comprou os seus ingressos? <a href="https://dreamfest.com.br/ingressos" target="_blank"><strong>Compre o seu agora mesmo</strong></a> </p>
-          </span>
-        </div>
+    <?php if (session()->getFlashdata('erro')): ?>
+      <div class="alert-modern alert-danger-modern">
+        <i class="fa fa-exclamation-circle"></i> <?php echo session()->getFlashdata('erro'); ?>
       </div>
+    <?php endif; ?>
+
+    <div class="input-group">
+      <input type="email" id="login-username" name="email" class="modern-input" placeholder="Seu e-mail" required autocomplete="email">
+      <i class="fa fa-envelope input-icon"></i>
+    </div>
+
+    <div class="input-group">
+      <input type="password" id="login-password" name="password" class="modern-input" placeholder="Sua senha" required autocomplete="current-password">
+      <i class="fa fa-lock input-icon"></i>
+    </div>
+
+    <button type="submit" id="btn-login" class="btn-primary-modern">
+      <span class="btn-text">Entrar</span>
+    </button>
+
+    <?php echo form_close(); ?>
+
+    <div class="divider">
+      <span>ou</span>
+    </div>
+
+    <a href="<?php echo site_url('esqueci'); ?>" class="btn-secondary-modern">
+      <i class="fa fa-key"></i> Esqueceu a senha?
+    </a>
+
+    <div class="form-footer">
+      <p style="color: rgba(255,255,255,0.8); font-size: 13px; margin-top: 16px;">
+        Ainda não tem conta? 
+        <a href="https://dreamfest.com.br/ingressos" target="_blank" class="form-link" style="font-weight: 600;">
+          Compre seu ingresso
+        </a>
+      </p>
     </div>
   </div>
+
+  <!-- Bottom Section - Eventos & Promoções -->
+  <?php if (!empty($eventos)): ?>
+  <div class="bottom-section">
+    <div class="bottom-content">
+      
+      <?php if (!empty($eventos)): ?>
+      <div class="events-section">
+        <h3 class="section-title">
+          <i class="fa fa-calendar-check"></i> Próximos Eventos
+        </h3>
+        <div class="events-carousel">
+          <?php foreach ($eventos as $evento): ?>
+          <a href="<?php echo site_url('ingressos/' . $evento->slug); ?>" class="event-card" style="text-decoration: none;">
+            <?php if (!empty($evento->cover)): ?>
+            <img src="<?php echo site_url('uploads/eventos/' . $evento->cover); ?>" alt="<?php echo esc($evento->nome); ?>" class="event-image">
+            <?php else: ?>
+            <div class="event-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
+              <i class="fa fa-ticket" style="font-size: 40px; color: rgba(255,255,255,0.5);"></i>
+            </div>
+            <?php endif; ?>
+            <div class="event-info">
+              <h4 class="event-name"><?php echo esc($evento->nome); ?></h4>
+              <p class="event-date">
+                <i class="fa fa-calendar"></i>
+                <?php echo date('d/m/Y', strtotime($evento->data_inicio)); ?>
+              </p>
+            </div>
+          </a>
+          <?php endforeach; ?>
+        </div>
+      </div>
+      <?php endif; ?>
+
+    </div>
+  </div>
+  <?php endif; ?>
+
 </div>
-
-
-
-
-
-
-
 
 <?php echo $this->endSection() ?>
 
-
-
 <?php echo $this->section('scripts') ?>
-
-<!-- Aqui coloco os scripts da view-->
-
 <script>
-  $(document).ready(function() {
+$(document).ready(function() {
 
-    $("#form").on('submit', function(e) {
+  $("#form").on('submit', function(e) {
+    e.preventDefault();
 
+    var $btn = $("#btn-login");
+    var $btnText = $btn.find('.btn-text');
+    var originalText = $btnText.text();
 
-      e.preventDefault();
+    $.ajax({
+      type: 'POST',
+      url: '<?php echo site_url('login/criar'); ?>',
+      data: new FormData(this),
+      dataType: 'json',
+      contentType: false,
+      cache: false,
+      processData: false,
+      beforeSend: function() {
+        $("#response").html('');
+        $btn.addClass('btn-loading');
+        $btnText.text('Verificando...');
+        $btn.prop('disabled', true);
+      },
+      success: function(response) {
+        $btn.removeClass('btn-loading');
+        $btnText.text(originalText);
+        $btn.prop('disabled', false);
 
+        $('[name=csrf_ordem]').val(response.token);
 
-      $.ajax({
-
-        type: 'POST',
-        url: '<?php echo site_url('login/criar'); ?>',
-        data: new FormData(this),
-        dataType: 'json',
-        contentType: false,
-        cache: false,
-        processData: false,
-        beforeSend: function() {
-
-          $("#response").html('');
-          $("#btn-login").val('Por favor aguarde...');
-
-        },
-        success: function(response) {
-
-          $("#btn-login").val('Entrar');
-          $("#btn-login").removeAttr("disabled");
-
-          $('[name=csrf_ordem]').val(response.token);
-
-
-          if (!response.erro) {
-
-            // Tudo certo com a atualização do usuário
-            // Podemos agora redirecioná-lo tranquilamente
-
-            window.location.href = "<?php echo site_url(); ?>" + response.redirect;
-
-
-          }
-
-          if (response.erro) {
-
-            // Exitem erros de validação
-
-
-            $("#response").html('<div class="alert alert-danger">' + response.erro + '</div>');
-
-
-            if (response.erros_model) {
-
-
-              $.each(response.erros_model, function(key, value) {
-
-                $("#response").append('<ul class="list-unstyled"><li class="text-danger">' + value + '</li></ul>');
-
-              });
-
-            }
-
-          }
-
-        },
-        error: function() {
-
-          alert('Não foi possível procesar a solicitação. Por favor entre em contato com o suporte técnico.');
-          $("#btn-login").val('Entrar');
-          $("#btn-login").removeAttr("disabled");
-
+        if (!response.erro) {
+          // Login bem-sucedido - redirecionar
+          $btnText.text('Redirecionando...');
+          $btn.addClass('btn-loading');
+          window.location.href = "<?php echo site_url(); ?>" + response.redirect;
         }
 
+        if (response.erro) {
+          // Exibir erros
+          $("#response").html('<div class="alert-modern alert-danger-modern"><i class="fa fa-exclamation-circle"></i> ' + response.erro + '</div>');
 
-
-      });
-
-
+          if (response.erros_model) {
+            $.each(response.erros_model, function(key, value) {
+              $("#response").append('<div class="alert-modern alert-danger-modern" style="margin-top: 8px;"><i class="fa fa-times-circle"></i> ' + value + '</div>');
+            });
+          }
+        }
+      },
+      error: function() {
+        alert('Não foi possível processar a solicitação. Por favor entre em contato com o suporte técnico.');
+        $btn.removeClass('btn-loading');
+        $btnText.text(originalText);
+        $btn.prop('disabled', false);
+      }
     });
-
-
-    $("#form").submit(function() {
-
-      $(this).find(":submit").attr('disabled', 'disabled');
-
-    });
-
-
   });
+
+  // Animação de entrada para eventos (scroll horizontal com mouse wheel)
+  $('.events-carousel').on('wheel', function(e) {
+    if (e.originalEvent.deltaY !== 0) {
+      e.preventDefault();
+      this.scrollLeft += e.originalEvent.deltaY;
+    }
+  });
+
+  // Tooltip para cupons
+  $('.promo-badge').on('click', function() {
+    var codigo = $(this).attr('title').replace('Use o código: ', '');
+    
+    // Copiar para clipboard
+    navigator.clipboard.writeText(codigo).then(function() {
+      var $badge = $(this);
+      var originalHtml = $badge.html();
+      $badge.html('<i class="fa fa-check"></i> Código copiado!');
+      setTimeout(function() {
+        $badge.html(originalHtml);
+      }, 2000);
+    }.bind(this));
+  });
+
+});
 </script>
-
-
 <?php echo $this->endSection() ?>
