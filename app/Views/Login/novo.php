@@ -62,14 +62,6 @@
       <i class="fa fa-key"></i> Esqueceu a senha?
     </a>
 
-    <div class="form-footer">
-      <p style="color: rgba(255,255,255,0.8); font-size: 13px; margin-top: 16px;">
-        Ainda não tem conta? 
-        <a href="https://dreamfest.com.br/ingressos" target="_blank" class="form-link" style="font-weight: 600;">
-          Compre seu ingresso
-        </a>
-      </p>
-    </div>
   </div>
 
   <!-- Bottom Section - Eventos & Promoções -->
@@ -108,7 +100,7 @@
               <h4 class="event-name"><?php echo esc($evento->nome); ?></h4>
               <p class="event-date">
                 <i class="fa fa-calendar"></i>
-                <?php echo date('d/m/Y', strtotime($evento->data_inicio)); ?>
+                <?php echo date('d/m', strtotime($evento->data_inicio)); ?> - <?php echo date('d/m/Y', strtotime($evento->data_fim)); ?>
               </p>
             </div>
           </a>
