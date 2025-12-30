@@ -906,12 +906,10 @@ class Concursos extends BaseController
 					$telefone = str_replace([' ', '-', '(', ')'], '', $cliente->telefone);
 					if (strlen($telefone) == 10 || strlen($telefone) == 11) {
 						// Verificar se o número começa com 9 (para números de celular no Brasil)
-						if (
-							strlen($telefone) == 11 && substr($telefone, 2, 1) != '9'
-						) {
-							return false;
+						// Apenas envia WhatsApp se for um número válido
+						if (strlen($telefone) == 11 && substr($telefone, 2, 1) == '9') {
+							$api = $this->notifyService->notificawpp($cliente, $mensagem);
 						}
-						$api = $this->notifyService->notificawpp($cliente, $mensagem);
 					}
 				}
 
@@ -934,6 +932,9 @@ class Concursos extends BaseController
 					->first();
 
 				$user_id = $cliente->usuario_id;
+			} else {
+				// Erro ao criar cliente
+				return redirect()->to(site_url("concursos/inscricao_kpop/" . $post['concurso_id']))->with('atencao', "Erro ao processar sua inscrição. Por favor, verifique os dados e tente novamente.");
 			}
 		}
 
