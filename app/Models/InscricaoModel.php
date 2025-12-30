@@ -14,6 +14,8 @@ class InscricaoModel extends Model
         'user_id',
         'codigo',
         'email',
+        'telefone',
+        'cpf',
         'motivacao',
         'tempo',
         'nome',
@@ -34,7 +36,7 @@ class InscricaoModel extends Model
         'grupo',
         'status',
         'ordem',
-        'cretade_at',
+        'created_at',
 
     ];
 
