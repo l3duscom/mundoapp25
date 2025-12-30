@@ -942,7 +942,10 @@ class Concursos extends BaseController
 		$musica = $this->request->getFile('musica');
 		$video = $this->request->getFile('video_led');
 
-
+		// Verificar se a imagem foi enviada
+		if (!$imagem || !$imagem->isValid() || $imagem->hasMoved()) {
+			return redirect()->to(site_url("concursos/inscricao_kpop/" . $post['concurso_id']))->with('atencao', "Erro ao enviar imagem de referência. Por favor, tente novamente.");
+		}
 
 		list($largura, $altura) = getimagesize($imagem->getPathName());
 
@@ -956,20 +959,28 @@ class Concursos extends BaseController
 
 
 		$caminhoImagem = $imagem->store('concursos');
-		$caminhoMusica = $musica->store('concursos');
-		$caminhoVideo = $video->store('concursos');
 
+		// Processar música apenas se foi enviada
+		$caminhoMusica = null;
+		$nomeMusica = null;
+		if ($musica && $musica->isValid() && !$musica->hasMoved()) {
+			$caminhoMusica = $musica->store('concursos');
+			$nomeMusica = $musica->getName();
+		}
 
-		// C:\xampp\htdocs\ordem\writable\uploads/usuarios/1625800273_8dc568f411ea409f3e16.jpg
-		$caminhoImagem = WRITEPATH . "uploads/$caminhoImagem";
-		$caminhoMusica = WRITEPATH . "uploads/$caminhoMusica";
-		$caminhoVideo = WRITEPATH . "uploads/$caminhoVideo";
+		// Processar vídeo LED apenas se foi enviado
+		$caminhoVideo = null;
+		$nomeVideo = null;
+		if ($video && $video->isValid() && !$video->hasMoved()) {
+			$caminhoVideo = $video->store('concursos');
+			$nomeVideo = $video->getName();
+		}
 
 
 		$inscricao = new Inscricao($post);
 		$inscricao->referencia = $imagem->getName();
-		$inscricao->musica = $musica->getName();
-		$inscricao->video_led = $video->getName();
+		$inscricao->musica = $nomeMusica;
+		$inscricao->video_led = $nomeVideo;
 		$inscricao->codigo = $this->inscricaoModel->geraCodigo();
 		$inscricao->status = 'INICIADA';
 
