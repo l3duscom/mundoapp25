@@ -4,8 +4,323 @@
 
 
 <?php echo $this->section('estilos') ?>
+<style>
+/* Wizard Stepper Styles */
+.wizard-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
 
+.wizard-header {
+    background: linear-gradient(135deg, #ff0063 0%, #ff4d8d 100%);
+    border-radius: 16px 16px 0 0;
+    padding: 30px 20px;
+    color: white;
+    text-align: center;
+}
 
+.wizard-header h4 {
+    margin: 0 0 25px 0;
+    font-weight: 600;
+    font-size: 1.4rem;
+}
+
+.wizard-stepper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    position: relative;
+}
+
+.wizard-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.wizard-step.disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.step-circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    border: 3px solid rgba(255,255,255,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    color: white;
+}
+
+.wizard-step.active .step-circle {
+    background: white;
+    color: #ff0063;
+    border-color: white;
+    box-shadow: 0 0 0 4px rgba(255,255,255,0.3);
+    animation: pulse 2s infinite;
+}
+
+.wizard-step.completed .step-circle {
+    background: #22c55e;
+    border-color: #22c55e;
+    color: white;
+}
+
+.step-label {
+    margin-top: 10px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    opacity: 0.8;
+    white-space: nowrap;
+}
+
+.wizard-step.active .step-label,
+.wizard-step.completed .step-label {
+    opacity: 1;
+    font-weight: 600;
+}
+
+.step-connector {
+    width: 80px;
+    height: 3px;
+    background: rgba(255,255,255,0.3);
+    position: relative;
+    top: -18px;
+    z-index: 1;
+}
+
+.step-connector.active {
+    background: white;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.5); }
+    50% { box-shadow: 0 0 0 8px rgba(255,255,255,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+}
+
+.wizard-body {
+    background: white;
+    border-radius: 0 0 16px 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+
+.wizard-content {
+    padding: 30px;
+}
+
+.wizard-step-content {
+    display: none;
+    animation: fadeIn 0.4s ease;
+}
+
+.wizard-step-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.step-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.step-title i {
+    color: #ff0063;
+    font-size: 1.4rem;
+}
+
+.step-subtitle {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-bottom: 25px;
+}
+
+.wizard-navigation {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 30px 30px;
+    border-top: 1px solid #e2e8f0;
+    background: #f8fafc;
+    border-radius: 0 0 16px 16px;
+}
+
+.btn-wizard {
+    padding: 12px 28px;
+    font-weight: 600;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-wizard-prev {
+    background: #e2e8f0;
+    color: #475569;
+    border: none;
+}
+
+.btn-wizard-prev:hover {
+    background: #cbd5e1;
+    color: #334155;
+}
+
+.btn-wizard-next {
+    background: linear-gradient(135deg, #ff0063 0%, #ff4d8d 100%);
+    color: white;
+    border: none;
+}
+
+.btn-wizard-next:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(255, 0, 99, 0.4);
+}
+
+.btn-wizard-submit {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+    border: none;
+}
+
+.btn-wizard-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(34, 197, 94, 0.4);
+}
+
+.form-group-modern {
+    margin-bottom: 20px;
+}
+
+.form-group-modern label {
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 8px;
+    display: block;
+    font-size: 0.9rem;
+}
+
+.form-group-modern .form-control {
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.form-group-modern .form-control:focus {
+    border-color: #ff0063;
+    box-shadow: 0 0 0 4px rgba(255, 0, 99, 0.1);
+}
+
+.form-hint {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-top: 6px;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.form-hint i {
+    color: #ff0063;
+    margin-top: 2px;
+}
+
+.file-upload-area {
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+    margin-bottom: 15px;
+}
+
+.file-upload-area:hover {
+    border-color: #ff0063;
+    background: #fff5f8;
+}
+
+.file-upload-area label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.file-upload-area input[type="file"] {
+    width: 100%;
+}
+
+.file-upload-hint {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-top: 8px;
+}
+
+.alert-info-wizard {
+    background: linear-gradient(135deg, #fff5f8 0%, #ffe4ec 100%);
+    border: none;
+    border-left: 4px solid #ff0063;
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+}
+
+.alert-info-wizard strong {
+    color: #be0049;
+}
+
+@media (max-width: 576px) {
+    .wizard-header {
+        padding: 20px 15px;
+    }
+    
+    .step-circle {
+        width: 36px;
+        height: 36px;
+        font-size: 0.85rem;
+    }
+    
+    .step-connector {
+        width: 40px;
+    }
+    
+    .step-label {
+        font-size: 0.7rem;
+    }
+    
+    .wizard-navigation {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn-wizard {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
 <?php echo $this->endSection() ?>
 
 
@@ -14,213 +329,214 @@
 
 
 <div class="row">
-    <div class="col-lg-2 ">
-    </div>
-    <div class="col-lg-8 ">
-        <div class="block">
-            <div class="block-body">
-                <div class="card shadow radius-10">
-                    <div class="card-body">
+    <div class="col-lg-2"></div>
+    <div class="col-lg-8">
+        
+        <!-- Container para erros de validação JS -->
+        <div id="response" class="mb-3"></div>
 
+        <div class="wizard-container">
+            <!-- Wizard Header com Stepper -->
+            <div class="wizard-header">
+                <h4><i class="bx bx-star me-2"></i><?= $concurso->nome ?></h4>
+                
+                <div class="wizard-stepper">
+                    <div class="wizard-step active" data-step="1" onclick="goToStep(1)">
+                        <div class="step-circle">1</div>
+                        <span class="step-label">Dados Pessoais</span>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="wizard-step disabled" data-step="2" onclick="goToStep(2)">
+                        <div class="step-circle">2</div>
+                        <span class="step-label">Sobre o Cosplay</span>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="wizard-step disabled" data-step="3" onclick="goToStep(3)">
+                        <div class="step-circle">3</div>
+                        <span class="step-label">Arquivos</span>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Wizard Body -->
+            <div class="wizard-body">
+                <?php echo form_open_multipart('Concursos/registrar_inscricao_cosplay_open', ['id' => 'form-inscricao']) ?>
+                
+                <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>" id="csrf_token_field">
+                <input type="hidden" name="concurso_id" value="<?= $concurso->id ?>">
 
+                <div class="wizard-content">
+                    
+                    <!-- ETAPA 1: Dados Pessoais -->
+                    <div class="wizard-step-content active" data-step="1">
+                        <div class="step-title">
+                            <i class="bx bx-user"></i>
+                            Dados Pessoais
+                        </div>
+                        <p class="step-subtitle">Informe seus dados para identificação e contato</p>
 
-
-
-                        <div class="col-lg-12">
-
-                            <div class="block">
-
-                                <div class="block-body">
-
-                                    <!-- Exibirá os retornos do backend -->
-                                    <div id="response">
-                                        <?php if (session()->has('sucesso')): ?>
-                                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                                <i class="bx bx-check-circle me-2"></i>
-                                                <strong>Sucesso!</strong> <?= session('sucesso') ?>
-                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                            </div>
-                                        <?php endif; ?>
-                                        
-                                        <?php if (session()->has('atencao')): ?>
-                                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                                <i class="bx bx-error-circle me-2"></i>
-                                                <strong>Atenção!</strong> <?= session('atencao') ?>
-                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                            </div>
-                                        <?php endif; ?>
-                                        
-                                        <?php if (session()->has('erro')): ?>
-                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                                <i class="bx bx-x-circle me-2"></i>
-                                                <strong>Erro!</strong> <?= session('erro') ?>
-                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                            </div>
-                                        <?php endif; ?>
-                                    </div>
-
-                                    <div class="card shadow radius-10">
-                                        <div class="card-body">
-                                            <?php echo form_open_multipart('Concursos/registrar_inscricao_cosplay_open', ['id' => 'form-inscricao']) ?>
-
-                                            <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>" id="csrf_token_field">
-                                            <input type="hidden" name="concurso_id" value="<?= $concurso->id ?>">
-                                            <center>
-                                                <h4>
-                                                    <?= $concurso->nome ?>
-                                                </h4>
-                                                <hr>
-                                            </center>
-                                            <div class="alert alert-danger  fade show" role="alert">
-                                                <strong>Atenção</strong> Todos os campos são obrigatórios!
-
-                                            </div>
-
-                                            <div class="row">
-
-                                                <div class="form-group col-md-12">
-                                                    <label class="form-control-label text-muted" style="padding-left: 5px;"> Informe o seu melhor e-mail</label>
-                                                    <input type="email" name="email" placeholder="Informe seu email" class="form-control  mb-0 shadow" style="padding:13px;" required>
-                                                    <label class="form-control-label text-muted mb-3" style="font-size: 10px; padding-left:5px;"><i class="fadeIn animated bx bx-info-circle" style="  font-size: 13px; font-weight: 600px"></i>
-                                                        Este e-mail será usado para confirmar a sua inscrição, e lhe dar acesso ao mundo dream, para realziar check-in, acompanhar e validar as suas notas!</label>
-
-                                                </div>
-                                                <div class="form-group col-md-6">
-                                                    <label class="form-control-label text-muted" style="padding-left: 5px;"> Informe o seu Nome Social</label>
-                                                    <input type="text" name="nome_social" placeholder="Informe seu nome social" class="form-control  mb-2 shadow " style="padding:13px;" required>
-                                                    <label class="form-control-label text-muted mb-3" style="font-size: 10px; padding-left:5px;"><i class="fadeIn animated bx bx-info-circle" style="  font-size: 13px; font-weight: 600px"></i>
-                                                        Esta informação será a única usada na divulgação da sua participação na competição.</label>
-                                                </div>
-                                                <div class="form-group col-md-6">
-                                                    <label class="form-control-label text-muted" style="padding-left: 5px;"> Informe o seu nome, igual o do RG</label>
-                                                    <input type="text" name="nome" placeholder="Nome completo" class="form-control  mb-2 shadow " style="padding:13px;" required>
-                                                    <label class="form-control-label text-muted mb-3" style="font-size: 10px; padding-left:5px;"><i class="fadeIn animated bx bx-info-circle" style="  font-size: 13px; font-weight: 600px"></i>
-                                                        Esta informação não será divulgada. Ela é usada unicamente para conferência com seu documento oficial.</label>
-                                                </div>
-                                                <div class="form-group col-md-6">
-                                                    <label class="form-control-label">Celular/Whatsapp</label>
-                                                    <input type="text" name="telefone" placeholder="Insira o telefone" class="form-control sp_celphones mb-2 shadow" style="font-size:medium; padding:13px" required>
-                                                    <label class="form-control-label text-muted mb-3" style="font-size: 10px; padding-left:5px;"><i class="fadeIn animated bx bx-info-circle" style="  font-size: 13px; font-weight: 600px"></i>
-                                                        É por aqui que manteremos contato referente à sua participação na competição!</label>
-                                                </div>
-
-                                                <div class="form-group col-md-6">
-                                                    <label class="form-control-label">CPF</label>
-                                                    <input type="text" name="cpf" placeholder="Digite o número do  seu CPF" class="form-control  mb-2 shadow cpf" style="font-size:medium; padding:13px" required>
-                                                    <label class="form-control-label text-muted mb-3" style="font-size: 10px; padding-left:5px;"><i class="fadeIn animated bx bx-info-circle" style="  font-size: 13px; font-weight: 600px"></i>
-                                                        Esta informação não será divulgada. Ela é usada únicamente para sua identificação.</label>
-                                                </div>
-                                                <div class="form-group col-md-12">
-                                                    <label class="form-control-label text-muted" style="padding-left: 5px;"> Qual sua motivação?</label>
-                                                    <input type="text" name="motivacao" placeholder="" class="form-control  mb-2 shadow " style="padding:13px;" required>
-                                                    <label class="form-control-label text-muted mb-3" style="font-size: 10px; padding-left:5px;"><i class="fadeIn animated bx bx-info-circle" style="  font-size: 13px; font-weight: 600px"></i>
-                                                        O que te motiva a participar da competição?</label>
-                                                </div>
-                                                <div class="form-group col-md-4">
-                                                    <label class="form-control-label">Nome do personagem</label>
-                                                    <input type="text" name="personagem" placeholder="Informe o nome do personagem" class="form-control mb-2 shadow " style="padding:13px;" required>
-                                                    <label class="form-control-label text-muted mb-3" style="font-size: 10px; padding-left:5px;"><i class="fadeIn animated bx bx-info-circle" style="  font-size: 13px; font-weight: 600px"></i>
-                                                        Exemplo: Luffy</label>
-                                                </div>
-
-                                                <div class="form-group col-md-4">
-                                                    <label class="form-control-label">Nome da obra/mídia</label>
-                                                    <input type="text" name="obra" placeholder="Informe o nome da obra" class="form-control mb-2 shadow " style="padding:13px;" required>
-                                                    <label class="form-control-label text-muted mb-3" style="font-size: 10px; padding-left:5px;"><i class="fadeIn animated bx bx-info-circle" style="  font-size: 13px; font-weight: 600px"></i>
-                                                        Exemplo: One Piece</label>
-                                                </div>
-
-                                                <div class="form-group col-md-4">
-                                                    <label class="form-control-label">Que tipo de obra está baseando este cosplay?</label>
-
-                                                    <select id="genero" name="genero" class="form-control mb-2 shadow">
-                                                        <option value="---">Selecione uma opção</option>
-                                                        <option value="Animação(Anime, Filme de animação, Cartoon, entre outros)">Animação(Anime, Filme de animação, Cartoon, entre outros)</option>
-                                                        <option value="Game">Game</option>
-                                                        <option value="Filme">Filme</option>
-                                                        <option value="Série">Série</option>
-                                                        <option value="Mangá/Manwa">Mangá/Manwa</option>
-                                                        <option value="HQ">HQ</option>
-                                                        <option value="Livro">Livro</option>
-                                                    </select>
-
-                                                </div>
-
-
-                                                <div class="form-group col-md-12">
-                                                    <label class="form-control-label text-muted" style="padding-left: 5px;">Observações</label>
-                                                    <input type="text" name="observacoes" placeholder="" class="form-control  mb-2 shadow " style="padding:13px;" required>
-                                                    <label class="form-control-label text-muted mb-3" style="font-size: 10px; padding-left:5px;"><i class="fadeIn animated bx bx-info-circle" style="  font-size: 13px; font-weight: 600px"></i>
-                                                        Observações sobre o arquivo de Referência ou Apresentação? Ou sobre a apresentação em si? Exemplo se vai precisar de ajuda para subir ao palco, segurar algo, necessidade de algo não disponível como tomada ou algum outro detalhe não especificado anteriormente. Ou sobre a apresentação em si? Caso não tenha informe "Sem mais observações"</label>
-                                                </div>
-
-                                                <div class="block">
-
-                                                    <div class="block-body">
-                                                        <div class="card shadow radius-10">
-                                                            <div class="card-body">
-                                                                <span style="font-weight: 600; font-size:16px">Arquivos</span>
-                                                                <hr>
-                                                                <div class="form-group col-md-12">
-                                                                    <label class="form-control-label">Imagem de referência <span style="color: red;"> Máx. 50mb</span></label>
-                                                                    <input type="file" name="referencia" class="form-control" required>
-                                                                    <label class="form-control-label text-muted mb-3" style="font-size: 10px; padding-left:5px;"><i class="fadeIn animated bx bx-info-circle" style="  font-size: 13px; font-weight: 600px"></i>
-                                                                        REFERÊNCIA VISUAL OBRIGATÓRIA, insira seu arquivo de referência (Imagem de Referência) - SOMENTE 1 ARQUIVO. | Somente 1 Imagem de Referência em formato JPG ou PNG. (Preferencialmente no tamanho de 1200 x 675 pixels). Este arquivo é obrigatório para validar a inscrição.</label>
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-
-
-
-
-
-
-                                                <div class="d-grid gap-2 mb-0 mt-3">
-                                                    <button id="btn-salvar" type="submit" class="btn btn-primary btn-lg mt-0">
-                                                        <span id="btn-text">Realizar Inscrição</span>
-                                                        <span id="btn-spinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true"></span>
-                                                    </button>
-                                                    <center><span style="font-size: 12px;"><?= $concurso->nome ?></span></center>
-                                                </div>
-                                            </div>
-
-
-
-
-
-                                            <?php echo form_close(); ?>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-
-
-                            </div> <!-- ./ block -->
-
+                        <div class="form-group-modern">
+                            <label><i class="bx bx-envelope me-1"></i>E-mail</label>
+                            <input type="email" name="email" placeholder="seu@email.com" class="form-control" required>
+                            <div class="form-hint">
+                                <i class="bx bx-info-circle"></i>
+                                <span>Este e-mail será usado para confirmar sua inscrição e acompanhar suas notas</span>
+                            </div>
                         </div>
 
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label><i class="bx bx-id-card me-1"></i>Nome Social</label>
+                                    <input type="text" name="nome_social" placeholder="Como você quer ser chamado(a)" class="form-control" required>
+                                    <div class="form-hint">
+                                        <i class="bx bx-info-circle"></i>
+                                        <span>Será usado na divulgação</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label><i class="bx bx-user-check me-1"></i>Nome Completo (RG)</label>
+                                    <input type="text" name="nome" placeholder="Nome igual ao documento" class="form-control" required>
+                                    <div class="form-hint">
+                                        <i class="bx bx-lock-alt"></i>
+                                        <span>Não será divulgado</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-
-
-
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label><i class="bx bxl-whatsapp me-1"></i>Celular/WhatsApp</label>
+                                    <input type="text" name="telefone" placeholder="(00) 00000-0000" class="form-control sp_celphones" required>
+                                    <div class="form-hint">
+                                        <i class="bx bx-info-circle"></i>
+                                        <span>Para contato sobre a competição</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label><i class="bx bx-id-card me-1"></i>CPF</label>
+                                    <input type="text" name="cpf" placeholder="000.000.000-00" class="form-control cpf" required>
+                                    <div class="form-hint">
+                                        <i class="bx bx-lock-alt"></i>
+                                        <span>Apenas para identificação interna</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
+                    <!-- ETAPA 2: Sobre o Cosplay -->
+                    <div class="wizard-step-content" data-step="2">
+                        <div class="step-title">
+                            <i class="bx bx-star"></i>
+                            Sobre o Cosplay
+                        </div>
+                        <p class="step-subtitle">Conte-nos sobre seu personagem e motivação</p>
+
+                        <div class="form-group-modern">
+                            <label><i class="bx bx-heart me-1"></i>Qual sua motivação?</label>
+                            <input type="text" name="motivacao" placeholder="O que te motiva a participar?" class="form-control" required>
+                            <div class="form-hint">
+                                <i class="bx bx-info-circle"></i>
+                                <span>O que te motiva a participar da competição?</span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label><i class="bx bx-user-circle me-1"></i>Nome do Personagem</label>
+                                    <input type="text" name="personagem" placeholder="Ex: Luffy" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label><i class="bx bx-book-open me-1"></i>Nome da Obra/Mídia</label>
+                                    <input type="text" name="obra" placeholder="Ex: One Piece" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group-modern">
+                            <label><i class="bx bx-category me-1"></i>Tipo de Obra</label>
+                            <select id="genero" name="genero" class="form-control" required>
+                                <option value="">Selecione uma opção</option>
+                                <option value="Animação(Anime, Filme de animação, Cartoon, entre outros)">Animação (Anime, Filme de animação, Cartoon, etc.)</option>
+                                <option value="Game">Game</option>
+                                <option value="Filme">Filme</option>
+                                <option value="Série">Série</option>
+                                <option value="Mangá/Manwa">Mangá/Manwa</option>
+                                <option value="HQ">HQ</option>
+                                <option value="Livro">Livro</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group-modern">
+                            <label><i class="bx bx-message-detail me-1"></i>Observações</label>
+                            <textarea name="observacoes" placeholder="Precisa de ajuda para subir ao palco? Algum detalhe especial?" class="form-control" rows="3" required></textarea>
+                            <div class="form-hint">
+                                <i class="bx bx-info-circle"></i>
+                                <span>Caso não tenha, informe "Sem mais observações"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ETAPA 3: Arquivos -->
+                    <div class="wizard-step-content" data-step="3">
+                        <div class="step-title">
+                            <i class="bx bx-cloud-upload"></i>
+                            Imagem de Referência
+                        </div>
+                        <p class="step-subtitle">Envie a imagem do personagem original para referência</p>
+
+                        <div class="alert alert-info-wizard">
+                            <i class="bx bx-info-circle me-2"></i>
+                            <strong>Atenção!</strong> A imagem de referência é obrigatória para validar sua inscrição. Use formatos JPG ou PNG (preferencialmente 1200x675 pixels).
+                        </div>
+
+                        <div class="file-upload-area">
+                            <label><i class="bx bx-image me-2"></i>Imagem de Referência do Personagem</label>
+                            <input type="file" name="referencia" class="form-control" required accept=".jpg,.jpeg,.png">
+                            <div class="file-upload-hint">
+                                <i class="bx bx-info-circle"></i> Formato: JPG ou PNG | Máx: 50MB | Apenas 1 arquivo
+                            </div>
+                        </div>
+
+                        <div class="alert alert-light border mt-4">
+                            <h6 class="mb-2"><i class="bx bx-check-circle text-success me-2"></i>Resumo da Inscrição</h6>
+                            <small class="text-muted">Confira seus dados antes de enviar. Você pode voltar às etapas anteriores para fazer correções.</small>
+                        </div>
+                    </div>
 
                 </div>
 
+                <!-- Navegação do Wizard -->
+                <div class="wizard-navigation">
+                    <button type="button" class="btn btn-wizard btn-wizard-prev" id="btnPrev" style="visibility: hidden;">
+                        <i class="bx bx-chevron-left"></i> Anterior
+                    </button>
+                    
+                    <button type="button" class="btn btn-wizard btn-wizard-next" id="btnNext">
+                        Próximo <i class="bx bx-chevron-right"></i>
+                    </button>
+                    
+                    <button type="submit" class="btn btn-wizard btn-wizard-submit" id="btnSubmit" style="display: none;">
+                        <i class="bx bx-check"></i> Realizar Inscrição
+                        <span id="btn-spinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status"></span>
+                    </button>
+                </div>
+
+                <?php echo form_close(); ?>
             </div>
         </div>
     </div>
-    <div class="col-lg-2 ">
-    </div>
-
-
+    <div class="col-lg-2"></div>
 </div>
 
 <?php echo $this->endSection() ?>
@@ -248,18 +564,145 @@
 <script src="<?php echo site_url('recursos/vendor/mask/app.js') ?>"></script>
 
 <script>
+let currentStep = 1;
+const totalSteps = 3;
+
+// Campos obrigatórios por etapa
+const requiredFieldsByStep = {
+    1: ['email', 'nome_social', 'nome', 'telefone', 'cpf'],
+    2: ['motivacao', 'personagem', 'obra', 'genero', 'observacoes'],
+    3: ['referencia']
+};
+
+function updateStepperUI() {
+    document.querySelectorAll('.wizard-step').forEach((step, index) => {
+        const stepNum = index + 1;
+        step.classList.remove('active', 'completed', 'disabled');
+        
+        if (stepNum < currentStep) {
+            step.classList.add('completed');
+            step.querySelector('.step-circle').innerHTML = '<i class="bx bx-check"></i>';
+        } else if (stepNum === currentStep) {
+            step.classList.add('active');
+            step.querySelector('.step-circle').textContent = stepNum;
+        } else {
+            step.classList.add('disabled');
+            step.querySelector('.step-circle').textContent = stepNum;
+        }
+    });
+    
+    // Atualizar conectores
+    document.querySelectorAll('.step-connector').forEach((conn, index) => {
+        conn.classList.toggle('active', index < currentStep - 1);
+    });
+    
+    // Atualizar conteúdo
+    document.querySelectorAll('.wizard-step-content').forEach(content => {
+        content.classList.remove('active');
+        if (parseInt(content.dataset.step) === currentStep) {
+            content.classList.add('active');
+        }
+    });
+    
+    // Atualizar botões
+    document.getElementById('btnPrev').style.visibility = currentStep > 1 ? 'visible' : 'hidden';
+    document.getElementById('btnNext').style.display = currentStep < totalSteps ? 'flex' : 'none';
+    document.getElementById('btnSubmit').style.display = currentStep === totalSteps ? 'flex' : 'none';
+}
+
+function validateStep(step) {
+    const fields = requiredFieldsByStep[step];
+    let isValid = true;
+    let firstInvalid = null;
+    
+    fields.forEach(fieldName => {
+        const field = document.querySelector(`[name="${fieldName}"]`);
+        if (!field) return;
+        
+        let fieldValid = true;
+        
+        if (field.type === 'file') {
+            fieldValid = field.files.length > 0;
+        } else if (field.type === 'email') {
+            fieldValid = field.value.trim() !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value);
+        } else if (field.tagName === 'SELECT') {
+            fieldValid = field.value !== '' && field.value !== '---';
+        } else {
+            fieldValid = field.value.trim() !== '';
+        }
+        
+        // Feedback visual
+        if (!fieldValid) {
+            field.classList.add('is-invalid');
+            field.style.borderColor = '#dc3545';
+            isValid = false;
+            if (!firstInvalid) firstInvalid = field;
+        } else {
+            field.classList.remove('is-invalid');
+            field.style.borderColor = '';
+        }
+    });
+    
+    if (firstInvalid) {
+        firstInvalid.focus();
+        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    
+    return isValid;
+}
+
+function goToStep(step) {
+    if (step < 1 || step > totalSteps) return;
+    
+    // Só pode voltar, ou avançar se validar
+    if (step > currentStep) {
+        // Validar todas as etapas anteriores
+        for (let i = currentStep; i < step; i++) {
+            if (!validateStep(i)) {
+                return;
+            }
+        }
+    }
+    
+    currentStep = step;
+    updateStepperUI();
+    
+    // Scroll suave para o topo do wizard
+    document.querySelector('.wizard-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function nextStep() {
+    if (validateStep(currentStep) && currentStep < totalSteps) {
+        currentStep++;
+        updateStepperUI();
+        document.querySelector('.wizard-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function prevStep() {
+    if (currentStep > 1) {
+        currentStep--;
+        updateStepperUI();
+        document.querySelector('.wizard-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    // Se houver mensagem de sucesso ou erro, faz scroll até ela
     const responseDiv = document.getElementById('response');
     if (responseDiv && responseDiv.querySelector('.alert')) {
         responseDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        window.scrollBy(0, -100);
     }
     
-    const form = document.getElementById('form-inscricao');
-    const btn = document.getElementById('btn-salvar');
-    const btnText = document.getElementById('btn-text');
-    const btnSpinner = document.getElementById('btn-spinner');
+    // Inicializar stepper
+    updateStepperUI();
     
+    // Botões de navegação
+    document.getElementById('btnNext').addEventListener('click', nextStep);
+    document.getElementById('btnPrev').addEventListener('click', prevStep);
+    
+    // Validação de arquivos
+    const form = document.getElementById('form-inscricao');
     const MAX_TOTAL_SIZE = 95 * 1024 * 1024;
     const ALLOWED_IMAGE = ['image/jpeg', 'image/png'];
     
@@ -311,40 +754,58 @@ document.addEventListener('DOMContentLoaded', function() {
         alertDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     
-    if (form && btn) {
-        form.addEventListener('submit', function(e) {
-            const fileErrors = validateFiles();
-            if (fileErrors.length > 0) {
-                e.preventDefault();
-                showFileErrors(fileErrors);
-                return false;
+    form.addEventListener('submit', function(e) {
+        // Valida a etapa atual primeiro
+        if (!validateStep(currentStep)) {
+            e.preventDefault();
+            return false;
+        }
+        
+        // Valida arquivos
+        const fileErrors = validateFiles();
+        if (fileErrors.length > 0) {
+            e.preventDefault();
+            showFileErrors(fileErrors);
+            return false;
+        }
+        
+        // Valida campos obrigatórios
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return false;
+        }
+        
+        // Atualiza CSRF token
+        const csrfField = document.getElementById('csrf_token_field');
+        if (csrfField) {
+            const metaCsrf = document.querySelector('meta[name="<?= csrf_token() ?>"]');
+            if (metaCsrf) {
+                csrfField.value = metaCsrf.content;
             }
-            
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return false;
-            }
-            
-            const csrfField = document.getElementById('csrf_token_field');
-            if (csrfField) {
-                const metaCsrf = document.querySelector('meta[name="<?= csrf_token() ?>"]');
-                if (metaCsrf) {
-                    csrfField.value = metaCsrf.content;
-                }
-            }
-            
-            btn.disabled = true;
-            btnText.textContent = 'Processando...';
-            btnSpinner.classList.remove('d-none');
-            
-            setTimeout(function() {
-                var modalProcessando = new bootstrap.Modal(document.getElementById('modalProcessando'));
-                modalProcessando.show();
-            }, 100);
-            
-            return true;
+        }
+        
+        // Desabilita o botão e mostra spinner
+        const btnSubmit = document.getElementById('btnSubmit');
+        const btnSpinner = document.getElementById('btn-spinner');
+        btnSubmit.disabled = true;
+        btnSpinner.classList.remove('d-none');
+        
+        // Mostra modal de processamento
+        setTimeout(function() {
+            var modalProcessando = new bootstrap.Modal(document.getElementById('modalProcessando'));
+            modalProcessando.show();
+        }, 100);
+        
+        return true;
+    });
+    
+    // Limpar validação ao digitar
+    document.querySelectorAll('.form-control').forEach(input => {
+        input.addEventListener('input', function() {
+            this.classList.remove('is-invalid');
+            this.style.borderColor = '';
         });
-    }
+    });
 });
 </script>
 
