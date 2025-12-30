@@ -84,11 +84,21 @@
         </h3>
         <div class="events-carousel">
           <?php foreach ($eventos as $evento): ?>
-          <a href="<?php echo site_url('ingressos/' . $evento->slug); ?>" class="event-card" style="text-decoration: none;">
+          <a href="<?php echo site_url('carrinho/evento/' . $evento->id); ?>" class="event-card" style="text-decoration: none;">
             <?php if (!empty($evento->cover)): ?>
             <img src="<?php echo site_url('uploads/eventos/' . $evento->cover); ?>" alt="<?php echo esc($evento->nome); ?>" class="event-image">
             <?php elseif (!empty($evento->avatar)): ?>
-            <img src="<?php echo site_url('uploads/eventos/' . $evento->avatar); ?>" alt="<?php echo esc($evento->nome); ?>" class="event-image">
+            <?php
+              // Verificar formato do avatar
+              if (strpos($evento->avatar, 'http') === 0) {
+                  $avatarUrl = $evento->avatar;
+              } elseif (strpos($evento->avatar, 'eventos/imagem/') === 0) {
+                  $avatarUrl = 'https://backoffice.mundodream.com.br/' . $evento->avatar;
+              } else {
+                  $avatarUrl = 'https://backoffice.mundodream.com.br/eventos/imagem/' . $evento->avatar;
+              }
+            ?>
+            <img src="<?php echo $avatarUrl; ?>" alt="<?php echo esc($evento->nome); ?>" class="event-image">
             <?php else: ?>
             <div class="event-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
               <i class="fa fa-ticket" style="font-size: 40px; color: rgba(255,255,255,0.5);"></i>
