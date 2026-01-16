@@ -42,6 +42,7 @@ class Checkout extends BaseController
 	private $ticketModel;
 	private $resendService;
 	private $cupomModel;
+	private $orderBumpModel;
 
 
 
@@ -64,6 +65,7 @@ class Checkout extends BaseController
 		$this->ticketModel = new \App\Models\TicketModel();
 		$this->resendService = new ResendService();
 		$this->cupomModel = new \App\Models\CupomModel();
+		$this->orderBumpModel = new \App\Models\OrderBumpModel();
 
 	}
 
@@ -452,13 +454,17 @@ class Checkout extends BaseController
 			}
 		}
 
+		// Buscar order_bumps ativos do evento
+		$orderBumps = $this->orderBumpModel->getOrderBumpsAtivos($event_id);
+
 		$data = [
 			'titulo' => 'Comprar ingressos',
 			'id' => $id,
 			'total' => $total,
 			'valor_desconto' => $valor_desconto,
 			'event_id' => $event_id,
-			'evento' => $evento
+			'evento' => $evento,
+			'orderBumps' => $orderBumps
 		];
 
 

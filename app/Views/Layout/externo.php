@@ -352,14 +352,8 @@
     <!--Start Back To Top Button-->
     <!--End Back To Top Button-->
 
-    <div class="row mb-5" style="padding-bottom: 250px;">
-        <div class="col-lg-8">
-            <p class="text-clack" style=" text-align: center; margin-top: -5px;"><a href="#" data-bs-toggle="modal" data-bs-target="#politicaModal"><u>Política de cancelamento</u></a> </p>
-        </div>
-        <div class="col-lg-4">
-
-        </div>
-    </div>
+    <!-- Footer do Checkout -->
+    <?php echo $this->include('Layout/_footer_checkout'); ?>
 
     <!--MODAL-->
     <div class="modal fade" id="politicaModal" tabindex="-1" aria-labelledby="politicaModallLabel" aria-hidden="true">

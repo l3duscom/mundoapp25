@@ -202,8 +202,68 @@ $totalComDesconto = $totalIngressosComDesconto + $valorFrete;
                                 <!-- Campos hidden para armazenar o cupom validado -->
                                 <input type="hidden" name="cupom_id" id="cupom_id" value="">
                                 <input type="hidden" name="cupom_desconto" id="cupom_desconto" value="0">
+                        </div>
+                        </div>
+
+                        <!-- Seção de Order Bumps -->
+                        <?php if (isset($orderBumps) && !empty($orderBumps)): ?>
+                        <div class="card border shadow-none w-100 mt-3">
+                            <div class="card-header py-2 bg-white border-bottom">
+                                <span class="text-dark">Aproveite e compre junto:</span>
+                            </div>
+                            <div class="card-body py-3">
+                                <?php foreach ($orderBumps as $bump): ?>
+                                <div class="order-bump-item border rounded p-3 mb-2" 
+                                     style="cursor: pointer; transition: all 0.2s ease; background: #fff;"
+                                     data-bump-id="<?= $bump->id ?>"
+                                     data-bump-preco="<?= $bump->preco ?>">
+                                    
+                                    <div class="d-flex align-items-center">
+                                        <!-- Checkbox -->
+                                        <div class="me-3">
+                                            <input type="checkbox" 
+                                                   class="form-check-input order-bump-checkbox" 
+                                                   name="order_bumps[]" 
+                                                   value="<?= $bump->id ?>"
+                                                   id="bump_<?= $bump->id ?>"
+                                                   data-preco="<?= $bump->preco ?>"
+                                                   style="width: 20px; height: 20px; cursor: pointer; accent-color: #28a745;">
+                                        </div>
+                                        
+                                        <!-- Imagem -->
+                                        <div class="me-3" style="flex-shrink: 0;">
+                                            <?php if (!empty($bump->imagem)): ?>
+                                            <img src="<?= site_url('uploads/order_bumps/' . $bump->imagem) ?>" 
+                                                 alt="<?= esc($bump->nome) ?>" 
+                                                 class="rounded"
+                                                 style="width: 50px; height: 50px; object-fit: cover; background: #f8f9fa;">
+                                            <?php else: ?>
+                                            <div class="rounded d-flex align-items-center justify-content-center" 
+                                                 style="width: 50px; height: 50px; background: #e8f5e9;">
+                                                <i class="bx bx-package" style="font-size: 24px; color: #28a745;"></i>
+                                            </div>
+                                            <?php endif; ?>
+                                        </div>
+                                        
+                                        <!-- Info e Preço -->
+                                        <div class="flex-grow-1">
+                                            <div class="fw-bold text-dark"><?= esc($bump->nome) ?></div>
+                                            <?php if (!empty($bump->descricao)): ?>
+                                            <div class="text-muted small"><?= esc($bump->descricao) ?></div>
+                                            <?php endif; ?>
+                                            <div class="fw-bold text-success">R$ <?= number_format($bump->preco, 2, ',', '.') ?></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Link produto adicionado (aparece quando selecionado) -->
+                                    <div class="order-bump-added text-success small mt-2" style="display: none;">
+                                        <i class="bx bx-check-circle me-1"></i>produto adicionado
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
                             </div>
                         </div>
+                        <?php endif; ?>
 
                         <!-- Resumo do Pedido -->
                         <div class="card border shadow-none w-100 mt-3">
@@ -227,6 +287,12 @@ $totalComDesconto = $totalIngressosComDesconto + $valorFrete;
                                     <span class="text-success"><i class="bx bx-purchase-tag me-1"></i>Desconto Cupom</span>
                                     <strong class="text-success resumo-desconto-cupom">- R$ 0,00</strong>
                                 </div>
+                                
+                                <div id="linha-order-bumps" class="d-flex justify-content-between mb-2" style="display: none;">
+                                    <span class="text-primary"><i class="bx bx-gift me-1"></i>Adicionais</span>
+                                    <strong class="text-primary resumo-order-bumps">+ R$ 0,00</strong>
+                                </div>
+
                                 
                                 <div class="d-flex justify-content-between mb-2">
                                     <span class="text-success"><i class="bx bx-check-circle me-1"></i>Desconto PIX (10%)</span>
@@ -410,18 +476,31 @@ function trackInitiateCheckoutPix() {
         var valorFrete = <?= $valorFrete ?? 0 ?>;
         var cupomAplicado = false;
         var valorDescontoCupom = 0;
+        var valorOrderBumps = 0;
+
+        // Função para calcular total dos order bumps selecionados
+        function calcularOrderBumps() {
+            var total = 0;
+            $('.order-bump-checkbox:checked').each(function() {
+                total += parseFloat($(this).data('preco')) || 0;
+            });
+            return total;
+        }
 
         // Função para atualizar valores na tela
         function atualizarValores() {
+            // Calcula order bumps selecionados
+            valorOrderBumps = calcularOrderBumps();
+            
             // Desconto cupom sobre ingressos
             var ingressosComDesconto = subtotalIngressos - valorDescontoCupom;
             
-            // Desconto PIX (10%) sobre ingressos já com desconto do cupom
+            // Desconto PIX (10%) sobre ingressos já com desconto do cupom (NÃO sobre order bumps)
             var novoDescontoPix = ingressosComDesconto * 0.10;
             var ingressosFinal = ingressosComDesconto - novoDescontoPix;
             
-            // Total final = ingressos com descontos + frete (frete não tem desconto)
-            var novoTotalFinal = ingressosFinal + valorFrete;
+            // Total final = ingressos com descontos + frete + order bumps (frete e order bumps não têm desconto PIX)
+            var novoTotalFinal = ingressosFinal + valorFrete + valorOrderBumps;
             
             // Função para formatar valor em Real
             function formatarReal(valor) {
@@ -436,6 +515,15 @@ function trackInitiateCheckoutPix() {
                 $('#linha-desconto-cupom').css('display', 'none');
             }
             
+            // Mostra/esconde linha de order bumps
+            if (valorOrderBumps > 0) {
+                $('#linha-order-bumps').show().css('display', 'flex');
+                $('.resumo-order-bumps').text('+ R$ ' + formatarReal(valorOrderBumps));
+            } else {
+                $('#linha-order-bumps').hide();
+                $('.resumo-order-bumps').text('+ R$ 0,00');
+            }
+            
             // Atualiza os spans de resumo
             $('.resumo-subtotal').text('R$ ' + formatarReal(subtotalIngressos));
             $('.resumo-desconto-pix').text('- R$ ' + formatarReal(novoDescontoPix));
@@ -444,6 +532,40 @@ function trackInitiateCheckoutPix() {
             // Atualiza o hidden do valor total (em centavos)
             $('#valor_total').val(Math.round(novoTotalFinal * 100));
         }
+
+        // ========================================
+        // ORDER BUMPS - Seleção e cálculo
+        // ========================================
+        
+        // Evento de mudança nos checkboxes dos order bumps
+        $('.order-bump-checkbox').on('change', function() {
+            var card = $(this).closest('.order-bump-item');
+            var addedMsg = card.find('.order-bump-added');
+            
+            if ($(this).is(':checked')) {
+                card.css({
+                    'border-color': '#a8d4ff',
+                    'background-color': '#f0f7ff'
+                });
+                addedMsg.show();
+            } else {
+                card.css({
+                    'border-color': '#dee2e6',
+                    'background-color': '#fff'
+                });
+                addedMsg.hide();
+            }
+            atualizarValores();
+        });
+
+        // Permitir clicar no card inteiro para selecionar o order bump
+        $('.order-bump-item').on('click', function(e) {
+            // Evita trigger duplo quando clica no checkbox
+            if ($(e.target).is('input[type="checkbox"]')) return;
+            
+            var checkbox = $(this).find('.order-bump-checkbox');
+            checkbox.prop('checked', !checkbox.prop('checked')).trigger('change');
+        });
 
         // Evento de clique no botão Aplicar
         $('#btn-validar-cupom').on('click', function() {
