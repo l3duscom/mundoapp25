@@ -43,6 +43,7 @@ class Checkout extends BaseController
 	private $resendService;
 	private $cupomModel;
 	private $orderBumpModel;
+	private $pedidoOrderBumpModel;
 
 
 
@@ -66,7 +67,7 @@ class Checkout extends BaseController
 		$this->resendService = new ResendService();
 		$this->cupomModel = new \App\Models\CupomModel();
 		$this->orderBumpModel = new \App\Models\OrderBumpModel();
-
+		$this->pedidoOrderBumpModel = new \App\Models\PedidoOrderBumpModel();
 	}
 
 	public function whatsapp()
@@ -1344,6 +1345,7 @@ class Checkout extends BaseController
 			$event_id = $this->request->getPost('event_id');
 			$pedido_id = $this->criaPedidoCartao($post, $user_id, $event_id);
 			$this->registraIngressos($pedido_id, $user_id);
+			$this->processaOrderBumps($pedido_id, $post);
 
 			$customer_id = $this->obtemOuCriaCustomerIdAsaas($cliente, $post);
 			$this->clienteModel->protect(false)->update($cliente->id, ['customer_id' => $customer_id]);
@@ -1530,6 +1532,7 @@ class Checkout extends BaseController
 
 			$pedido_id = $this->criaPedido($post, $user_id, $event_id);
 			$this->registraIngressos($pedido_id, $user_id);
+			$this->processaOrderBumps($pedido_id, $post);
 
 			$customer_id = $this->obtemOuCriaCustomerIdAsaas($cliente, $post);
 			$this->clienteModel->protect(false)->update($cliente->id, ['customer_id' => $customer_id]);
@@ -1713,6 +1716,26 @@ class Checkout extends BaseController
 				]);
 			}
 		}
+	}
+
+	/**
+	 * Processa e salva os orderbumps selecionados no pedido
+	 * 
+	 * @param int $pedidoId ID do pedido
+	 * @param array $post Dados do POST contendo order_bumps[]
+	 * @return void
+	 */
+	private function processaOrderBumps(int $pedidoId, array $post): void
+	{
+		// Verifica se há orderbumps selecionados no POST
+		if (!isset($post['order_bumps']) || !is_array($post['order_bumps']) || empty($post['order_bumps'])) {
+			return;
+		}
+
+		$orderBumps = $post['order_bumps'];
+
+		// Salva os orderbumps e decrementa o estoque
+		$this->pedidoOrderBumpModel->salvaOrderBumpsDoPedido($pedidoId, $orderBumps, $this->orderBumpModel);
 	}
 
 	/**
