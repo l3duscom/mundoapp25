@@ -367,10 +367,6 @@ $totalComDesconto = $totalIngressosComDesconto + $valorFrete;
             <p class="mt-0 mb-0">* O valor parcelado possui acréscimo.</p>
             <p class="mt-0 mb-0"><strong>Meia entrada solidária </strong> (40% de desconto) disponível para qualquer pessoa que levar 1kg de alimento não perecível no dia do evento.</p>
             <p class="mt-0 mb-0">Ao clicar em 'Comprar agora', eu concordo (i) com os termos de uso e regras do evento denominado Dreamfest 25 - Mega Festivalk Geek e estou ciente da Política de Privacidade e que sou maior de idade ou autorizado e acompanhado por um tutor legal.</p>
-
-            <hr>
-            <p class="mt-0 mb-0">MUNDO DREAM EVENTOS E PRODUCOES LTDA © 2024 - Todos os direitos reservados</p>
-            <p class="mt-0 mb-0">21.812.142/0001-23</p>
         </div>
     </div>
 </div>

@@ -307,6 +307,13 @@
                             <div class="menu-title">Permissões</div>
                         </a>
                     </li>
+                    <li>
+                        <a href="<?php echo site_url('/footer-settings'); ?>">
+                            <div class="parent-icon"><i class="bx bx-cog"></i>
+                            </div>
+                            <div class="menu-title">Config. Footer</div>
+                        </a>
+                    </li>
                     <hr>
                     <?php if (evento_selecionado()) : ?>
                         <li class="menu-label">EVENTO ATUAL</li>

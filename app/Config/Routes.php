@@ -244,6 +244,11 @@ $routes->get('checkout/check-status/(:any)', 'Checkout::checkTransactionStatus/$
 $routes->post('carrinho/validar', 'Carrinho::validar');
 $routes->post('carrinho/removerCupom', 'Carrinho::removerCupom');
 
+// Rotas para configurações do footer
+$routes->get('footer-settings', 'FooterSettings::index');
+$routes->post('footer-settings/salvar', 'FooterSettings::salvar');
+$routes->post('footer-settings/remover-imagem', 'FooterSettings::removerImagem');
+
 // Rotas para o controller de API do carrinho
 $routes->group('api/carrinho', ['filter' => 'apiKey'], function ($routes) {
     $routes->get('evento/(:num)', 'ApiCarrinho::evento/$1');
