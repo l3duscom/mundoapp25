@@ -233,7 +233,7 @@ $totalComDesconto = $totalIngressosComDesconto + $valorFrete;
                                         <!-- Imagem -->
                                         <div class="me-3" style="flex-shrink: 0;">
                                             <?php if (!empty($bump->imagem)): ?>
-                                            <img src="<?= site_url('uploads/order_bumps/' . $bump->imagem) ?>" 
+                                            <img src="<?= $bump->getImagemUrl() ?>" 
                                                  alt="<?= esc($bump->nome) ?>" 
                                                  class="rounded"
                                                  style="width: 50px; height: 50px; object-fit: cover; background: #f8f9fa;">
@@ -255,8 +255,8 @@ $totalComDesconto = $totalIngressosComDesconto + $valorFrete;
                                         </div>
                                     </div>
                                     
-                                    <!-- Link produto adicionado (aparece quando selecionado) -->
-                                    <div class="order-bump-added text-success small mt-2" style="display: none;">
+                                    <!-- Footer produto adicionado (aparece quando selecionado) -->
+                                    <div class="order-bump-added small" style="display: none; background: #28a745; color: #fff; padding: 8px 16px; margin: 12px -12px -12px -12px; border-radius: 0 0 6px 6px; text-align: center;">
                                         <i class="bx bx-check-circle me-1"></i>produto adicionado
                                     </div>
                                 </div>
@@ -540,8 +540,8 @@ function trackInitiateCheckoutPix() {
             
             if ($(this).is(':checked')) {
                 card.css({
-                    'border-color': '#a8d4ff',
-                    'background-color': '#f0f7ff'
+                    'border-color': '#81c784',
+                    'background-color': '#e8f5e9'
                 });
                 addedMsg.show();
             } else {

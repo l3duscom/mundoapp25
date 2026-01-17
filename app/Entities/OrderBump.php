@@ -61,7 +61,12 @@ class OrderBump extends Entity
     public function getImagemUrl(): string
     {
         if (!empty($this->attributes['imagem'])) {
-            return site_url('uploads/order_bumps/' . $this->attributes['imagem']);
+            // Se já for uma URL externa completa
+            if (strpos($this->attributes['imagem'], 'http') === 0) {
+                return $this->attributes['imagem'];
+            }
+            // Imagens ficam no backoffice externo
+            return 'https://backoffice.mundodream.com.br/uploads/order_bumps/' . $this->attributes['imagem'];
         }
         return site_url('recursos/front/images/placeholder.png');
     }

@@ -653,7 +653,15 @@
                                 <div class="col-12 col-md-6">
                                     <div class="d-flex align-items-center gap-3 p-3 rounded" style="background: rgba(103, 46, 186, 0.1); border: 1px solid rgba(103, 46, 186, 0.3);" id="orderbump-item-<?= $ob->id ?>">
                                         <?php if (!empty($ob->imagem)) : ?>
-                                            <img src="<?= site_url('uploads/orderbumps/' . $ob->imagem) ?>" 
+                                            <?php 
+                                            // Imagens dos orderbumps ficam no backoffice externo
+                                            if (strpos($ob->imagem, 'http') === 0) {
+                                                $imagemUrl = $ob->imagem;
+                                            } else {
+                                                $imagemUrl = 'https://backoffice.mundodream.com.br/uploads/order_bumps/' . $ob->imagem;
+                                            }
+                                            ?>
+                                            <img src="<?= $imagemUrl ?>" 
                                                  alt="<?= esc($ob->nome) ?>" 
                                                  style="width: 70px; height: 70px; object-fit: cover; border-radius: 10px;">
                                         <?php else : ?>

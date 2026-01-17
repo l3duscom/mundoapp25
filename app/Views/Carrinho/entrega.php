@@ -517,21 +517,6 @@ if (!isset($_SESSION['impressao'])) {
                                     </center>
 
 
-                                </div>
-                            </div>
-                        </div>
-
-
-
-
-
-
-
-
-
-
-
-
                     </div>
                 </div>
             </div>
