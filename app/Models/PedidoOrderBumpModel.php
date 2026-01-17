@@ -14,6 +14,8 @@ class PedidoOrderBumpModel extends Model
         'order_bump_id',
         'quantidade',
         'preco_unitario',
+        'usado',
+        'usado_em',
     ];
 
     // Dates
@@ -82,5 +84,53 @@ class PedidoOrderBumpModel extends Model
                        ->first();
         
         return $result->total ?? 0;
+    }
+
+    /**
+     * Recupera os orderbumps de pedidos confirmados de um usuário
+     * 
+     * @param int $userId
+     * @return array
+     */
+    public function getOrderBumpsPorUsuario(int $userId): array
+    {
+        return $this->select('pedido_order_bumps.*, order_bumps.nome, order_bumps.descricao, order_bumps.imagem, pedidos.id as pedido_id, pedidos.codigo as pedido_codigo')
+                    ->join('order_bumps', 'order_bumps.id = pedido_order_bumps.order_bump_id')
+                    ->join('pedidos', 'pedidos.id = pedido_order_bumps.pedido_id')
+                    ->where('pedidos.user_id', $userId)
+                    ->whereIn('pedidos.status', ['CONFIRMED', 'RECEIVED', 'paid'])
+                    ->orderBy('pedido_order_bumps.created_at', 'DESC')
+                    ->findAll();
+    }
+
+    /**
+     * Marca um orderbump como usado
+     * 
+     * @param int $id ID do pedido_order_bump
+     * @param int $userId ID do usuário (para validação de segurança)
+     * @return bool
+     */
+    public function marcarComoUsado(int $id, int $userId): bool
+    {
+        // Verificar se o orderbump pertence ao usuário
+        $item = $this->select('pedido_order_bumps.*')
+                     ->join('pedidos', 'pedidos.id = pedido_order_bumps.pedido_id')
+                     ->where('pedido_order_bumps.id', $id)
+                     ->where('pedidos.user_id', $userId)
+                     ->first();
+
+        if (!$item) {
+            return false;
+        }
+
+        // Verificar se já foi usado
+        if ($item->usado) {
+            return false;
+        }
+
+        return $this->update($id, [
+            'usado' => 1,
+            'usado_em' => date('Y-m-d H:i:s'),
+        ]);
     }
 }

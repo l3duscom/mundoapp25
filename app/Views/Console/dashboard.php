@@ -247,6 +247,14 @@
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="anteriores-tab" data-bs-toggle="tab" data-bs-target="#anteriores" type="button" role="tab" aria-controls="anteriores" aria-selected="false">Ingressos Anteriores</button>
             </li>
+            <?php if (!empty($orderbumps)) : ?>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="produtos-tab" data-bs-toggle="tab" data-bs-target="#produtos" type="button" role="tab" aria-controls="produtos" aria-selected="false">
+                    <i class="bi bi-bag-check me-1"></i>Meus Produtos
+                    <span class="badge bg-purple ms-1"><?= count($orderbumps) ?></span>
+                </button>
+            </li>
+            <?php endif; ?>
         </ul>
         <div class="tab-content" id="ingressosTabsContent">
             <div class="tab-pane fade show active" id="atuais" role="tabpanel" aria-labelledby="atuais-tab">
@@ -633,6 +641,55 @@
                     </center>
                 <?php endif; ?>
             </div>
+            
+            <!-- Aba Meus Produtos -->
+            <?php if (!empty($orderbumps)) : ?>
+            <div class="tab-pane fade" id="produtos" role="tabpanel" aria-labelledby="produtos-tab">
+                <div class="card bg-dark border-0 shadow">
+                    <div class="card-body">
+                        <h5 class="text-white mb-4"><i class="bi bi-bag-check me-2" style="color: #a855f7"></i>Meus Produtos</h5>
+                        <div class="row g-3">
+                            <?php foreach ($orderbumps as $ob) : ?>
+                                <div class="col-12 col-md-6">
+                                    <div class="d-flex align-items-center gap-3 p-3 rounded" style="background: rgba(103, 46, 186, 0.1); border: 1px solid rgba(103, 46, 186, 0.3);" id="orderbump-item-<?= $ob->id ?>">
+                                        <?php if (!empty($ob->imagem)) : ?>
+                                            <img src="<?= site_url('uploads/orderbumps/' . $ob->imagem) ?>" 
+                                                 alt="<?= esc($ob->nome) ?>" 
+                                                 style="width: 70px; height: 70px; object-fit: cover; border-radius: 10px;">
+                                        <?php else : ?>
+                                            <div style="width: 70px; height: 70px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                                <i class="bi bi-box text-muted" style="font-size: 2rem;"></i>
+                                            </div>
+                                        <?php endif; ?>
+                                        <div class="flex-grow-1">
+                                            <p class="mb-1 text-white fw-semibold"><?= esc($ob->nome) ?></p>
+                                            <small class="text-muted d-block">R$ <?= number_format($ob->preco_unitario, 2, ',', '.') ?></small>
+                                            <small class="text-muted">Pedido #<?= esc($ob->pedido_codigo) ?></small>
+                                        </div>
+                                        <div class="text-end">
+                                            <?php if ($ob->usado) : ?>
+                                                <span class="badge bg-secondary d-block mb-1">
+                                                    <i class="bi bi-check-circle me-1"></i>Usado
+                                                </span>
+                                                <small class="text-muted" style="font-size: 0.7rem;"><?= date('d/m/Y H:i', strtotime($ob->usado_em)) ?></small>
+                                            <?php else : ?>
+                                                <span class="badge bg-success d-block mb-2">Disponível</span>
+                                                <button type="button" 
+                                                        class="btn btn-sm btn-outline-light btn-marcar-usado" 
+                                                        data-id="<?= $ob->id ?>"
+                                                        data-nome="<?= esc($ob->nome) ?>">
+                                                    <i class="bi bi-check2-square me-1"></i>Usar
+                                                </button>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
         </div>
         
         <!-- Card DreamCard -->
@@ -798,6 +855,125 @@
     });
 </script>
 
+<!-- Modal de Confirmação para Marcar OrderBump como Usado -->
+<div class="modal fade" id="confirmarUsadoModal" tabindex="-1" aria-labelledby="confirmarUsadoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="confirmarUsadoModalLabel">
+                    <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
+                    Confirmar Ação
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body py-4">
+                <p class="mb-3">Você está marcando o produto abaixo como <strong>usado</strong>:</p>
+                <div class="p-3 rounded mb-3" style="background: rgba(255,255,255,0.1);">
+                    <strong id="confirmarUsadoNome" class="text-white"></strong>
+                </div>
+                <div class="alert alert-warning mb-0">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i>
+                    <strong>Atenção:</strong> Esta operação não pode ser desfeita!
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" id="btnConfirmarUsado">
+                    <i class="bi bi-check-circle me-1"></i>Confirmar - Marcar como Usado
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Script para marcar orderbump como usado com dupla verificação
+    (function() {
+        let orderbumpIdAtual = null;
+        const modal = new bootstrap.Modal(document.getElementById('confirmarUsadoModal'));
+        
+        // Primeiro clique: abre o modal de confirmação
+        document.querySelectorAll('.btn-marcar-usado').forEach(btn => {
+            btn.addEventListener('click', function() {
+                orderbumpIdAtual = this.getAttribute('data-id');
+                const nome = this.getAttribute('data-nome');
+                document.getElementById('confirmarUsadoNome').textContent = nome;
+                modal.show();
+            });
+        });
+        
+        // Segundo clique (no modal): confirma e processa
+        document.getElementById('btnConfirmarUsado').addEventListener('click', function() {
+            if (!orderbumpIdAtual) return;
+            
+            const btn = this;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Processando...';
+            
+            fetch('<?= site_url('console/marcarOrderBumpUsado/') ?>' + orderbumpIdAtual, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    '<?= csrf_header() ?>': '<?= csrf_hash() ?>'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                modal.hide();
+                
+                if (data.success) {
+                    // Atualizar a UI
+                    const item = document.getElementById('orderbump-item-' + orderbumpIdAtual);
+                    if (item) {
+                        const btnContainer = item.querySelector('div:last-child');
+                        btnContainer.innerHTML = `
+                            <span class="badge bg-secondary" title="Usado agora">
+                                <i class="bi bi-check-circle me-1"></i>Usado
+                            </span>
+                        `;
+                    }
+                    
+                    // Toast de sucesso
+                    Toastify({
+                        text: data.message,
+                        duration: 3000,
+                        gravity: "top",
+                        position: "right",
+                        backgroundColor: "#28a745",
+                    }).showToast();
+                } else {
+                    // Toast de erro
+                    Toastify({
+                        text: data.message,
+                        duration: 4000,
+                        gravity: "top",
+                        position: "right",
+                        backgroundColor: "#dc3545",
+                    }).showToast();
+                }
+            })
+            .catch(error => {
+                modal.hide();
+                console.error('Erro:', error);
+                Toastify({
+                    text: 'Erro ao processar a requisição. Tente novamente.',
+                    duration: 4000,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#dc3545",
+                }).showToast();
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-check-circle me-1"></i>Confirmar - Marcar como Usado';
+                orderbumpIdAtual = null;
+            });
+        });
+    })();
+</script>
 
 
 <?php echo $this->endSection() ?>

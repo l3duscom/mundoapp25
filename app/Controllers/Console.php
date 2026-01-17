@@ -27,6 +27,7 @@ class Console extends BaseController
 	private $eventoModel;
 	private $ticketModel;
 	private $bonusModel;
+	private $pedidoOrderBumpModel;
 	
 
 
@@ -43,6 +44,7 @@ class Console extends BaseController
 		$this->eventoModel = new \App\Models\EventoModel();
 		$this->ticketModel = new \App\Models\TicketModel();
 		$this->bonusModel = new \App\Models\BonusModel();
+		$this->pedidoOrderBumpModel = new \App\Models\PedidoOrderBumpModel();
 	}
 
 	public function dashboard()
@@ -195,6 +197,8 @@ class Console extends BaseController
 
         $data['enderecos_lista'] = $enderecos_lista;
 
+		// Buscar orderbumps do usuário
+		$data['orderbumps'] = $this->pedidoOrderBumpModel->getOrderBumpsPorUsuario($id);
 
 		return view('Console/dashboard', $data);
 	}
@@ -434,6 +438,39 @@ class Console extends BaseController
 		}
 
 		return $cliente;
+	}
+
+	/**
+	 * Marca um orderbump como usado via AJAX
+	 *
+	 * @param int $id ID do pedido_order_bump
+	 * @return \CodeIgniter\HTTP\ResponseInterface
+	 */
+	public function marcarOrderBumpUsado(int $id)
+	{
+		// Verificar se é uma requisição AJAX
+		if (!$this->request->isAJAX()) {
+			return $this->response->setJSON([
+				'success' => false,
+				'message' => 'Requisição inválida'
+			]);
+		}
+
+		$userId = $this->usuarioLogado()->id;
+
+		$resultado = $this->pedidoOrderBumpModel->marcarComoUsado($id, $userId);
+
+		if ($resultado) {
+			return $this->response->setJSON([
+				'success' => true,
+				'message' => 'Produto marcado como usado com sucesso!'
+			]);
+		}
+
+		return $this->response->setJSON([
+			'success' => false,
+			'message' => 'Não foi possível marcar o produto como usado. Ele pode já ter sido usado ou não pertence a você.'
+		]);
 	}
 
 

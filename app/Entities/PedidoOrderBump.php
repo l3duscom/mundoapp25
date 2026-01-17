@@ -10,6 +10,7 @@ class PedidoOrderBump extends Entity
         'created_at',
         'updated_at',
         'deleted_at',
+        'usado_em',
     ];
 
     protected $casts = [
@@ -17,5 +18,6 @@ class PedidoOrderBump extends Entity
         'order_bump_id' => 'integer',
         'quantidade' => 'integer',
         'preco_unitario' => 'float',
+        'usado' => 'boolean',
     ];
 }
