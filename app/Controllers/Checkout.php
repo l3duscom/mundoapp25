@@ -567,15 +567,26 @@ class Checkout extends BaseController
 			];
 		}
 
-		// Calcular total da sessão
-		$total = $_SESSION['total'] ?? 0;
+		// Calcular total do carrinho (igual ao método pix)
+		$total = 0;
+		if (isset($_SESSION['carrinho']) && is_array($_SESSION['carrinho'])) {
+			foreach ($_SESSION['carrinho'] as $item) {
+				if ($item['quantidade'] > 0) {
+					$total += ($item['quantidade'] * $item['unitario']) + ($item['quantidade'] * $item['taxa']);
+				}
+			}
+		}
+
+		// Buscar order_bumps ativos do evento
+		$orderBumps = $this->orderBumpModel->getOrderBumpsAtivos($event_id);
 
 		$data = [
 			'titulo' => 'Comprar ingressos',
 			'data_cli' => $data_cli,
 			'event_id' => $event_id,
 			'evento' => $evento,
-			'total' => $total
+			'total' => $total,
+			'orderBumps' => $orderBumps
 		];
 
 

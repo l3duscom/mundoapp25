@@ -16,21 +16,14 @@
 <?php
 $juros = 0.034;
 
-// Se vier valor_total via GET, usa ele como base do total (corrigindo para float)
-if (isset($_GET['valor_total']) && !empty($_GET['valor_total'])) {
-    // Limpa o valor e converte para float
-    $valorGet = str_replace(',', '.', $_GET['valor_total']);
-    $valorGet = preg_replace('/[^0-9.]/', '', $valorGet);
-    $subtotalIngressos = floatval($valorGet);
-} else {
-    $subtotalIngressos = 0;
-}
+// Usa o total passado pelo controlador (calculado a partir do carrinho)
+$subtotalIngressos = $total ?? 0;
 
 // Separa o frete do total dos ingressos
 $valorFrete = isset($_SESSION['valor_frete']) ? floatval($_SESSION['valor_frete']) : 0;
 
 // Total = ingressos + frete (frete não tem desconto do cupom)
-$total = $subtotalIngressos + $valorFrete;
+$totalFinal = $subtotalIngressos + $valorFrete;
 
 $event_id = session()->get('event_id');
 ?>
@@ -52,7 +45,7 @@ $event_id = session()->get('event_id');
 
                                         <div class="ms-auto fs-3 mb-0">
                                             <p class="mb-0" style="font-size: 10px;">Total a pagar:</p>
-                                            <strong>R$ <?= number_format($total, 2, ',', '') ?></strong>
+                                            <strong>R$ <?= number_format($totalFinal, 2, ',', '') ?></strong>
                                         </div>
                                     </div>
                                 </div>
@@ -74,7 +67,7 @@ $event_id = session()->get('event_id');
 
                             <?= csrf_field() ?>
 
-                            <input type="hidden" name="valor_total" id="valor_total" value="<?= $total ?>" required>
+                            <input type="hidden" name="valor_total" id="valor_total" value="<?= $totalFinal ?>" required>
                             <input type="hidden" name="frete" id="frete" value="<?= $_SESSION['frete'] ?>" required>
                             <input type="hidden" name="convite" value="<?= $_SESSION['convite'] ?>">
                             <input type="hidden" name="event_id" value="<?= $event_id ?>">
@@ -171,11 +164,11 @@ $event_id = session()->get('event_id');
                                                     <label for="installmentCount" class="form-label">Parcelas</label>
                                                     <select class="form-select form-control-lg mb-2 shadow" style="font-size:medium; padding:13px" name="installmentCount" id="installmentCount" required>
                                                         <option></option>
-                                                        <option value="1">1x de <?= number_format($total / 1, 2, ',', ' ') ?> </option>
-                                                        <option value="2">2x de <?= number_format(($total + ($total * $juros * 2)) / 2, 2, ',', ' ') ?> </option>
-                                                        <option value="3">3x de <?= number_format(($total + ($total * $juros * 3)) / 3, 2, ',', ' ') ?> </option>
-                                                        <option value="4">4x de <?= number_format(($total + ($total * $juros * 4)) / 4, 2, ',', ' ') ?> </option>
-                                                        <option value="5">5x de <?= number_format(($total + ($total * $juros * 5)) / 5, 2, ',', ' ') ?> </option>
+                                                        <option value="1">1x de <?= number_format($totalFinal / 1, 2, ',', ' ') ?> </option>
+                                                        <option value="2">2x de <?= number_format(($totalFinal + ($totalFinal * $juros * 2)) / 2, 2, ',', ' ') ?> </option>
+                                                        <option value="3">3x de <?= number_format(($totalFinal + ($totalFinal * $juros * 3)) / 3, 2, ',', ' ') ?> </option>
+                                                        <option value="4">4x de <?= number_format(($totalFinal + ($totalFinal * $juros * 4)) / 4, 2, ',', ' ') ?> </option>
+                                                        <option value="5">5x de <?= number_format(($totalFinal + ($totalFinal * $juros * 5)) / 5, 2, ',', ' ') ?> </option>
 
                                                     </select>
                                                     <div class="invalid-feedback">
@@ -406,6 +399,67 @@ $event_id = session()->get('event_id');
                                 </div>
                             </div>
 
+                            <!-- Seção de Order Bumps -->
+                            <?php if (isset($orderBumps) && !empty($orderBumps)): ?>
+                            <div class="d-flex align-items-center mt-0">
+                                <div class="card border shadow-none w-100">
+                                    <div class="card-header py-2 bg-white border-bottom">
+                                        <span class="text-dark">Aproveite e compre junto:</span>
+                                    </div>
+                                    <div class="card-body py-3">
+                                        <?php foreach ($orderBumps as $bump): ?>
+                                        <div class="order-bump-item border rounded p-3 mb-2" 
+                                             style="cursor: pointer; transition: all 0.2s ease; background: #fff;"
+                                             data-bump-id="<?= $bump->id ?>"
+                                             data-bump-preco="<?= $bump->preco ?>">
+                                            
+                                            <div class="d-flex align-items-center">
+                                                <!-- Checkbox -->
+                                                <div class="me-3">
+                                                    <input type="checkbox" 
+                                                           class="form-check-input order-bump-checkbox" 
+                                                           name="order_bumps[]" 
+                                                           value="<?= $bump->id ?>"
+                                                           id="bump_<?= $bump->id ?>"
+                                                           data-preco="<?= $bump->preco ?>"
+                                                           style="width: 20px; height: 20px; cursor: pointer; accent-color: #28a745;">
+                                                </div>
+                                                
+                                                <!-- Imagem -->
+                                                <div class="me-3" style="flex-shrink: 0;">
+                                                    <?php if (!empty($bump->imagem)): ?>
+                                                    <img src="<?= $bump->getImagemUrl() ?>" 
+                                                         alt="<?= esc($bump->nome) ?>" 
+                                                         class="rounded"
+                                                         style="width: 50px; height: 50px; object-fit: cover; background: #f8f9fa;">
+                                                    <?php else: ?>
+                                                    <div class="rounded d-flex align-items-center justify-content-center" 
+                                                         style="width: 50px; height: 50px; background: #e8f5e9;">
+                                                        <i class="bx bx-package" style="font-size: 24px; color: #28a745;"></i>
+                                                    </div>
+                                                    <?php endif; ?>
+                                                </div>
+                                                
+                                                <!-- Info e Preço -->
+                                                <div class="flex-grow-1">
+                                                    <div class="fw-bold text-dark"><?= esc($bump->nome) ?></div>
+                                                    <?php if (!empty($bump->descricao)): ?>
+                                                    <div class="text-muted small"><?= esc($bump->descricao) ?></div>
+                                                    <?php endif; ?>
+                                                    <div class="fw-bold text-success">R$ <?= number_format($bump->preco, 2, ',', '.') ?></div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Footer produto adicionado (aparece quando selecionado) -->
+                                            <div class="order-bump-added small" style="display: none; background: #28a745; color: #fff; padding: 8px 16px; margin: 12px -12px -12px -12px; border-radius: 0 0 6px 6px; text-align: center;">
+                                                <i class="bx bx-check-circle me-1"></i>produto adicionado
+                                            </div>
+                                        </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php endif; ?>
 
                             <!-- Resumo do Pedido -->
                             <div class="card border shadow-none w-100 mt-3">
@@ -430,11 +484,16 @@ $event_id = session()->get('event_id');
                                         <strong class="text-success resumo-desconto-cupom">- R$ 0,00</strong>
                                     </div>
                                     
+                                    <div id="linha-order-bumps" class="d-flex justify-content-between mb-2" style="display: none;">
+                                        <span class="text-primary"><i class="bx bx-gift me-1"></i>Adicionais</span>
+                                        <strong class="text-primary resumo-order-bumps">+ R$ 0,00</strong>
+                                    </div>
+
                                     <hr class="my-2">
                                     
                                     <div class="d-flex justify-content-between align-items-center">
                                         <span class="fw-bold" style="font-size: 1.1rem;">Total a pagar</span>
-                                        <span class="fw-bold resumo-total-final" style="font-size: 1.3rem; color: #6C038F;">R$ <?= number_format($total, 2, ',', '.') ?></span>
+                                        <span class="fw-bold resumo-total-final" style="font-size: 1.3rem; color: #6C038F;">R$ <?= number_format($totalFinal, 2, ',', '.') ?></span>
                                     </div>
                                 </div>
                             </div>
@@ -620,14 +679,27 @@ $event_id = session()->get('event_id');
         var juros = <?= $juros ?? 0.034 ?>;
         var cupomAplicado = false;
         var valorDescontoCupom = 0;
+        var valorOrderBumps = 0;
+
+        // Função para calcular total dos order bumps selecionados
+        function calcularOrderBumps() {
+            var total = 0;
+            $('.order-bump-checkbox:checked').each(function() {
+                total += parseFloat($(this).data('preco')) || 0;
+            });
+            return total;
+        }
 
         // Função para atualizar valores na tela
         function atualizarValores() {
+            // Calcula order bumps selecionados
+            valorOrderBumps = calcularOrderBumps();
+            
             // Desconto cupom sobre ingressos apenas
             var ingressosComDesconto = subtotalIngressos - valorDescontoCupom;
             
-            // Total final = ingressos com desconto + frete (frete não tem desconto)
-            var novoTotalFinal = ingressosComDesconto + valorFrete;
+            // Total final = ingressos com desconto + frete + order bumps
+            var novoTotalFinal = ingressosComDesconto + valorFrete + valorOrderBumps;
             
             // Função para formatar valor em Real
             function formatarReal(valor) {
@@ -640,6 +712,15 @@ $event_id = session()->get('event_id');
                 $('.resumo-desconto-cupom').text('- R$ ' + formatarReal(valorDescontoCupom));
             } else {
                 $('#linha-desconto-cupom').css('display', 'none');
+            }
+            
+            // Mostra/esconde linha de order bumps
+            if (valorOrderBumps > 0) {
+                $('#linha-order-bumps').show().css('display', 'flex');
+                $('.resumo-order-bumps').text('+ R$ ' + formatarReal(valorOrderBumps));
+            } else {
+                $('#linha-order-bumps').hide();
+                $('.resumo-order-bumps').text('+ R$ 0,00');
             }
             
             // Atualiza os spans de resumo
@@ -659,6 +740,40 @@ $event_id = session()->get('event_id');
                 '<option value="5">5x de R$ ' + formatarReal((novoTotalFinal + (novoTotalFinal * juros * 5)) / 5) + '</option>'
             );
         }
+
+        // ========================================
+        // ORDER BUMPS - Seleção e cálculo
+        // ========================================
+        
+        // Evento de mudança nos checkboxes dos order bumps
+        $('.order-bump-checkbox').on('change', function() {
+            var card = $(this).closest('.order-bump-item');
+            var addedMsg = card.find('.order-bump-added');
+            
+            if ($(this).is(':checked')) {
+                card.css({
+                    'border-color': '#81c784',
+                    'background-color': '#e8f5e9'
+                });
+                addedMsg.show();
+            } else {
+                card.css({
+                    'border-color': '#dee2e6',
+                    'background-color': '#fff'
+                });
+                addedMsg.hide();
+            }
+            atualizarValores();
+        });
+
+        // Permitir clicar no card inteiro para selecionar o order bump
+        $('.order-bump-item').on('click', function(e) {
+            // Evita trigger duplo quando clica no checkbox
+            if ($(e.target).is('input[type="checkbox"]')) return;
+            
+            var checkbox = $(this).find('.order-bump-checkbox');
+            checkbox.prop('checked', !checkbox.prop('checked')).trigger('change');
+        });
 
         // Evento de clique no botão Aplicar
         $('#btn-validar-cupom').on('click', function() {
@@ -757,7 +872,7 @@ $event_id = session()->get('event_id');
 <?php if (isset($evento) && !empty($evento->meta_pixel_id)): ?>
 <script>
 // InitiateCheckout Event - quando o usuário inicia o processo de pagamento
-let totalValue = <?= $total ?? 0 ?>;
+let totalValue = <?= $totalFinal ?? 0 ?>;
 let cartItems = [];
 let totalItems = 0;
 
