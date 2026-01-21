@@ -264,6 +264,43 @@ class Autenticacao
         return true;
     }
 
+    /**
+     * Método que verifica se o usuário logado é premium
+     * Baseado no campo is_premium e premium_ate da tabela usuarios
+     *
+     * @return boolean
+     */
+    private function isPremium(): bool
+    {
+        $usuario_id = session()->get('usuario_id');
+        
+        if (!$usuario_id) {
+            return false;
+        }
+
+        $usuario = $this->usuarioModel->find($usuario_id);
+        
+        if (!$usuario) {
+            return false;
+        }
+
+        // Verifica se is_premium é true
+        if (empty($usuario->is_premium) || $usuario->is_premium != 1) {
+            return false;
+        }
+
+        // Verifica se a data de expiração ainda é válida
+        if (!empty($usuario->premium_ate)) {
+            if (strtotime($usuario->premium_ate) < time()) {
+                // Premium expirou - podemos atualizar no banco
+                $this->usuarioModel->protect(false)->update($usuario_id, ['is_premium' => 0]);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 
 
 
@@ -297,6 +334,8 @@ class Autenticacao
             $usuario->is_influencer = $this->isInfluencer();
         }
 
+        // Definimos se o usuário é premium (independente de ser admin ou cliente)
+        $usuario->is_premium = $this->isPremium();
 
         // Só recuperamos as permissões de um usuário que não seja admin e não seja cliente
         // pois esses dois grupos não possuem permissões

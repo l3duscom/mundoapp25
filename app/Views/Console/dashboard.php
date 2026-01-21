@@ -158,6 +158,42 @@
         </a>
         <?php endif; ?>
 
+        <?php if (!usuario_logado()->is_premium && isset($plano_premium) && $plano_premium): ?>
+        <!-- Banner Premium -->
+        <a href="<?= site_url('assinaturas') ?>" class="card w-100 shadow-lg mb-2 text-decoration-none position-relative overflow-hidden" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px;">
+            <div class="position-absolute" style="top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+            <div class="position-absolute" style="bottom: -30px; left: -30px; width: 100px; height: 100px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
+            <div class="card-body py-3 px-3 position-relative">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="flex-shrink-0">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; background: rgba(255,255,255,0.2);">
+                            <i class="bx bx-crown text-warning" style="font-size: 1.5rem;"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <span class="text-white fw-bold d-block" style="font-size: 1rem;">Seja Premium!</span>
+                        <span class="text-white-50" style="font-size: 0.8rem;"><?= $plano_premium->getPrecoFormatado() ?>/mês</span>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <span class="badge bg-warning text-dark px-2 py-1" style="font-size: 0.7rem;">
+                            <i class="bx bx-right-arrow-alt"></i>
+                        </span>
+                    </div>
+                </div>
+                <?php $beneficios = $plano_premium->getBeneficios(); ?>
+                <?php if (!empty($beneficios)): ?>
+                <div class="mt-2 d-flex gap-1 flex-wrap">
+                    <?php foreach (array_slice($beneficios, 0, 3) as $beneficio): ?>
+                    <span class="badge text-white-50" style="font-size: 0.65rem; background: rgba(255,255,255,0.15);">
+                        <i class="bx bx-check"></i> <?= esc($beneficio) ?>
+                    </span>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
+            </div>
+        </a>
+        <?php endif; ?>
+
         <div class="card w-100 shadow bg-dark radius-10 mb-2">
             <div class="card-body">
                 <div class="row">

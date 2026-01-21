@@ -12,6 +12,8 @@ class AsaasService
     private $access_token;
     private $customers;
     private $payments;
+    private $subscriptions;
+    private $baseUrl;
 
 
 
@@ -19,12 +21,16 @@ class AsaasService
     {
         if (env('CI_ENVIRONMENT') == 'development') {
             $this->access_token = env('ASAAS_ACCESS_TOKEN_SANDBOX');
-            $this->customers = 'https://sandbox.asaas.com/api/v3/customers';
-            $this->payments = 'https://sandbox.asaas.com/api/v3/payments/';
+            $this->baseUrl = 'https://sandbox.asaas.com/api/v3/';
+            $this->customers = $this->baseUrl . 'customers';
+            $this->payments = $this->baseUrl . 'payments/';
+            $this->subscriptions = $this->baseUrl . 'subscriptions';
         } else {
             $this->access_token = env('ASAAS_ACCESS_TOKEN');
-            $this->customers = 'https://www.asaas.com/api/v3/customers';
-            $this->payments = 'https://www.asaas.com/api/v3/payments/';
+            $this->baseUrl = 'https://www.asaas.com/api/v3/';
+            $this->customers = $this->baseUrl . 'customers';
+            $this->payments = $this->baseUrl . 'payments/';
+            $this->subscriptions = $this->baseUrl . 'subscriptions';
         }
     }
 
@@ -239,6 +245,170 @@ class AsaasService
             return $retorno;
         } catch (Exception $e) {
             print_r($e->getMessage());
+        }
+    }
+
+    // ========================================
+    // MÉTODOS DE ASSINATURA RECORRENTE
+    // ========================================
+
+    /**
+     * Cria uma assinatura recorrente no Asaas
+     *
+     * @param array $data Dados da assinatura
+     * @return array|null
+     */
+    public function createSubscription(array $data): ?array
+    {
+        $subscription = [
+            'customer' => $data['customer_id'],
+            'billingType' => $data['billing_type'] ?? 'CREDIT_CARD',
+            'value' => (float) $data['value'],
+            'nextDueDate' => $data['next_due_date'] ?? date('Y-m-d'),
+            'cycle' => $data['cycle'] ?? 'MONTHLY', // MONTHLY ou YEARLY
+            'description' => $data['description'] ?? 'Assinatura Premium',
+            'externalReference' => $data['external_reference'] ?? null,
+        ];
+
+        // Se for cartão de crédito, adiciona os dados do cartão
+        if (($data['billing_type'] ?? 'CREDIT_CARD') === 'CREDIT_CARD' && isset($data['credit_card'])) {
+            $subscription['creditCard'] = [
+                'holderName' => $data['credit_card']['holder_name'],
+                'number' => $data['credit_card']['number'],
+                'expiryMonth' => $data['credit_card']['expiry_month'],
+                'expiryYear' => $data['credit_card']['expiry_year'],
+                'ccv' => $data['credit_card']['ccv'],
+            ];
+            $subscription['creditCardHolderInfo'] = [
+                'name' => $data['holder_info']['name'],
+                'email' => $data['holder_info']['email'],
+                'cpfCnpj' => $data['holder_info']['cpf_cnpj'],
+                'postalCode' => $data['holder_info']['postal_code'],
+                'addressNumber' => $data['holder_info']['address_number'],
+                'mobilePhone' => $data['holder_info']['mobile_phone'],
+            ];
+        }
+
+        $headers = [
+            'Content-Type: application/json',
+            'access_token: ' . $this->access_token
+        ];
+
+        try {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $this->subscriptions);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($subscription));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+            $apiResponse = curl_exec($ch);
+            $retorno = json_decode($apiResponse, true);
+
+            curl_close($ch);
+
+            log_message('info', 'Asaas createSubscription response: ' . json_encode($retorno));
+
+            return $retorno;
+        } catch (Exception $e) {
+            log_message('error', 'Erro ao criar assinatura Asaas: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Cancela uma assinatura no Asaas
+     *
+     * @param string $subscriptionId ID da assinatura no Asaas
+     * @return array|null
+     */
+    public function cancelSubscription(string $subscriptionId): ?array
+    {
+        $headers = [
+            'Content-Type: application/json',
+            'access_token: ' . $this->access_token
+        ];
+
+        try {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $this->subscriptions . '/' . $subscriptionId);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+            $apiResponse = curl_exec($ch);
+            $retorno = json_decode($apiResponse, true);
+
+            curl_close($ch);
+
+            log_message('info', 'Asaas cancelSubscription response: ' . json_encode($retorno));
+
+            return $retorno;
+        } catch (Exception $e) {
+            log_message('error', 'Erro ao cancelar assinatura Asaas: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Obtém detalhes de uma assinatura no Asaas
+     *
+     * @param string $subscriptionId ID da assinatura no Asaas
+     * @return array|null
+     */
+    public function getSubscription(string $subscriptionId): ?array
+    {
+        $headers = [
+            'Content-Type: application/json',
+            'access_token: ' . $this->access_token
+        ];
+
+        try {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $this->subscriptions . '/' . $subscriptionId);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+            $apiResponse = curl_exec($ch);
+            $retorno = json_decode($apiResponse, true);
+
+            curl_close($ch);
+
+            return $retorno;
+        } catch (Exception $e) {
+            log_message('error', 'Erro ao obter assinatura Asaas: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Lista pagamentos de uma assinatura
+     *
+     * @param string $subscriptionId ID da assinatura no Asaas
+     * @return array|null
+     */
+    public function getSubscriptionPayments(string $subscriptionId): ?array
+    {
+        $headers = [
+            'Content-Type: application/json',
+            'access_token: ' . $this->access_token
+        ];
+
+        try {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $this->subscriptions . '/' . $subscriptionId . '/payments');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+            $apiResponse = curl_exec($ch);
+            $retorno = json_decode($apiResponse, true);
+
+            curl_close($ch);
+
+            return $retorno;
+        } catch (Exception $e) {
+            log_message('error', 'Erro ao listar pagamentos da assinatura: ' . $e->getMessage());
+            return null;
         }
     }
 }

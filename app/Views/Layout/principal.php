@@ -409,6 +409,18 @@
                         <div class="menu-title">Gerenciar Perfil</div>
                     </a>
                 </li>
+                <li>
+                    <a href="<?php echo site_url('assinaturas/minhas'); ?>">
+                        <div class="parent-icon"><i class="bx bx-crown" style="color: #ffd700;"></i>
+                        </div>
+                        <div class="menu-title">
+                            Minha Assinatura
+                            <?php if (usuario_logado()->is_premium): ?>
+                                <span class="badge bg-success ms-1" style="font-size: 0.6rem;">PRO</span>
+                            <?php endif; ?>
+                        </div>
+                    </a>
+                </li>
                 <?php endif; ?>
                 <li>
                     <a href="<?php echo site_url('logout'); ?>">

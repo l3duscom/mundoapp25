@@ -200,6 +200,13 @@ class Console extends BaseController
 		// Buscar orderbumps do usuário
 		$data['orderbumps'] = $this->pedidoOrderBumpModel->getOrderBumpsPorUsuario($id);
 
+		// Buscar plano Premium para o banner (se usuário não for premium)
+		if (!usuario_logado()->is_premium) {
+			$planoModel = new \App\Models\PlanoModel();
+			$planoPremium = $planoModel->where('slug', 'premium')->where('ativo', 1)->first();
+			$data['plano_premium'] = $planoPremium;
+		}
+
 		return view('Console/dashboard', $data);
 	}
 

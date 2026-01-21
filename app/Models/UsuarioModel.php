@@ -20,6 +20,9 @@ class UsuarioModel extends Model
         'reset_expira_em',
         'imagem',
         'pontos', // Pontos do sistema de conquistas
+        'is_premium', // Flag de usuário premium
+        'premium_ate', // Data de expiração do premium
+        'asaas_subscription_id', // ID da assinatura no Asaas
         // Não colocaremos o campo ativo.... Pois existe a manipulação de formulário
     ];
 

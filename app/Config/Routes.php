@@ -171,7 +171,6 @@ $routes->group('assinaturas', ['namespace' => 'App\Controllers'], function($rout
     $routes->get('minhas', 'Assinaturas::minhasAssinaturas');
     $routes->get('detalhes/(:num)', 'Assinaturas::detalhes/$1');
     $routes->post('cancelar', 'Assinaturas::cancelar');
-    $routes->post('webhook', 'Assinaturas::webhook');
     
     // Área administrativa
     $routes->get('admin', 'Assinaturas::admin');
