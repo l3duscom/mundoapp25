@@ -106,6 +106,124 @@
     color: #fff;
     font-weight: 500;
 }
+
+/* ====== ESTILOS PREMIUM ESPECIAIS ====== */
+.premium-card {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    border: 2px solid transparent;
+    border-image: linear-gradient(135deg, #ffd700, #ff6b35, #ff1493, #00ff88, #ffd700) 1;
+    animation: premium-border-glow 3s ease-in-out infinite;
+}
+
+@keyframes premium-border-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), 0 0 40px rgba(255, 107, 53, 0.2); }
+    50% { box-shadow: 0 0 30px rgba(255, 20, 147, 0.4), 0 0 60px rgba(0, 255, 136, 0.2); }
+}
+
+.premium-crown {
+    animation: crown-bounce 2s ease-in-out infinite;
+}
+
+@keyframes crown-bounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-5px) rotate(-5deg); }
+    75% { transform: translateY(-5px) rotate(5deg); }
+}
+
+.premium-shimmer {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+.premium-confetti {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.confetti-piece {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    animation: confetti-fall 4s linear infinite;
+    opacity: 0.8;
+}
+
+@keyframes confetti-fall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(150px) rotate(720deg); opacity: 0; }
+}
+
+.premium-stars {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.star {
+    color: #ffd700;
+    animation: star-twinkle 1.5s ease-in-out infinite;
+    display: inline-block;
+}
+
+.star:nth-child(2) { animation-delay: 0.3s; }
+.star:nth-child(3) { animation-delay: 0.6s; }
+
+@keyframes star-twinkle {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.premium-badge-animated {
+    display: inline-block;
+    background: linear-gradient(135deg, #ffd700 0%, #ff8c00 50%, #ffd700 100%);
+    background-size: 200% 200%;
+    animation: gradient-shift 2s ease infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+@keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.premium-emoji-float {
+    animation: emoji-float 3s ease-in-out infinite;
+    display: inline-block;
+}
+
+@keyframes emoji-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.premium-pulse {
+    animation: premium-pulse 2s ease-in-out infinite;
+}
+
+@keyframes premium-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
 </style>
 <?php echo $this->endSection() ?>
 
@@ -158,8 +276,82 @@
         </a>
         <?php endif; ?>
 
-        <?php if (!usuario_logado()->is_premium && isset($plano_premium) && $plano_premium): ?>
-        <!-- Banner Premium -->
+        <?php if (usuario_logado()->is_premium): ?>
+        <!-- 🎉 CARD PREMIUM CELEBRATIVO 🎉 -->
+        <div class="card w-100 shadow-lg mb-3 premium-card premium-pulse" style="border-radius: 16px;">
+            <!-- Efeito shimmer -->
+            <div class="premium-shimmer"></div>
+            
+            <!-- Confetti decorativo -->
+            <div class="premium-confetti">
+                <span class="confetti-piece" style="left: 10%; background: #ffd700; animation-delay: 0s;"></span>
+                <span class="confetti-piece" style="left: 25%; background: #ff6b35; animation-delay: 0.5s;"></span>
+                <span class="confetti-piece" style="left: 40%; background: #ff1493; animation-delay: 1s;"></span>
+                <span class="confetti-piece" style="left: 55%; background: #00ff88; animation-delay: 1.5s;"></span>
+                <span class="confetti-piece" style="left: 70%; background: #00bfff; animation-delay: 2s;"></span>
+                <span class="confetti-piece" style="left: 85%; background: #ff69b4; animation-delay: 2.5s;"></span>
+            </div>
+            
+            <!-- Estrelas piscando -->
+            <div class="premium-stars">
+                <span class="star">⭐</span>
+                <span class="star">✨</span>
+                <span class="star">🌟</span>
+            </div>
+            
+            <div class="card-body py-4 px-3 position-relative" style="z-index: 1;">
+                <div class="text-center">
+                    <!-- Coroa animada -->
+                    <div class="premium-crown mb-2" style="font-size: 3rem;">
+                        👑
+                    </div>
+                    
+                    <!-- Título premium -->
+                    <h4 class="fw-bold mb-2">
+                        <span class="premium-badge-animated" style="font-size: 1.3rem;">VOCÊ É PREMIUM!</span>
+                    </h4>
+                    
+                    <!-- Mensagem divertida -->
+                    <p class="text-white-50 small mb-3">
+                        <span class="premium-emoji-float">🎉</span>
+                        Aproveite todos os benefícios exclusivos!
+                        <span class="premium-emoji-float" style="animation-delay: 0.5s;">🚀</span>
+                    </p>
+                    
+                    <!-- Validade da assinatura -->
+                    <?php if (!empty(usuario_logado()->premium_ate)): ?>
+                    <div class="d-flex justify-content-center gap-2 flex-wrap mb-3">
+                        <span class="badge" style="background: rgba(255,215,0,0.2); color: #ffd700; font-size: 0.75rem;">
+                            <i class="bi bi-calendar-check me-1"></i>
+                            Válido até: <?= date('d/m/Y', strtotime(usuario_logado()->premium_ate)) ?>
+                        </span>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <!-- Badges de benefícios -->
+                    <div class="d-flex justify-content-center gap-2 flex-wrap">
+                        <span class="badge" style="background: linear-gradient(135deg, rgba(139,78,207,0.3), rgba(103,46,186,0.5)); color: #fff; font-size: 0.7rem;">
+                            <i class="bi bi-lightning-charge-fill text-warning"></i> Acesso VIP
+                        </span>
+                        <span class="badge" style="background: linear-gradient(135deg, rgba(0,191,255,0.3), rgba(0,150,199,0.5)); color: #fff; font-size: 0.7rem;">
+                            <i class="bi bi-gift-fill text-info"></i> Ofertas Exclusivas
+                        </span>
+                        <span class="badge" style="background: linear-gradient(135deg, rgba(255,107,53,0.3), rgba(255,140,0,0.5)); color: #fff; font-size: 0.7rem;">
+                            <i class="bi bi-star-fill text-warning"></i> Suporte Prioritário
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Botão para gerenciar assinatura -->
+                <div class="text-center mt-3">
+                    <a href="<?= site_url('assinaturas/minhas') ?>" class="btn btn-sm" style="background: linear-gradient(135deg, #ffd700, #ff8c00); color: #000; font-weight: 600; border-radius: 20px; padding: 8px 20px;">
+                        <i class="bx bx-crown me-1"></i> Gerenciar Assinatura
+                    </a>
+                </div>
+            </div>
+        </div>
+        <?php elseif (isset($plano_premium) && $plano_premium): ?>
+        <!-- Banner Premium para não-premium -->
         <a href="<?= site_url('assinaturas') ?>" class="card w-100 shadow-lg mb-2 text-decoration-none position-relative overflow-hidden" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px;">
             <div class="position-absolute" style="top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
             <div class="position-absolute" style="bottom: -30px; left: -30px; width: 100px; height: 100px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
