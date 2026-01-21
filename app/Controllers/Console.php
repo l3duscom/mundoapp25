@@ -28,6 +28,7 @@ class Console extends BaseController
 	private $ticketModel;
 	private $bonusModel;
 	private $pedidoOrderBumpModel;
+	private $resgatePremiumModel;
 	
 
 
@@ -45,6 +46,7 @@ class Console extends BaseController
 		$this->ticketModel = new \App\Models\TicketModel();
 		$this->bonusModel = new \App\Models\BonusModel();
 		$this->pedidoOrderBumpModel = new \App\Models\PedidoOrderBumpModel();
+		$this->resgatePremiumModel = new \App\Models\ResgatePremiumModel();
 	}
 
 	public function dashboard()
@@ -205,6 +207,45 @@ class Console extends BaseController
 			$planoModel = new \App\Models\PlanoModel();
 			$planoPremium = $planoModel->where('slug', 'premium')->where('ativo', 1)->first();
 			$data['plano_premium'] = $planoPremium;
+		} else {
+			// Usuário é premium - buscar eventos elegíveis para ingresso grátis
+			try {
+				$eventosAtivos = $this->eventoModel
+					->where('data_fim >=', date('Y-m-d'))
+					// ->where('ativo', 1)  // Comentado para debug
+					->orderBy('data_inicio', 'ASC')
+					->findAll();
+				
+				// Pegar IDs dos eventos já resgatados
+				$eventosResgatados = $this->resgatePremiumModel->getEventosResgatados($id);
+				
+				// Filtrar apenas eventos não resgatados e com tickets disponíveis
+				$eventosElegiveis = [];
+				foreach ($eventosAtivos as $evento) {
+					if (!in_array($evento->id, $eventosResgatados)) {
+						// Buscar tickets com estoque
+						$ticketsDisponiveis = $this->ticketModel
+							->where('event_id', $evento->id)
+							->whereIn('categoria', ['comum', 'cosplay'])
+							->where('ativo', 1)
+							// Sem verificação de estoque para premium
+							->findAll();
+						
+						if (!empty($ticketsDisponiveis)) {
+							$evento->tickets_gratuitos = $ticketsDisponiveis;
+							$eventosElegiveis[] = $evento;
+						}
+					}
+				}
+				
+				$data['eventos_ingressos_gratis'] = $eventosElegiveis;
+				$data['resgates_premium'] = $this->resgatePremiumModel->getResgatesPorUsuario($id);
+			} catch (\Exception $e) {
+				// Se tabela não existe, ignora silenciosamente
+				log_message('error', 'Erro Ingresso Premium: ' . $e->getMessage());
+				$data['eventos_ingressos_gratis'] = [];
+				$data['resgates_premium'] = [];
+			}
 		}
 
 		return view('Console/dashboard', $data);
@@ -477,6 +518,122 @@ class Console extends BaseController
 		return $this->response->setJSON([
 			'success' => false,
 			'message' => 'Não foi possível marcar o produto como usado. Ele pode já ter sido usado ou não pertence a você.'
+		]);
+	}
+
+	/**
+	 * Resgata ingresso gratuito premium via AJAX
+	 * 
+	 * @return \CodeIgniter\HTTP\ResponseInterface
+	 */
+	public function resgatarIngressoPremium()
+	{
+		// Verificar se é requisição AJAX
+		if (!$this->request->isAJAX()) {
+			return $this->response->setJSON([
+				'success' => false,
+				'message' => 'Requisição inválida'
+			]);
+		}
+
+		$usuario = $this->usuarioLogado();
+		$usuarioId = $usuario->id;
+
+		// Verificar se é premium
+		if (!$usuario->is_premium) {
+			return $this->response->setJSON([
+				'success' => false,
+				'message' => 'Apenas usuários Premium podem resgatar ingressos gratuitos.'
+			]);
+		}
+
+		$ticketId = $this->request->getPost('ticket_id');
+		$eventoId = $this->request->getPost('evento_id');
+
+		if (!$ticketId || !$eventoId) {
+			return $this->response->setJSON([
+				'success' => false,
+				'message' => 'Dados inválidos.'
+			]);
+		}
+
+		// Verificar se já resgatou para este evento
+		if ($this->resgatePremiumModel->jaResgatouParaEvento($usuarioId, $eventoId)) {
+			return $this->response->setJSON([
+				'success' => false,
+				'message' => 'Você já resgatou seu ingresso gratuito para este evento.'
+			]);
+		}
+
+		// Buscar ticket
+		$ticket = $this->ticketModel->find($ticketId);
+		if (!$ticket) {
+			return $this->response->setJSON([
+				'success' => false,
+				'message' => 'Ingresso não encontrado.'
+			]);
+		}
+
+		// Verificar categoria
+		if (!in_array($ticket->categoria, ['comum', 'cosplay'])) {
+			return $this->response->setJSON([
+				'success' => false,
+				'message' => 'Categoria de ingresso não elegível.'
+			]);
+		}
+
+		// Verificação de estoque removida - premium tem prioridade
+		// if ($ticket->estoque >= $ticket->quantidade) {
+		// 	return $this->response->setJSON([
+		// 		'success' => false,
+		// 		'message' => 'Este ingresso está esgotado.'
+		// 	]);
+		// }
+
+		// Criar pedido virtual (cortesia)
+		$pedidoData = [
+			'user_id' => $usuarioId,
+			'evento_id' => $eventoId,
+			'codigo' => strtoupper(random_string('alnum', 10)),
+			'total' => 0,
+			'status' => 'CONFIRMED',
+			'forma_pagamento' => 'CORTESIA_PREMIUM',
+		];
+		
+		$this->pedidoModel->protect(false)->insert($pedidoData);
+		$pedidoId = $this->pedidoModel->getInsertID();
+
+		// Criar ingresso
+		$codigoIngresso = $this->ingressoModel->geraCodigoIngresso();
+		$ingressoData = [
+			'pedido_id' => $pedidoId,
+			'user_id' => $usuarioId,
+			'ticket_id' => $ticketId,
+			'nome' => $ticket->nome . ' (Premium)',
+			'valor_unitario' => 0,
+			'valor' => 0,
+			'quantidade' => 1,
+			'codigo' => $codigoIngresso,
+			'tipo' => $ticket->tipo ?? 'individual',
+			'participante' => $usuario->nome,
+		];
+		
+		$this->ingressoModel->protect(false)->insert($ingressoData);
+		$ingressoId = $this->ingressoModel->getInsertID();
+
+		// Atualizar estoque do ticket
+		$this->ticketModel->protect(false)
+			->where('id', $ticketId)
+			->set('estoque', $ticket->estoque + 1)
+			->update();
+
+		// Registrar resgate
+		$this->resgatePremiumModel->registrarResgate($usuarioId, $eventoId, $ticketId, $ingressoId);
+
+		return $this->response->setJSON([
+			'success' => true,
+			'message' => 'Ingresso resgatado com sucesso! Atualize a página para visualizá-lo.',
+			'codigo' => $codigoIngresso
 		]);
 	}
 

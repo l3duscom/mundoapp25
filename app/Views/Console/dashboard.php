@@ -224,6 +224,159 @@
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.05); }
 }
+
+/* Animação da moeda girando */
+@keyframes coin-spin {
+    0% { transform: rotateY(0deg); }
+    100% { transform: rotateY(360deg); }
+}
+
+/* Estilos para tabs premium */
+.premium-tabs .nav-link.active {
+    background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%) !important;
+    color: #000 !important;
+    font-weight: 600;
+    border: none !important;
+    box-shadow: 0 0 15px rgba(255,215,0,0.4);
+}
+
+.premium-tabs .nav-link {
+    border: 1px solid rgba(255,215,0,0.3) !important;
+    color: #ffd700 !important;
+}
+
+.premium-tabs .nav-link:hover:not(.active) {
+    background: rgba(255,215,0,0.1) !important;
+    border-color: rgba(255,215,0,0.5) !important;
+}
+
+/* Card de ticket premium */
+.ticket-card-premium {
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    position: relative;
+}
+
+.ticket-card-premium::before {
+    content: '';
+    position: absolute;
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    background: linear-gradient(135deg, #ffd700, #ff6b35, #ff1493, #00ff88, #ffd700);
+    background-size: 400% 400%;
+    border-radius: 18px;
+    z-index: -1;
+    animation: gradient-border 4s ease infinite;
+}
+
+@keyframes gradient-border {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* DreamCard premium styles */
+.dreamcard-premium {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
+    border: 2px solid rgba(255,215,0,0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.dreamcard-premium::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,215,0,0.1), transparent);
+    animation: shimmer 3s infinite;
+}
+
+.dreamcard-icon-premium {
+    color: #ffd700;
+    text-shadow: 0 0 20px rgba(255,215,0,0.5);
+    animation: glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+    0%, 100% { text-shadow: 0 0 20px rgba(255,215,0,0.5); }
+    50% { text-shadow: 0 0 40px rgba(255,215,0,0.8), 0 0 60px rgba(255,215,0,0.4); }
+}
+
+/* ====== ESTILOS INTERNOS DO CARD DE INGRESSO PREMIUM ====== */
+.ticket-card-premium .ticket-card-body {
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+}
+
+.ticket-card-premium .ticket-event-title {
+    background: linear-gradient(135deg, #ffd700 0%, #ff8c00 50%, #ffd700 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient-shift 3s ease infinite;
+}
+
+.ticket-card-premium .ticket-label {
+    color: #a78bfa !important;
+}
+
+.ticket-card-premium .ticket-label i {
+    color: #ffd700 !important;
+}
+
+.ticket-card-premium .ticket-value {
+    color: #00ff88 !important;
+    text-shadow: 0 0 8px rgba(0,255,136,0.3);
+}
+
+.ticket-card-premium .ticket-qr-wrapper {
+    position: relative;
+    padding: 4px;
+    background: linear-gradient(135deg, #ffd700, #ff6b35, #ff1493, #00ff88, #ffd700);
+    background-size: 400% 400%;
+    border-radius: 12px;
+    animation: gradient-border 4s ease infinite;
+}
+
+.ticket-card-premium .ticket-qr-wrapper img {
+    border-radius: 8px;
+}
+
+.ticket-card-premium .ticket-info-label {
+    color: #ffd700 !important;
+}
+
+.ticket-card-premium .ticket-info-value {
+    color: #fff;
+    text-shadow: 0 0 5px rgba(255,255,255,0.2);
+}
+
+.ticket-card-premium .ticket-divider {
+    border-color: rgba(255,215,0,0.3) !important;
+    background: linear-gradient(90deg, transparent, rgba(255,215,0,0.5), transparent);
+    height: 1px;
+    border: none;
+}
+
+.ticket-card-premium .ticket-vip-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    color: #000;
+    font-size: 0.6rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    margin-left: 8px;
+    animation: premium-pulse 2s ease-in-out infinite;
+}
+
+.ticket-card-premium .ticket-access-badge {
+    background: linear-gradient(135deg, rgba(0,255,136,0.2), rgba(0,191,255,0.2));
+    border: 1px solid rgba(0,255,136,0.4);
+    color: #00ff88;
+}
 </style>
 <?php echo $this->endSection() ?>
 
@@ -299,54 +452,32 @@
                 <span class="star">🌟</span>
             </div>
             
-            <div class="card-body py-4 px-3 position-relative" style="z-index: 1;">
+            <div class="card-body py-2 px-3 position-relative" style="z-index: 1;">
                 <div class="text-center">
                     <!-- Coroa animada -->
-                    <div class="premium-crown mb-2" style="font-size: 3rem;">
+                    <div class="premium-crown mb-1" style="font-size: 2rem;">
                         👑
                     </div>
                     
                     <!-- Título premium -->
-                    <h4 class="fw-bold mb-2">
-                        <span class="premium-badge-animated" style="font-size: 1.3rem;">VOCÊ É PREMIUM!</span>
-                    </h4>
+                    <h5 class="fw-bold mb-1">
+                        <span class="premium-badge-animated" style="font-size: 1.1rem;">VOCÊ É PREMIUM!</span>
+                    </h5>
                     
                     <!-- Mensagem divertida -->
-                    <p class="text-white-50 small mb-3">
-                        <span class="premium-emoji-float">🎉</span>
-                        Aproveite todos os benefícios exclusivos!
-                        <span class="premium-emoji-float" style="animation-delay: 0.5s;">🚀</span>
+                    <p class="text-white-50 small mb-2" style="font-size: 0.75rem;">
+                        🎉 Aproveite todos os benefícios exclusivos! 🚀
                     </p>
                     
                     <!-- Validade da assinatura -->
                     <?php if (!empty(usuario_logado()->premium_ate)): ?>
-                    <div class="d-flex justify-content-center gap-2 flex-wrap mb-3">
-                        <span class="badge" style="background: rgba(255,215,0,0.2); color: #ffd700; font-size: 0.75rem;">
+                    <div class="d-flex justify-content-center">
+                        <span class="badge" style="background: rgba(255,215,0,0.2); color: #ffd700; font-size: 0.7rem;">
                             <i class="bi bi-calendar-check me-1"></i>
                             Válido até: <?= date('d/m/Y', strtotime(usuario_logado()->premium_ate)) ?>
                         </span>
                     </div>
                     <?php endif; ?>
-                    
-                    <!-- Badges de benefícios -->
-                    <div class="d-flex justify-content-center gap-2 flex-wrap">
-                        <span class="badge" style="background: linear-gradient(135deg, rgba(139,78,207,0.3), rgba(103,46,186,0.5)); color: #fff; font-size: 0.7rem;">
-                            <i class="bi bi-lightning-charge-fill text-warning"></i> Acesso VIP
-                        </span>
-                        <span class="badge" style="background: linear-gradient(135deg, rgba(0,191,255,0.3), rgba(0,150,199,0.5)); color: #fff; font-size: 0.7rem;">
-                            <i class="bi bi-gift-fill text-info"></i> Ofertas Exclusivas
-                        </span>
-                        <span class="badge" style="background: linear-gradient(135deg, rgba(255,107,53,0.3), rgba(255,140,0,0.5)); color: #fff; font-size: 0.7rem;">
-                            <i class="bi bi-star-fill text-warning"></i> Suporte Prioritário
-                        </span>
-                    </div>
-                </div>
-                
-                <!-- Botão para gerenciar assinatura -->
-                <div class="text-center mt-3">
-                    <a href="<?= site_url('assinaturas/minhas') ?>" class="btn btn-sm" style="background: linear-gradient(135deg, #ffd700, #ff8c00); color: #000; font-weight: 600; border-radius: 20px; padding: 8px 20px;">
-                        <i class="bx bx-crown me-1"></i> Gerenciar Assinatura
-                    </a>
                 </div>
             </div>
         </div>
@@ -386,42 +517,108 @@
         </a>
         <?php endif; ?>
 
-        <div class="card w-100 shadow bg-dark radius-10 mb-2">
-            <div class="card-body">
+        <?php if (usuario_logado()->is_premium && isset($eventos_ingressos_gratis) && !empty($eventos_ingressos_gratis)): ?>
+        <!-- Card Ingresso Grátis Premium -->
+        <div class="card w-100 shadow-lg mb-2 position-relative overflow-hidden" style="background: linear-gradient(135deg, #0d9488 0%, #065f46 50%, #064e3b 100%); border: 2px solid rgba(34,197,94,0.5); border-radius: 16px;">
+            <div class="premium-shimmer"></div>
+            <div class="card-body position-relative" style="z-index: 1;">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span style="font-size: 1.8rem;">🎁</span>
+                    <div>
+                        <h5 class="mb-0 text-white fw-bold">Ingresso Grátis!</h5>
+                        <small class="text-white-50">Benefício exclusivo Premium</small>
+                    </div>
+                </div>
+                
+                <form id="formResgatePremium">
+                    <div class="mb-3">
+                        <label class="form-label text-white-50 small mb-1">Escolha o evento:</label>
+                        <select class="form-select form-select-sm bg-dark text-white border-success" id="selectEventoPremium" required>
+                            <option value="">Selecione um evento</option>
+                            <?php foreach ($eventos_ingressos_gratis as $evento): ?>
+                                <option value="<?= $evento->id ?>" data-evento='<?= json_encode($evento->tickets_gratuitos) ?>'>
+                                    <?= esc($evento->nome) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3" id="divSelectTicket" style="display: none;">
+                        <label class="form-label text-white-50 small mb-1">Escolha a categoria:</label>
+                        <select class="form-select form-select-sm bg-dark text-white border-success" id="selectTicketPremium" required>
+                            <option value="">Selecione o ingresso</option>
+                        </select>
+                    </div>
+                    
+                    <button type="button" id="btnResgatarPremium" class="btn w-100" style="background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; font-weight: 600; border-radius: 12px;" disabled>
+                        <i class="bi bi-gift me-2"></i>Resgatar Meu Ingresso
+                    </button>
+                </form>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <?php if (usuario_logado()->is_premium && isset($resgates_premium) && !empty($resgates_premium)): ?>
+        <!-- Resgates já realizados -->
+        <div class="card w-100 shadow mb-2" style="background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); border-radius: 12px;">
+            <div class="card-body py-2 px-3">
+                <small class="text-success d-block mb-1"><i class="bi bi-check-circle me-1"></i>Ingressos resgatados</small>
+                <?php foreach ($resgates_premium as $resgate): ?>
+                <div class="d-flex align-items-center justify-content-between" style="font-size: 0.8rem;">
+                    <span class="text-white-50"><?= esc($resgate->evento_nome ?? 'Evento') ?></span>
+                    <span class="badge bg-success" style="font-size: 0.65rem;"><?= date('d/m', strtotime($resgate->created_at)) ?></span>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Card Saldo da conta -->
+        <div class="card w-100 shadow-lg radius-10 mb-2 position-relative overflow-hidden" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); border: 1px solid rgba(255,215,0,0.3);">
+            <div class="premium-shimmer"></div>
+            <div class="card-body position-relative" style="z-index: 1;">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h5> <img src="<?php echo site_url('recursos/img/dreamcoin.png'); ?>" alt="" class="rounded-circle" width="34" height="34">
-                            Saldo da conta </h5>
+                        <h5 class="d-flex align-items-center gap-2">
+                            <div class="position-relative">
+                                <img src="<?php echo site_url('recursos/img/dreamcoin.png'); ?>" alt="" class="rounded-circle" width="34" height="34" style="animation: coin-spin 3s linear infinite;">
+                            </div>
+                            <span class="premium-badge-animated">Saldo da Conta</span>
+                        </h5>
                     </div>
-                    <div class="row ">
+                    <div class="row">
                         <div class="col col-5">
-                            <p class="mb-0 text-muted" style="font-size: 10px;">DREAMCOIN</p>
-                            <h4 class="mb-0"><?php echo usuario_logado()->pontos; ?></h4>
+                            <p class="mb-0" style="font-size: 10px; color: #ffd700;">DREAMCOIN</p>
+                            <h4 class="mb-0" style="color: #ffd700; text-shadow: 0 0 10px rgba(255,215,0,0.5);"><?php echo usuario_logado()->pontos; ?></h4>
                         </div>
                         <div class="col col-2">
-                            <i class="bi bi-plus-lg text-muted" style="margin-left: -10px"></i>
+                            <i class="bi bi-plus-lg" style="margin-left: -10px; color: #00ff88;"></i>
                         </div>
                         <div class="col col-5">
-                            <p class="mb-0 text-muted" style="font-size: 10px;">CASHBACK</p>
-                            <h4 class="mb-0"><span style="font-size: 10px; margin-left: -20px"> R$ </span> <?php echo usuario_logado()->saldo; ?></h4>
+                            <p class="mb-0" style="font-size: 10px; color: #00ff88;">CASHBACK</p>
+                            <h4 class="mb-0" style="color: #00ff88; text-shadow: 0 0 10px rgba(0,255,136,0.5);"><span style="font-size: 10px; margin-left: -20px"> R$ </span> <?php echo usuario_logado()->saldo; ?></h4>
                         </div>
-                    </div><!--end row-->
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Card Conquistas Compacto -->
-        <div class="card w-100 shadow bg-dark radius-10 mb-2">
-            <div class="card-body py-2 px-3">
+        <div class="card w-100 shadow-lg radius-10 mb-2 position-relative overflow-hidden" style="background: linear-gradient(135deg, #2d1f4e 0%, #1a1a3e 100%); border: 1px solid rgba(139,78,207,0.4);">
+            <div class="card-body py-3 px-3">
                 <div class="d-flex align-items-center justify-content-between">
-                    <span class="text-muted small">Conquistas</span>
+                    <div>
+                        <span class="small" style="color: #a78bfa;">🏆 Conquistas</span>
+                    </div>
                     <div class="d-flex gap-2">
+                        <span class="premium-emoji-float" style="font-size: 1.4rem;" title="Cadastro realizado">🖱️</span>
                         <?php if (usuario_logado()->is_membro) : ?>
-                            <i class="bx bx-mouse-alt" style="color: #ffd700; font-size: 1.3rem;" title="Cadastro realizado"></i>
-                            <i class="bx bx-face" style="color: #ffd700; font-size: 1.3rem;" title="Pioneiro"></i>
-                            <i class="bx bx-crown" style="color: #ffd700; font-size: 1.3rem;" title="Premium"></i>
-                        <?php else : ?>
-                            <i class="bx bx-mouse-alt" style="color: #ffd700; font-size: 1.3rem;" title="Cadastro realizado"></i>
+                            <span class="premium-emoji-float" style="font-size: 1.4rem; animation-delay: 0.3s;" title="Pioneiro">🎭</span>
+                            <span class="premium-emoji-float" style="font-size: 1.4rem; animation-delay: 0.6s;" title="Premium">👑</span>
+                        <?php endif; ?>
+                        <?php if (usuario_logado()->is_premium) : ?>
+                            <span class="premium-emoji-float" style="font-size: 1.4rem; animation-delay: 0.9s;" title="VIP">💎</span>
+                            <span class="premium-emoji-float" style="font-size: 1.4rem; animation-delay: 1.2s;" title="Exclusivo">⭐</span>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -468,7 +665,7 @@
         
         
         <!-- Nav tabs -->
-        <ul class="nav nav-tabs mb-3" id="ingressosTabs" role="tablist">
+        <ul class="nav nav-tabs mb-3 <?= usuario_logado()->is_premium ? 'premium-tabs' : '' ?>" id="ingressosTabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="atuais-tab" data-bs-toggle="tab" data-bs-target="#atuais" type="button" role="tab" aria-controls="atuais" aria-selected="true">Ingressos Atuais</button>
             </li>
@@ -489,7 +686,7 @@
                 <?php if (!empty($ingressos_atuais)) : ?>
                     <?php foreach ($ingressos_atuais as $i) : ?>
                     <!-- Card de Ingresso - Novo Design -->
-                    <div class="ticket-card card mb-4">
+                    <div class="ticket-card card mb-4 <?= usuario_logado()->is_premium ? 'ticket-card-premium' : '' ?>">
                         <!-- Header com imagem/capa do evento -->
                         <?php 
                         $header_class = 'ticket-card-header';
@@ -536,13 +733,15 @@
                         <!-- Conteúdo do Card -->
                         <div class="ticket-card-body p-3">
                             <!-- Nome do Evento -->
-                            <h4 class="fw-bold text-white mb-3"><?= $i->nome_evento ?></h4>
+                            <h4 class="fw-bold text-white mb-3 ticket-event-title">
+                                <?= $i->nome_evento ?>
+                            </h4>
                             
                             <!-- Data, Horário e Local do Evento -->
                             <div class="row mb-2">
                                 <div class="col-6 col-md-4 mb-2">
-                                    <small class="text-muted text-uppercase d-block" style="font-size: 0.7rem;"><i class="bi bi-calendar3 me-1"></i>DATA</small>
-                                    <p class="mb-0 text-white">
+                                    <small class="text-muted text-uppercase d-block ticket-label" style="font-size: 0.7rem;"><i class="bi bi-calendar3 me-1"></i>DATA</small>
+                                    <p class="mb-0 text-white ticket-value">
                                         <?php 
                                         // Prioriza data do ticket, se não existir usa ticket_dia
                                         if (!empty($i->ticket_data_inicio)) {
@@ -576,8 +775,8 @@
                                     </p>
                                 </div>
                                 <div class="col-6 col-md-4 mb-2">
-                                    <small class="text-muted text-uppercase d-block" style="font-size: 0.7rem;"><i class="bi bi-clock me-1"></i>HORÁRIO</small>
-                                    <p class="mb-0 text-white">
+                                    <small class="text-muted text-uppercase d-block ticket-label" style="font-size: 0.7rem;"><i class="bi bi-clock me-1"></i>HORÁRIO</small>
+                                    <p class="mb-0 text-white ticket-value">
                                         <?php 
                                         $hora_inicio = !empty($i->hora_inicio) ? substr($i->hora_inicio, 0, 5) : '';
                                         $hora_fim = !empty($i->hora_fim) ? substr($i->hora_fim, 0, 5) : '';
@@ -590,41 +789,47 @@
                                     </p>
                                 </div>
                                 <div class="col-12 col-md-4">
-                                    <small class="text-muted text-uppercase d-block" style="font-size: 0.7rem;"><i class="bi bi-geo-alt me-1"></i>LOCAL</small>
-                                    <p class="mb-0 text-white" style="font-size: 0.95rem;"><?= !empty($i->local) ? esc($i->local) : 'Não informado' ?></p>
+                                    <small class="text-muted text-uppercase d-block ticket-label" style="font-size: 0.7rem;"><i class="bi bi-geo-alt me-1"></i>LOCAL</small>
+                                    <p class="mb-0 text-white ticket-value" style="font-size: 0.95rem;"><?= !empty($i->local) ? esc($i->local) : 'Não informado' ?></p>
                                 </div>
                             </div>
                             
-                            <hr class="border-secondary my-3">
+                            <hr class="border-secondary my-3 ticket-divider">
                             
                             <!-- Código + QR Code e Informações -->
                             <div class="d-flex gap-3">
                                 <!-- QR Code -->
                                 <div class="flex-shrink-0 text-center">
-                                    <small class="text-muted d-block mb-1" style="font-size: 0.7rem;"><?= $i->codigo ?></small>
+                                    <small class="text-muted d-block mb-1 ticket-info-label" style="font-size: 0.7rem;"><?= $i->codigo ?></small>
                                     <?php 
                                     $ultimoAcesso = isset($ultimo_acesso_por_ingresso[$i->id]) ? $ultimo_acesso_por_ingresso[$i->id] : null;
                                     $totalAcessos = isset($total_acessos_por_ingresso[$i->id]) ? $total_acessos_por_ingresso[$i->id] : 0;
                                     ?>
+                                    <?php if (usuario_logado()->is_premium): ?>
+                                    <div class="ticket-qr-wrapper d-inline-block">
+                                        <img src="<?= $i->qr ?>" class="qr-zoom" style="width: 116px; height: 116px; background-color:#fff; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#qrModal" data-qr="<?= $i->qr ?>" data-codigo="<?= $i->codigo ?>" data-acesso="<?= $ultimoAcesso ? date('d/m/Y H:i', strtotime($ultimoAcesso)) : '' ?>" data-total="<?= $totalAcessos ?>" title="Clique para ampliar">
+                                    </div>
+                                    <?php else: ?>
                                     <img src="<?= $i->qr ?>" class="qr-zoom" style="width: 120px; height: 120px; background-color:#fff; padding: 2px; border-radius: 8px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#qrModal" data-qr="<?= $i->qr ?>" data-codigo="<?= $i->codigo ?>" data-acesso="<?= $ultimoAcesso ? date('d/m/Y H:i', strtotime($ultimoAcesso)) : '' ?>" data-total="<?= $totalAcessos ?>" title="Clique para ampliar">
+                                    <?php endif; ?>
                                     <?php if ($ultimoAcesso): ?>
-                                        <span class="badge bg-success mt-2 d-block" style="font-size: 0.65rem;"><i class="bi bi-check-circle me-1"></i><?= date('d/m/Y H:i', strtotime($ultimoAcesso)) ?> <span class="badge bg-light text-success ms-1"><?= $totalAcessos ?></span></span>
+                                        <span class="badge bg-success mt-2 d-block ticket-access-badge" style="font-size: 0.65rem;"><i class="bi bi-check-circle me-1"></i><?= date('d/m/Y H:i', strtotime($ultimoAcesso)) ?> <span class="badge bg-light text-success ms-1"><?= $totalAcessos ?></span></span>
                                     <?php endif; ?>
                                 </div>
                                 
                                 <!-- Informações do Ingresso -->
                                 <div class="flex-grow-1">
                                     <div class="mb-2">
-                                        <small class="text-muted text-uppercase" style="font-size: 0.65rem;">INGRESSO</small>
-                                        <p class="mb-0 text-white fw-semibold"><?= $i->nome ?></p>
+                                        <small class="text-muted text-uppercase ticket-info-label" style="font-size: 0.65rem;">INGRESSO</small>
+                                        <p class="mb-0 text-white fw-semibold ticket-info-value"><?= $i->nome ?></p>
                                     </div>
                                     <div class="mb-2">
-                                        <small class="text-muted text-uppercase" style="font-size: 0.65rem;">PARTICIPANTE</small>
-                                        <p class="mb-0 text-white"><?= $i->participante ?? $cliente->nome ?></p>
+                                        <small class="text-muted text-uppercase ticket-info-label" style="font-size: 0.65rem;">PARTICIPANTE</small>
+                                        <p class="mb-0 text-white ticket-info-value"><?= $i->participante ?? $cliente->nome ?></p>
                                     </div>
                                     <div>
-                                        <small class="text-muted text-uppercase" style="font-size: 0.65rem;">ACESSO</small>
-                                        <p class="mb-0 text-white"><?= $i->frete == null || $i->frete == 0 ? "Retirar no local" : "Receber em casa" ?></p>
+                                        <small class="text-muted text-uppercase ticket-info-label" style="font-size: 0.65rem;">ACESSO</small>
+                                        <p class="mb-0 text-white ticket-info-value"><?= $i->frete == null || $i->frete == 0 ? "Retirar no local" : "Receber em casa" ?></p>
                                     </div>
                                 </div>
                             </div>
@@ -711,7 +916,7 @@
                 <?php if (!empty($ingressos_anteriores)) : ?>
                 <?php foreach ($ingressos_anteriores as $i) : ?>
                     <!-- Card de Ingresso Anterior - Mesmo Design dos Atuais -->
-                    <div class="ticket-card card mb-4" style="opacity: 0.85;">
+                    <div class="ticket-card card mb-4 <?= usuario_logado()->is_premium ? 'ticket-card-premium' : '' ?>" style="opacity: 0.85;">
                         <!-- Header com imagem/capa do evento -->
                         <?php 
                         $header_class = 'ticket-card-header';
@@ -878,8 +1083,8 @@
                         <h5 class="text-white mb-4"><i class="bi bi-bag-check me-2" style="color: #a855f7"></i>Meus Produtos</h5>
                         <div class="row g-3">
                             <?php foreach ($orderbumps as $ob) : ?>
-                                <div class="col-12 col-md-6">
-                                    <div class="d-flex align-items-center gap-3 p-3 rounded" style="background: rgba(103, 46, 186, 0.1); border: 1px solid rgba(103, 46, 186, 0.3);" id="orderbump-item-<?= $ob->id ?>">
+                            <div class="col-12 col-md-6">
+                                    <div class="d-flex align-items-start flex-wrap flex-sm-nowrap gap-2 gap-sm-3 p-3 rounded" style="background: rgba(103, 46, 186, 0.1); border: 1px solid rgba(103, 46, 186, 0.3);" id="orderbump-item-<?= $ob->id ?>">
                                         <?php if (!empty($ob->imagem)) : ?>
                                             <?php 
                                             // Imagens dos orderbumps ficam no backoffice externo
@@ -891,29 +1096,30 @@
                                             ?>
                                             <img src="<?= $imagemUrl ?>" 
                                                  alt="<?= esc($ob->nome) ?>" 
-                                                 style="width: 70px; height: 70px; object-fit: cover; border-radius: 10px;">
+                                                 style="width: 60px; height: 60px; object-fit: cover; border-radius: 10px; flex-shrink: 0;">
                                         <?php else : ?>
-                                            <div style="width: 70px; height: 70px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                                                <i class="bi bi-box text-muted" style="font-size: 2rem;"></i>
+                                            <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                                <i class="bi bi-box text-muted" style="font-size: 1.5rem;"></i>
                                             </div>
                                         <?php endif; ?>
-                                        <div class="flex-grow-1">
-                                            <p class="mb-1 text-white fw-semibold"><?= esc($ob->nome) ?></p>
+                                        <div class="flex-grow-1" style="min-width: 0;">
+                                            <p class="mb-1 text-white fw-semibold text-truncate" style="font-size: 0.9rem;"><?= esc($ob->nome) ?></p>
                                             <small class="text-muted d-block">R$ <?= number_format($ob->preco_unitario, 2, ',', '.') ?></small>
-                                            <small class="text-muted">Pedido #<?= esc($ob->pedido_codigo) ?></small>
+                                            <small class="text-muted text-truncate d-block" style="font-size: 0.7rem;">#<?= esc($ob->pedido_codigo) ?></small>
                                         </div>
-                                        <div class="text-end">
+                                        <div class="text-end" style="flex-shrink: 0;">
                                             <?php if ($ob->usado) : ?>
-                                                <span class="badge bg-secondary d-block mb-1">
+                                                <span class="badge bg-secondary d-block mb-1" style="font-size: 0.7rem;">
                                                     <i class="bi bi-check-circle me-1"></i>Usado
                                                 </span>
-                                                <small class="text-muted" style="font-size: 0.7rem;"><?= date('d/m/Y H:i', strtotime($ob->usado_em)) ?></small>
+                                                <small class="text-muted" style="font-size: 0.6rem;"><?= date('d/m/Y', strtotime($ob->usado_em)) ?></small>
                                             <?php else : ?>
-                                                <span class="badge bg-success d-block mb-2">Disponível</span>
+                                                <span class="badge bg-success d-block mb-1" style="font-size: 0.7rem;">Disponível</span>
                                                 <button type="button" 
-                                                        class="btn btn-sm btn-outline-light btn-marcar-usado" 
+                                                        class="btn btn-sm btn-outline-light btn-marcar-usado py-1 px-2" 
                                                         data-id="<?= $ob->id ?>"
-                                                        data-nome="<?= esc($ob->nome) ?>">
+                                                        data-nome="<?= esc($ob->nome) ?>"
+                                                        style="font-size: 0.75rem;">
                                                     <i class="bi bi-check2-square me-1"></i>Usar
                                                 </button>
                                             <?php endif; ?>
@@ -931,6 +1137,21 @@
         <!-- Card DreamCard -->
         <div class="mt-4" style="max-width: 500px;">
             <?php if ($card == null) : ?>
+                <?php if (usuario_logado()->is_premium): ?>
+                <!-- DreamCard não solicitado - versão premium -->
+                <div class="card w-100 shadow-lg radius-10 dreamcard-premium">
+                    <div class="card-body position-relative" style="z-index: 1;">
+                        <h5 class="d-flex align-items-center gap-2">
+                            <span class="premium-badge-animated">Seu DreamCard</span>
+                            <span class="badge bg-warning text-dark" style="font-size: 0.6rem;">👑 Exclusivo</span>
+                        </h5>
+                        <p class="text-white-50 mb-0">Você ainda não solicitou seu cartão VIP!</p>
+                    </div>
+                    <div class="d-grid" style="padding: 10px;">
+                        <a href="#" target="_blank" class="btn disabled" style="background: linear-gradient(135deg, #ffd700, #ff8c00); color: #000; font-weight: 600;">🎴 Em breve - Cartão VIP</a>
+                    </div>
+                </div>
+                <?php else: ?>
                 <div class="card w-100 shadow bg-dark radius-10">
                     <div class="card-body">
                         <h5>Seu DreamCard </h5>
@@ -940,7 +1161,32 @@
                         <a href="#" target="_blank" class="btn btn-primary disabled">Solicitar cartão</a>
                     </div>
                 </div>
+                <?php endif; ?>
             <?php else : ?>
+                <?php if (usuario_logado()->is_premium): ?>
+                <!-- DreamCard ativo - versão premium -->
+                <div class="card w-100 shadow-lg radius-10 dreamcard-premium">
+                    <div class="card-body position-relative" style="z-index: 1;">
+                        <h5 class="d-flex align-items-center gap-2">
+                            <span class="premium-badge-animated">Seu DreamCard</span>
+                            <span class="badge" style="background: linear-gradient(135deg, #00ff88, #00d9ff); color: #000; font-size: 0.6rem;"><?= $card->status ?></span>
+                            <span class="badge bg-warning text-dark" style="font-size: 0.6rem;">👑 VIP</span>
+                        </h5>
+                        <div class="d-flex align-items-center gap-3 mt-3">
+                            <div class="fs-1 dreamcard-icon-premium">
+                                <i class="bi bi-credit-card-2-back-fill"></i>
+                            </div>
+                            <div>
+                                <p class="mb-0 fs-5" style="color: #ffd700; text-shadow: 0 0 10px rgba(255,215,0,0.5);"><strong><?= $card->matricula ?></strong></p>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <span style="color: #00ff88;"><?php echo esc(usuario_logado()->nome); ?></span><br>
+                            <small class="text-white-50">Expira em: <span style="color: #ffd700;"><?= date("d/m/Y", strtotime($card->expiration)) ?></span></small>
+                        </div>
+                    </div>
+                </div>
+                <?php else: ?>
                 <div class="card w-100 shadow bg-purple radius-10">
                     <div class="card-body">
                         <h5>Seu DreamCard <span class="badge bg-success"><?= $card->status ?></span></h5>
@@ -956,6 +1202,7 @@
                         Expira em: <?= date("d/m/Y", strtotime($card->expiration)) ?>
                     </div>
                 </div>
+                <?php endif; ?>
                 <?php if ($card->status == 'Confecção') : ?>
                     <div class="d-grid mt-2">
                         <a href="<?= site_url('/pedidos/recebercartao') ?>" class="btn btn-outline-danger">Receber meu cartão em casa!</a>
@@ -1209,6 +1456,86 @@
             });
         });
     })();
+</script>
+
+<!-- Script Resgate Ingresso Premium -->
+<script>
+(function() {
+    const selectEvento = document.getElementById('selectEventoPremium');
+    const selectTicket = document.getElementById('selectTicketPremium');
+    const divSelectTicket = document.getElementById('divSelectTicket');
+    const btnResgatar = document.getElementById('btnResgatarPremium');
+    
+    if (!selectEvento) return;
+    
+    // Quando selecionar evento, preencher tickets
+    selectEvento.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        selectTicket.innerHTML = '<option value="">Selecione o ingresso</option>';
+        
+        if (this.value) {
+            const tickets = JSON.parse(selectedOption.dataset.evento || '[]');
+            tickets.forEach(ticket => {
+                const option = document.createElement('option');
+                option.value = ticket.id;
+                option.textContent = `${ticket.nome} (${ticket.categoria})`;
+                selectTicket.appendChild(option);
+            });
+            divSelectTicket.style.display = 'block';
+        } else {
+            divSelectTicket.style.display = 'none';
+        }
+        btnResgatar.disabled = true;
+    });
+    
+    // Habilitar botão quando ticket for selecionado
+    selectTicket.addEventListener('change', function() {
+        btnResgatar.disabled = !this.value;
+    });
+    
+    // Resgatar ingresso
+    btnResgatar.addEventListener('click', function() {
+        if (!selectEvento.value || !selectTicket.value) return;
+        
+        if (!confirm('Deseja realmente resgatar este ingresso gratuito?\n\nEste benefício só pode ser usado 1 vez por evento.')) {
+            return;
+        }
+        
+        btnResgatar.disabled = true;
+        btnResgatar.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Resgatando...';
+        
+        const formData = new FormData();
+        formData.append('evento_id', selectEvento.value);
+        formData.append('ticket_id', selectTicket.value);
+        formData.append('<?= csrf_token() ?>', '<?= csrf_hash() ?>');
+        
+        fetch('<?= site_url('console/resgatarIngressoPremium') ?>', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('🎉 ' + data.message);
+                // Recarregar página
+                window.location.reload();
+            } else {
+                alert('Erro: ' + data.message);
+                btnResgatar.disabled = false;
+                btnResgatar.innerHTML = '<i class="bi bi-gift me-2"></i>Resgatar Meu Ingresso';
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao processar requisição. Tente novamente.');
+            btnResgatar.disabled = false;
+            btnResgatar.innerHTML = '<i class="bi bi-gift me-2"></i>Resgatar Meu Ingresso';
+        });
+    });
+})();
 </script>
 
 

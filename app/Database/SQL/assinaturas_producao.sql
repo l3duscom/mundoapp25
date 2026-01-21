@@ -89,3 +89,25 @@ INSERT INTO `planos` (`nome`, `slug`, `descricao`, `preco`, `ciclo`, `beneficios
 ('Premium Anual', 'premium-anual', 'Acesso completo por 1 ano com desconto de 20%', 287.00, 'YEARLY', 
 '["Acesso antecipado a ingressos","Descontos exclusivos","Sem taxa de conveniência","Suporte prioritário","Cashback em compras","Economia de 20%"]', 
 1, NOW());
+
+
+-- =====================================================
+-- 6. CRIAR TABELA RESGATES_PREMIUM (Ingresso Gratuito)
+-- =====================================================
+-- Controla os ingressos gratuitos resgatados por usuários premium
+-- 1 ingresso grátis (comum ou cosplay) por evento ativo
+
+CREATE TABLE `resgates_premium` (
+    `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `usuario_id` INT(11) UNSIGNED NOT NULL,
+    `evento_id` INT(11) UNSIGNED NOT NULL,
+    `ticket_id` INT(11) UNSIGNED NOT NULL,
+    `ingresso_id` INT(11) UNSIGNED NOT NULL,
+    `created_at` DATETIME NULL,
+    `updated_at` DATETIME NULL,
+    PRIMARY KEY (`id`),
+    KEY `idx_usuario_id` (`usuario_id`),
+    KEY `idx_evento_id` (`evento_id`),
+    UNIQUE KEY `uk_usuario_evento` (`usuario_id`, `evento_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
