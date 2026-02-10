@@ -399,7 +399,7 @@ if (!isset($_SESSION['impressao'])) {
                         $entregas = array(
 
                             ['tipo' => 'casa', 'valor' => 25, 'descricao' => 'Receba seu kit com ingresso, credencial + cordão colecionável, pulseiras e guia no conforto da sua casa (máximo de 4 ingressos por pacote)', 'titulo' => 'Receber em casa', 'badge' => '+ R$ 25,00', 'icone' => '<i class="fa-solid fa-truck-fast"></i>', 'classe' => 'badge bg-warning text-dark font-13'],
-                            ['tipo' => 'impressao', 'valor' => 0, 'descricao' => 'Seu ingresso vai estar disponível na sua área de membros.', 'titulo' => 'Retirar na loja', 'badge' => 'GRÁTIS', 'classe' => 'badge bg-success  font-13']
+                            ['tipo' => 'impressao', 'valor' => 0, 'descricao' => 'Seu ingresso vai estar disponível na sua área de membros.', 'titulo' => 'Ingresso Digital', 'badge' => 'GRÁTIS', 'classe' => 'badge bg-success  font-13']
 
                         );
 
