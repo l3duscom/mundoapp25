@@ -417,7 +417,11 @@ class Checkout extends BaseController
 			];
 
 			$this->enderecoModel->skipValidation(true)->protect(false)->insert($endereco);
-			$this->enviaEmailPedidoCartao($cliente);
+			try {
+				$this->enviaEmailPedidoCartao($cliente);
+			} catch (\Throwable $e) {
+				log_message('error', 'Falha no envio de email (cartão), não interrompendo compra: ' . $e->getMessage());
+			}
 
 			//$retorno['id'] = $pedido_id;
 
@@ -970,7 +974,11 @@ class Checkout extends BaseController
 
 			$this->enderecoModel->skipValidation(true)->protect(false)->insert($endereco);
 
-			$this->enviaEmailPedidoCartao($cliente);
+			try {
+				$this->enviaEmailPedidoCartao($cliente);
+			} catch (\Throwable $e) {
+				log_message('error', 'Falha no envio de email (cartão), não interrompendo compra: ' . $e->getMessage());
+			}
 			/*
 			$atributos = [
 				'clientes.id',
@@ -1296,7 +1304,11 @@ class Checkout extends BaseController
 
 
 
-			$this->enviaEmailPedido((object)$montaemail);
+			try {
+				$this->enviaEmailPedido((object)$montaemail);
+			} catch (\Throwable $e) {
+				log_message('error', 'Falha no envio de email (PIX), não interrompendo compra: ' . $e->getMessage());
+			}
 
 			/*
 			$atributos = [
@@ -1427,7 +1439,11 @@ class Checkout extends BaseController
 					'estado' => $post['estado'],
 				]);
 
-				$this->enviaEmailPedidoCartao($cliente, $event_id);
+				try {
+					$this->enviaEmailPedidoCartao($cliente, $event_id);
+				} catch (\Throwable $e) {
+					log_message('error', 'Falha no envio de email (cartão), não interrompendo compra: ' . $e->getMessage());
+				}
 
 				if (in_array($status, ['CONFIRMED', 'RECEIVED'])) {
 					// Atribui pontos pela compra
@@ -1590,15 +1606,19 @@ class Checkout extends BaseController
 				'link' => $payment['invoiceUrl']
 			]);
 
-			$this->enviaEmailPedido((object) [
-				'nome' => $cliente->nome,
-				'email' => $cliente->email,
-				'url' => site_url("checkout/qrcode/{$event_id}/{$payment['id']}"),
-				'qrcode_image' => $transaction['encodedImage'],
-				'copiaecola' => $transaction['payload'],
-				'expire_at' => strtotime($transaction['expirationDate']),
-				'valor' => $payment['value']
-			], $event_id);
+			try {
+				$this->enviaEmailPedido((object) [
+					'nome' => $cliente->nome,
+					'email' => $cliente->email,
+					'url' => site_url("checkout/qrcode/{$event_id}/{$payment['id']}"),
+					'qrcode_image' => $transaction['encodedImage'],
+					'copiaecola' => $transaction['payload'],
+					'expire_at' => strtotime($transaction['expirationDate']),
+					'valor' => $payment['value']
+				], $event_id);
+			} catch (\Throwable $e) {
+				log_message('error', 'Falha no envio de email (PIX), não interrompendo compra: ' . $e->getMessage());
+			}
 
 			unset($_SESSION['carrinho']);
 
@@ -2027,7 +2047,11 @@ class Checkout extends BaseController
 		$this->ingressoModel->skipValidation(true)->protect(false)->insert($ingressos);
 
 
-		$this->enviaEmailPedido($cliente, $event_id);
+		try {
+			$this->enviaEmailPedido($cliente, $event_id);
+		} catch (\Throwable $e) {
+			log_message('error', 'Falha no envio de email (PIX), não interrompendo compra: ' . $e->getMessage());
+		}
 
 		return redirect()->to(site_url("ingressos"))->with('sucesso', "Seu ingresso foi gerado com sucesso! Apresente seu cartão na bilheteria do evento para garantir seu acesso.");
 	}
