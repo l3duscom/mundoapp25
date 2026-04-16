@@ -8,6 +8,7 @@ use App\Models\CupomModel;
 use App\Models\AssinaturaModel;
 use App\Models\UsuarioModel;
 use App\Services\PontosCompraService;
+use App\Services\UtmifyService;
 
 class Webhook extends BaseController
 {
@@ -113,11 +114,19 @@ class Webhook extends BaseController
                 if (!$statusAnteriorConfirmado && $statusAtualConfirmado) {
                     $pontosService = new PontosCompraService();
                     $pontosResult = $pontosService->atribuirPontosDoPedido($pedido->id);
-                    
+
                     if ($pontosResult['success']) {
                         log_message('info', 'Pontos atribuídos para pedido #' . $pedido->id . ': ' . ($pontosResult['data']['pontos'] ?? 0) . ' pontos');
                     } else {
                         log_message('warning', 'Falha ao atribuir pontos para pedido #' . $pedido->id . ': ' . ($pontosResult['message'] ?? 'Erro desconhecido'));
+                    }
+
+                    // Notifica UTMify sobre a venda confirmada
+                    try {
+                        $utmifyService = new UtmifyService();
+                        $utmifyService->notifyPurchase($pedido->id);
+                    } catch (\Exception $e) {
+                        log_message('error', 'UTMify: Erro ao notificar venda do pedido #' . $pedido->id . ': ' . $e->getMessage());
                     }
                 }
             }

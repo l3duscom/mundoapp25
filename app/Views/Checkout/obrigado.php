@@ -379,6 +379,17 @@ fbq('track', 'Purchase', {
 </script>
 <?php endif; ?>
 
+<!-- UTMify Purchase Event -->
+<script>
+if (typeof window.pixelId !== 'undefined') {
+    window.utmifyPurchase = {
+        orderId: '<?= $order_id ?? '' ?>',
+        value: <?= $total ?? 0 ?>,
+        currency: 'BRL'
+    };
+}
+</script>
+
 <script src="<?php echo site_url('recursos/vendor/loadingoverlay/loadingoverlay.min.js') ?>"></script>
 
 

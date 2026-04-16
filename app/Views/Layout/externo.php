@@ -80,6 +80,18 @@
     <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=393991432344364&ev=PageView&noscript=1" /></noscript>
     <!-- End Meta Pixel Code -->
 
+    <!-- UTMify Pixel -->
+    <script>
+    window.pixelId = "69e0fc350d119a03b6f17a74";
+    var a = document.createElement("script");
+    a.setAttribute("async", "");
+    a.setAttribute("defer", "");
+    a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
+    document.head.appendChild(a);
+    </script>
+    <!-- UTMify UTM Capture -->
+    <script src="https://cdn.utmify.com.br/scripts/utms/latest.js" async defer></script>
+
     <script>
         ! function(w, d, t) {
             w.TiktokAnalyticsObject = t;

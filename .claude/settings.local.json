@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(find /c/Users/Edu/Documents/Projetos/mundo_app/public/recursos -name *.js -type f)",
+      "Bash(find /c/Users/Edu/Documents/Projetos/mundo_app/public/recursos/front -type f -name *.html -o -name *.php)",
+      "WebFetch(domain:utmify.com.br)",
+      "Bash(grep -n \"convite\\\\|referral\\\\|utm\" /c/Users/Edu/Documents/Projetos/mundo_app/app/Views/Checkout/*.php)",
+      "WebFetch(domain:utmify.help.center)",
+      "WebFetch(domain:help.monetizze.com.br)",
+      "WebFetch(domain:ajuda.cakto.com.br)",
+      "WebFetch(domain:rifei.com.br)",
+      "WebFetch(domain:www.utmify.com.br)",
+      "WebFetch(domain:ajuda.kiwify.com.br)",
+      "Bash(php -l app/Helpers/utmify_helper.php)",
+      "Bash(php -l app/Models/PedidoUtmModel.php)",
+      "Bash(php -l app/Services/UtmifyService.php)",
+      "Bash(php -l app/Database/Migrations/2026-04-16-120000_CreatePedidoUtmsTable.php)",
+      "Bash(where php:*)"
+    ]
+  }
+}

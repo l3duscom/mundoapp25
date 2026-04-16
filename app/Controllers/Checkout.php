@@ -44,6 +44,7 @@ class Checkout extends BaseController
 	private $cupomModel;
 	private $orderBumpModel;
 	private $pedidoOrderBumpModel;
+	private $pedidoUtmModel;
 
 
 
@@ -68,6 +69,10 @@ class Checkout extends BaseController
 		$this->cupomModel = new \App\Models\CupomModel();
 		$this->orderBumpModel = new \App\Models\OrderBumpModel();
 		$this->pedidoOrderBumpModel = new \App\Models\PedidoOrderBumpModel();
+		$this->pedidoUtmModel = new \App\Models\PedidoUtmModel();
+
+		helper('utmify');
+		capture_utm_params();
 	}
 
 	public function whatsapp()
@@ -1465,21 +1470,26 @@ class Checkout extends BaseController
 		];
 
 		$this->pedidoModel->skipValidation(true)->protect(false)->insert($data);
-		
+		$pedido_id = $this->pedidoModel->getInsertID();
+
+		// Salva UTMs na tabela de ligação
+		$utmParams = get_utm_params();
+		$this->pedidoUtmModel->insert(array_merge(['pedido_id' => $pedido_id], $utmParams));
+
 		// Incrementa uso do cupom (independente do pagamento)
 		if ($cupomId) {
 			$this->cupomModel->incrementarUso($cupomId);
 		}
-		
+
 		// Limpa cupom da sessão após usar
 		$session->remove('cupom_id');
 		$session->remove('cupom_codigo');
 		$session->remove('cupom_desconto');
-		
-		return $this->pedidoModel->getInsertID();
+
+		return $pedido_id;
 	}
 
-	
+
 	public function finalizarpix($event_id)
 	{
 		// Debug log
@@ -1646,18 +1656,23 @@ class Checkout extends BaseController
 		];
 
 		$this->pedidoModel->skipValidation(true)->protect(false)->insert($data);
-		
+		$pedido_id = $this->pedidoModel->getInsertID();
+
+		// Salva UTMs na tabela de ligação
+		$utmParams = get_utm_params();
+		$this->pedidoUtmModel->insert(array_merge(['pedido_id' => $pedido_id], $utmParams));
+
 		// Incrementa uso do cupom (independente do pagamento)
 		if ($cupomId) {
 			$this->cupomModel->incrementarUso($cupomId);
 		}
-		
+
 		// Limpa cupom da sessão após usar
 		$session->remove('cupom_id');
 		$session->remove('cupom_codigo');
 		$session->remove('cupom_desconto');
-		
-		return $this->pedidoModel->getInsertID();
+
+		return $pedido_id;
 	}
 
 	private function registraIngressos(int $pedido_id, int $user_id): void
