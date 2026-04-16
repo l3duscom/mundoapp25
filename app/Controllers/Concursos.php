@@ -1016,6 +1016,7 @@ class Concursos extends BaseController
 
 	public function registrar_inscricao_cosplay_open()
 	{
+		log_message('info', '[COSPLAY-DESFILE] === INÍCIO registrar_inscricao_cosplay_open ===');
 
 		// Envio o hash do token do form
 		$retorno['token'] = csrf_hash();
@@ -1024,9 +1025,13 @@ class Concursos extends BaseController
 		// Recupero o post da requisição
 		$post = $this->request->getPost();
 
-		$email = $post['email'];
+		$email = $post['email'] ?? null;
+		log_message('info', '[COSPLAY-DESFILE] Email recebido: ' . ($email ?? 'NULL') . ' | concurso_id: ' . ($post['concurso_id'] ?? 'NULL'));
 
-
+		if (!$email) {
+			log_message('error', '[COSPLAY-DESFILE] Email não informado no POST');
+			return redirect()->to(site_url("concursos/inscricao_cosplay/" . $post['concurso_id']))->with('atencao', "Erro ao realizar inscrição, contate o suporte!");
+		}
 
 		$atributos = [
 			'clientes.id',
@@ -1047,10 +1052,12 @@ class Concursos extends BaseController
 
 		if ($cliente != null) {
 			$user_id = $cliente->usuario_id;
+			log_message('info', '[COSPLAY-DESFILE] Cliente existente encontrado. user_id: ' . $user_id);
 
 			// Verificar se o usuário já tem inscrição neste concurso
 			$inscricaoExistente = $this->inscricaoModel->verificaInscricaoDuplicada($user_id, $post['concurso_id']);
 			if ($inscricaoExistente) {
+				log_message('info', '[COSPLAY-DESFILE] Inscrição duplicada detectada. Código: ' . $inscricaoExistente->codigo);
 				return redirect()->to(site_url("concursos/inscricao_cosplay/" . $post['concurso_id']))
 					->with('atencao', "Você já possui uma inscrição ativa neste concurso (Código: {$inscricaoExistente->codigo}). Cada participante pode ter apenas uma inscrição por concurso. Para fazer alterações, utilize a opção de edição na área 'Minhas Inscrições'.");
 			}
@@ -1077,11 +1084,13 @@ class Concursos extends BaseController
 					->update();
 			}
 		} else {
+			log_message('info', '[COSPLAY-DESFILE] Cliente não encontrado, criando novo...');
 			//criqar usuario e pegar o ID
 			//$user_id = $this->usuarioModel->getInsertID();
 
 			$cliente = new Cliente($post);
 			if ($this->clienteModel->save($cliente)) {
+				log_message('info', '[COSPLAY-DESFILE] Cliente novo criado com sucesso');
 				// Cria usuario do cliente
 				$newuser = $this->criaUsuarioParaCliente($cliente);
 
@@ -1098,6 +1107,7 @@ class Concursos extends BaseController
 						if (
 							strlen($telefone) == 11 && substr($telefone, 2, 1) != '9'
 						) {
+							log_message('error', '[COSPLAY-DESFILE] Telefone inválido, retornando false. Telefone: ' . $telefone);
 							return false;
 						}
 						$api = $this->notifyService->notificawpp($cliente, $mensagem);
@@ -1123,6 +1133,10 @@ class Concursos extends BaseController
 					->first();
 
 				$user_id = $cliente->usuario_id;
+				log_message('info', '[COSPLAY-DESFILE] user_id do novo cliente: ' . ($user_id ?? 'NULL'));
+			} else {
+				log_message('error', '[COSPLAY-DESFILE] Falha ao criar cliente. Erros: ' . json_encode($this->clienteModel->errors()));
+				return redirect()->to(site_url("concursos/inscricao_cosplay/" . $post['concurso_id']))->with('atencao', "Erro ao realizar inscrição, contate o suporte!");
 			}
 		}
 
@@ -1130,12 +1144,17 @@ class Concursos extends BaseController
 		$imagem = $this->request->getFile('referencia');
 		//$video = $this->request->getFile('video_led');
 
+		if (!$imagem || !$imagem->isValid()) {
+			log_message('error', '[COSPLAY-DESFILE] Imagem inválida ou não enviada. Erro: ' . ($imagem ? $imagem->getErrorString() : 'NULL'));
+			return redirect()->to(site_url("concursos/inscricao_cosplay/" . $post['concurso_id']))->with('atencao', "Erro ao realizar inscrição, contate o suporte!");
+		}
 
-
+		log_message('info', '[COSPLAY-DESFILE] Imagem recebida: ' . $imagem->getName() . ' | Tamanho: ' . $imagem->getSize());
 
 		list($largura, $altura) = getimagesize($imagem->getPathName());
 
 		if ($largura < "100" || $altura < "100") {
+			log_message('error', '[COSPLAY-DESFILE] Imagem muito pequena: ' . $largura . 'x' . $altura);
 			$retorno['erro'] = 'Por favor verifique os abaixo e tente novamente';
 			$retorno['erros_model'] = ['dimensao' => 'A imagem não pode ser menor do que 300 x 300 pixels'];
 
@@ -1147,7 +1166,7 @@ class Concursos extends BaseController
 		$caminhoImagem = $imagem->store('concursos');
 		//$caminhoVideo = $video->store('concursos');
 
-
+		log_message('info', '[COSPLAY-DESFILE] Imagem salva em: ' . $caminhoImagem);
 
 		// C:\xampp\htdocs\ordem\writable\uploads/usuarios/1625800273_8dc568f411ea409f3e16.jpg
 		$caminhoImagem = WRITEPATH . "uploads/$caminhoImagem";
@@ -1161,8 +1180,11 @@ class Concursos extends BaseController
 		$inscricao->status = 'INICIADA';
 		//$inscricao->video_led = $video->getName();
 
+		log_message('info', '[COSPLAY-DESFILE] Tentando salvar inscrição. user_id: ' . ($user_id ?? 'NULL') . ' | concurso_id: ' . ($post['concurso_id'] ?? 'NULL'));
+
 		if ($this->inscricaoModel->skipvalidation(true)->protect(false)->save($inscricao)) {
 			$inscricao_id = $this->inscricaoModel->getInsertID();
+			log_message('info', '[COSPLAY-DESFILE] Inscrição salva com sucesso! ID: ' . $inscricao_id);
 			$this->inscricaoModel
 				->protect(false)
 				->where('id', $inscricao_id)
@@ -1175,6 +1197,7 @@ class Concursos extends BaseController
 			return redirect()->to(site_url("concursos/inscricao_cosplay/" . $post['concurso_id']))->with('sucesso', "Inscrição realizada com sucesso! Confirma os dados em seu e-mail!");
 		}
 
+		log_message('error', '[COSPLAY-DESFILE] Falha ao salvar inscrição. Erros model: ' . json_encode($this->inscricaoModel->errors()));
 		return redirect()->to(site_url("concursos/inscricao_cosplay/" . $post['concurso_id']))->with('atencao', "Erro ao realizar inscrição, contate o suporte!");
 	}
 
@@ -1419,11 +1442,15 @@ class Concursos extends BaseController
 		$mensagem = view('Concursos/email_aprovado', $data);
 
 		// Enviar via Resend
-		$this->resendService->enviarEmail(
-			$cliente->email,
-			'Sua Inscrição para o ' . $concurso->nome . ' foi aprovada!',
-			$mensagem
-		);
+		try {
+			$this->resendService->enviarEmail(
+				$cliente->email,
+				'Sua Inscrição para o ' . $concurso->nome . ' foi aprovada!',
+				$mensagem
+			);
+		} catch (\Exception $e) {
+			log_message('error', 'Erro ao enviar email de aprovação: ' . $e->getMessage());
+		}
 	}
 
 
@@ -1555,11 +1582,15 @@ class Concursos extends BaseController
 		$mensagem = view('Concursos/email_rejeitado', $data);
 
 		// Enviar via Resend
-		$this->resendService->enviarEmail(
-			$cliente->email,
-			'Sua Inscrição para o ' . $concurso->nome . ' foi rejeitada!',
-			$mensagem
-		);
+		try {
+			$this->resendService->enviarEmail(
+				$cliente->email,
+				'Sua Inscrição para o ' . $concurso->nome . ' foi rejeitada!',
+				$mensagem
+			);
+		} catch (\Exception $e) {
+			log_message('error', 'Erro ao enviar email de rejeição: ' . $e->getMessage());
+		}
 	}
 
 	private function enviaEmailInscricaoCancelada(object $cliente, object $inscricao, object $concurso): void
@@ -1581,11 +1612,15 @@ class Concursos extends BaseController
 		$mensagem = view('Concursos/email_cancelada', $data);
 
 		// Enviar via Resend
-		$this->resendService->enviarEmail(
-			$cliente->email,
-			'Sua Inscrição para o ' . $concurso->nome . ' foi CANCELADA!',
-			$mensagem
-		);
+		try {
+			$this->resendService->enviarEmail(
+				$cliente->email,
+				'Sua Inscrição para o ' . $concurso->nome . ' foi CANCELADA!',
+				$mensagem
+			);
+		} catch (\Exception $e) {
+			log_message('error', 'Erro ao enviar email de cancelamento: ' . $e->getMessage());
+		}
 	}
 
 
@@ -1724,11 +1759,15 @@ class Concursos extends BaseController
 		$mensagem = view('Concursos/email_checkin', $data);
 
 		// Enviar via Resend
-		$this->resendService->enviarEmail(
-			$cliente->email,
-			'Checkin para o ' . $concurso->nome . ' realizado com sucesso!',
-			$mensagem
-		);
+		try {
+			$this->resendService->enviarEmail(
+				$cliente->email,
+				'Checkin para o ' . $concurso->nome . ' realizado com sucesso!',
+				$mensagem
+			);
+		} catch (\Exception $e) {
+			log_message('error', 'Erro ao enviar email de checkin: ' . $e->getMessage());
+		}
 	}
 
 	private function enviaEmailInscricaoCheckinOnline(object $cliente, object $inscricao, object $concurso): void
@@ -1750,11 +1789,15 @@ class Concursos extends BaseController
 		$mensagem = view('Concursos/email_checkin_online', $data);
 
 		// Enviar via Resend
-		$this->resendService->enviarEmail(
-			$cliente->email,
-			'Checkin para o ' . $concurso->nome . ' realizado com sucesso!',
-			$mensagem
-		);
+		try {
+			$this->resendService->enviarEmail(
+				$cliente->email,
+				'Checkin para o ' . $concurso->nome . ' realizado com sucesso!',
+				$mensagem
+			);
+		} catch (\Exception $e) {
+			log_message('error', 'Erro ao enviar email de checkin online: ' . $e->getMessage());
+		}
 	}
 
 	private function enviaEmailInscricao($cliente): void
@@ -1762,11 +1805,15 @@ class Concursos extends BaseController
 		$mensagem = view('Concursos/email_inscricao');
 
 		// Enviar via Resend
-		$this->resendService->enviarEmail(
-			$cliente,
-			'Olá, Sua inscrição está pronta!',
-			$mensagem
-		);
+		try {
+			$this->resendService->enviarEmail(
+				$cliente,
+				'Olá, Sua inscrição está pronta!',
+				$mensagem
+			);
+		} catch (\Exception $e) {
+			log_message('error', 'Erro ao enviar email de inscrição: ' . $e->getMessage());
+		}
 	}
 
 
@@ -1942,11 +1989,15 @@ class Concursos extends BaseController
 		$mensagem = view('Pedidos/email_envio_cartao', $data);
 
 		// Enviar via Resend
-		$this->resendService->enviarEmail(
-			$cliente->email,
-			'Endereço atualizado com sucesso!',
-			$mensagem
-		);
+		try {
+			$this->resendService->enviarEmail(
+				$cliente->email,
+				'Endereço atualizado com sucesso!',
+				$mensagem
+			);
+		} catch (\Exception $e) {
+			log_message('error', 'Erro ao enviar email de endereço: ' . $e->getMessage());
+		}
 	}
 
 	private function manipulaImagem(string $caminhoImagem, int $usuario_id)
@@ -2040,11 +2091,15 @@ class Concursos extends BaseController
 		$mensagem = view('Clientes/email_dados_acesso', $data);
 
 		// Enviar via Resend
-		$this->resendService->enviarEmail(
-			$cliente->email,
-			'Dados de acesso ao sistema',
-			$mensagem
-		);
+		try {
+			$this->resendService->enviarEmail(
+				$cliente->email,
+				'Dados de acesso ao sistema',
+				$mensagem
+			);
+		} catch (\Exception $e) {
+			log_message('error', 'Erro ao enviar email de dados de acesso: ' . $e->getMessage());
+		}
 	}
 
 	/**

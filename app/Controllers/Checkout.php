@@ -2165,11 +2165,15 @@ class Checkout extends BaseController
 		$mensagem = view('Clientes/email_dados_acesso', $data);
 
 		// Enviar via Resend
-		$this->resendService->enviarEmail(
-			$cliente->email,
-			'Dados de acesso ao sistema',
-			$mensagem
-		);
+		try {
+			$this->resendService->enviarEmail(
+				$cliente->email,
+				'Dados de acesso ao sistema',
+				$mensagem
+			);
+		} catch (\Exception $e) {
+			log_message('error', 'Erro ao enviar email de dados de acesso: ' . $e->getMessage());
+		}
 	}
 
 	/**
@@ -2203,11 +2207,15 @@ class Checkout extends BaseController
 		$mensagem = view('Pedidos/email_pedido', $data);
 
 		// Enviar via Resend
-		$this->resendService->enviarEmail(
-			$cliente->email,
-			'Pedido realizado com sucesso!',
-			$mensagem
-		);
+		try {
+			$this->resendService->enviarEmail(
+				$cliente->email,
+				'Pedido realizado com sucesso!',
+				$mensagem
+			);
+		} catch (\Exception $e) {
+			log_message('error', 'Erro ao enviar email de pedido: ' . $e->getMessage());
+		}
 	}
 
 	private function enviaEmailCortesia(object $cliente, int $event_id = null): void
@@ -2226,11 +2234,15 @@ class Checkout extends BaseController
 		$mensagem = view('Pedidos/email_cortesia', $data);
 
 		// Enviar via Resend
-		$this->resendService->enviarEmail(
-			$cliente->email,
-			'Seus ingressos CORTESIA estão disponíveis!',
-			$mensagem
-		);
+		try {
+			$this->resendService->enviarEmail(
+				$cliente->email,
+				'Seus ingressos CORTESIA estão disponíveis!',
+				$mensagem
+			);
+		} catch (\Exception $e) {
+			log_message('error', 'Erro ao enviar email de cortesia: ' . $e->getMessage());
+		}
 	}
 
 
@@ -2250,11 +2262,15 @@ class Checkout extends BaseController
 		$mensagem = view('Pedidos/email_pedido_cartao', $data);
 
 		// Enviar via Resend
-		$this->resendService->enviarEmail(
-			$cliente->email,
-			'Pedido realizado com sucesso!',
-			$mensagem
-		);
+		try {
+			$this->resendService->enviarEmail(
+				$cliente->email,
+				'Pedido realizado com sucesso!',
+				$mensagem
+			);
+		} catch (\Exception $e) {
+			log_message('error', 'Erro ao enviar email de pedido cartão: ' . $e->getMessage());
+		}
 	}
 
 	public function consultaCep()
@@ -2324,11 +2340,15 @@ class Checkout extends BaseController
 		$mensagem = view('Pedidos/email_paid', $data);
 
 		// Enviar via Resend
-		$this->resendService->enviarEmail(
-			$cliente->email,
-			'Olá, seus ingressos já estão disponíveis!',
-			$mensagem
-		);
+		try {
+			$this->resendService->enviarEmail(
+				$cliente->email,
+				'Olá, seus ingressos já estão disponíveis!',
+				$mensagem
+			);
+		} catch (\Exception $e) {
+			log_message('error', 'Erro ao enviar email de pagamento confirmado: ' . $e->getMessage());
+		}
 	}
 
 	/**
