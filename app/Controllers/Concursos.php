@@ -122,7 +122,7 @@ class Concursos extends BaseController
 		}
 
 		$post = $this->request->getPost();
-		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term'], $post['subid'], $post['src'], $post['sck'], $post['utm_id']);
 
 		// Gera código automaticamente
 		$codigo = $this->concursoModel->geraCodigoPedido();
@@ -184,7 +184,7 @@ class Concursos extends BaseController
 		}
 
 		$post = $this->request->getPost();
-		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term'], $post['subid'], $post['src'], $post['sck'], $post['utm_id']);
 		$id = $post['id'];
 
 		$concurso = $this->concursoModel->find($id);
@@ -557,7 +557,7 @@ class Concursos extends BaseController
 
 		// Recupero o post da requisição
 		$post = $this->request->getPost();
-		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term'], $post['subid'], $post['src'], $post['sck'], $post['utm_id']);
 
 		$rate = new Avaliacao($post);
 
@@ -723,7 +723,7 @@ class Concursos extends BaseController
 
 		// Recupero o post da requisição
 		$post = $this->request->getPost();
-		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term'], $post['subid'], $post['src'], $post['sck'], $post['utm_id']);
 
 
 		$imagem = $this->request->getFile('referencia');
@@ -780,7 +780,7 @@ class Concursos extends BaseController
 
 		// Recupero o post da requisição
 		$post = $this->request->getPost();
-		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term'], $post['subid'], $post['src'], $post['sck'], $post['utm_id']);
 
 
 		$imagem = $this->request->getFile('referencia');
@@ -839,7 +839,7 @@ class Concursos extends BaseController
 
 		// Recupero o post da requisição
 		$post = $this->request->getPost();
-		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term'], $post['subid'], $post['src'], $post['sck'], $post['utm_id']);
 
 		$email = $post['email'];
 
@@ -1030,10 +1030,10 @@ class Concursos extends BaseController
 
 		// Recupero o post da requisição
 		$post = $this->request->getPost();
-		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term'], $post['subid'], $post['src'], $post['sck'], $post['utm_id']);
 
 		// Remove campos UTM injetados pelo script UTMify para não poluir o insert
-		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term'], $post['subid'], $post['src'], $post['sck'], $post['utm_id']);
 
 		$email = $post['email'] ?? null;
 		log_message('info', '[COSPLAY-DESFILE] Email recebido: ' . ($email ?? 'NULL') . ' | concurso_id: ' . ($post['concurso_id'] ?? 'NULL'));
@@ -1220,7 +1220,7 @@ class Concursos extends BaseController
 
 		// Recupero o post da requisição
 		$post = $this->request->getPost();
-		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term'], $post['subid'], $post['src'], $post['sck'], $post['utm_id']);
 
 		$email = $post['email'];
 
@@ -1903,7 +1903,7 @@ class Concursos extends BaseController
 
 		// Recupero o post da requisição
 		$post = $this->request->getPost();
-		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term'], $post['subid'], $post['src'], $post['sck'], $post['utm_id']);
 
 		$endereco = new Endereco($post);
 
@@ -1949,7 +1949,7 @@ class Concursos extends BaseController
 
 		// Recupero o post da requisição
 		$post = $this->request->getPost();
-		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term'], $post['subid'], $post['src'], $post['sck'], $post['utm_id']);
 		$pedido_id = $post['pedido_id'];
 		$endereco = $this->enderecoModel->where('pedido_id', $pedido_id)->first();
 		$endereco->fill($post);
@@ -2210,7 +2210,7 @@ class Concursos extends BaseController
 	public function atualizar_inscricao_kpop()
 	{
 		$post = $this->request->getPost();
-		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term'], $post['subid'], $post['src'], $post['sck'], $post['utm_id']);
 		$usuario_logado = $this->usuarioLogado()->id;
 		$inscricao_id = $post['inscricao_id'];
 
@@ -2300,7 +2300,7 @@ class Concursos extends BaseController
 	public function atualizar_inscricao_cosplay()
 	{
 		$post = $this->request->getPost();
-		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term'], $post['subid'], $post['src'], $post['sck'], $post['utm_id']);
 		$usuario_logado = $this->usuarioLogado()->id;
 		$inscricao_id = $post['inscricao_id'];
 
@@ -2370,7 +2370,7 @@ class Concursos extends BaseController
 	public function atualizar_inscricao_cosplay_apresentacao()
 	{
 		$post = $this->request->getPost();
-		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term'], $post['subid'], $post['src'], $post['sck'], $post['utm_id']);
 		$usuario_logado = $this->usuarioLogado()->id;
 		$inscricao_id = $post['inscricao_id'];
 
