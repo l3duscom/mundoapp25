@@ -159,6 +159,7 @@ class Checkout extends BaseController
 		$retorno['token'] = csrf_hash();
 
 		$post = $this->request->getPost();
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
 
 		$email = $post['email'];
 
@@ -535,6 +536,7 @@ class Checkout extends BaseController
 	{
 		// Recupero o post da requisição
 		$post = $this->request->getPost();
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
 
 		$email = $post['email'];
 		$data_cli = [];
@@ -684,6 +686,7 @@ class Checkout extends BaseController
 	{
 
 		$post = $this->request->getPost();
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
 
 		var_dump($post);
 	}
@@ -702,6 +705,7 @@ class Checkout extends BaseController
 		$retorno['token'] = csrf_hash();
 
 		$post = $this->request->getPost();
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
 
 		$email = $post['email'];
 
@@ -1038,6 +1042,7 @@ class Checkout extends BaseController
 		$retorno['token'] = csrf_hash();
 
 		$post = $this->request->getPost();
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
 
 		$email = $post['email'];
 
@@ -1362,6 +1367,7 @@ class Checkout extends BaseController
 
 		try {
 			$post = $this->request->getPost();
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
 
 			if (!isset($post['email'], $post['valor_total'], $_SESSION['carrinho'])) {
 				return redirect()->to(site_url("checkout/cartao/"))->with('erro', "Dados incompletos");
@@ -1515,6 +1521,7 @@ class Checkout extends BaseController
 
 		try {
 			$post = $this->request->getPost();
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
 
 			// Validar dados obrigatórios
 			if (!isset($post['email'], $post['valor_total'], $_SESSION['carrinho'])) {
@@ -1835,6 +1842,7 @@ class Checkout extends BaseController
 		$event_id = 17;
 
 		$post = $this->request->getPost();
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
 
 		$email = $post['email'];
 

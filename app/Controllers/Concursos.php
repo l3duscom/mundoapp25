@@ -122,6 +122,7 @@ class Concursos extends BaseController
 		}
 
 		$post = $this->request->getPost();
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
 
 		// Gera código automaticamente
 		$codigo = $this->concursoModel->geraCodigoPedido();
@@ -183,6 +184,7 @@ class Concursos extends BaseController
 		}
 
 		$post = $this->request->getPost();
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
 		$id = $post['id'];
 
 		$concurso = $this->concursoModel->find($id);
@@ -555,6 +557,7 @@ class Concursos extends BaseController
 
 		// Recupero o post da requisição
 		$post = $this->request->getPost();
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
 
 		$rate = new Avaliacao($post);
 
@@ -720,6 +723,7 @@ class Concursos extends BaseController
 
 		// Recupero o post da requisição
 		$post = $this->request->getPost();
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
 
 
 		$imagem = $this->request->getFile('referencia');
@@ -776,6 +780,7 @@ class Concursos extends BaseController
 
 		// Recupero o post da requisição
 		$post = $this->request->getPost();
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
 
 
 		$imagem = $this->request->getFile('referencia');
@@ -834,6 +839,7 @@ class Concursos extends BaseController
 
 		// Recupero o post da requisição
 		$post = $this->request->getPost();
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
 
 		$email = $post['email'];
 
@@ -1024,6 +1030,10 @@ class Concursos extends BaseController
 
 		// Recupero o post da requisição
 		$post = $this->request->getPost();
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
+
+		// Remove campos UTM injetados pelo script UTMify para não poluir o insert
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
 
 		$email = $post['email'] ?? null;
 		log_message('info', '[COSPLAY-DESFILE] Email recebido: ' . ($email ?? 'NULL') . ' | concurso_id: ' . ($post['concurso_id'] ?? 'NULL'));
@@ -1210,6 +1220,7 @@ class Concursos extends BaseController
 
 		// Recupero o post da requisição
 		$post = $this->request->getPost();
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
 
 		$email = $post['email'];
 
@@ -1892,6 +1903,7 @@ class Concursos extends BaseController
 
 		// Recupero o post da requisição
 		$post = $this->request->getPost();
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
 
 		$endereco = new Endereco($post);
 
@@ -1937,6 +1949,7 @@ class Concursos extends BaseController
 
 		// Recupero o post da requisição
 		$post = $this->request->getPost();
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
 		$pedido_id = $post['pedido_id'];
 		$endereco = $this->enderecoModel->where('pedido_id', $pedido_id)->first();
 		$endereco->fill($post);
@@ -2197,6 +2210,7 @@ class Concursos extends BaseController
 	public function atualizar_inscricao_kpop()
 	{
 		$post = $this->request->getPost();
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
 		$usuario_logado = $this->usuarioLogado()->id;
 		$inscricao_id = $post['inscricao_id'];
 
@@ -2286,6 +2300,7 @@ class Concursos extends BaseController
 	public function atualizar_inscricao_cosplay()
 	{
 		$post = $this->request->getPost();
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
 		$usuario_logado = $this->usuarioLogado()->id;
 		$inscricao_id = $post['inscricao_id'];
 
@@ -2355,6 +2370,7 @@ class Concursos extends BaseController
 	public function atualizar_inscricao_cosplay_apresentacao()
 	{
 		$post = $this->request->getPost();
+		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term']);
 		$usuario_logado = $this->usuarioLogado()->id;
 		$inscricao_id = $post['inscricao_id'];
 
