@@ -757,7 +757,7 @@ class Concursos extends BaseController
 		$inscricao->codigo = $this->inscricaoModel->geraCodigo();
 		$inscricao->status = 'INICIADA';
 
-		if ($this->inscricaoModel->skipvalidation(true)->protect(false)->save($inscricao)) {
+		if ($this->inscricaoModel->skipvalidation(true)->save($inscricao)) {
 
 
 			//$this->enviaEmailInscricao($post['email']);
@@ -819,7 +819,7 @@ class Concursos extends BaseController
 		$inscricao->status = 'INICIADA';
 
 
-		if ($this->inscricaoModel->skipvalidation(true)->protect(false)->save($inscricao)) {
+		if ($this->inscricaoModel->skipvalidation(true)->save($inscricao)) {
 
 
 			//$this->enviaEmailInscricao($post['email']);
@@ -994,7 +994,7 @@ class Concursos extends BaseController
 		$inscricao->codigo = $this->inscricaoModel->geraCodigo();
 		$inscricao->status = 'INICIADA';
 
-		if ($this->inscricaoModel->skipvalidation(true)->protect(false)->save($inscricao)) {
+		if ($this->inscricaoModel->skipvalidation(true)->save($inscricao)) {
 			$inscricao_id = $this->inscricaoModel->getInsertID();
 			$this->inscricaoModel
 				->protect(false)
@@ -1192,7 +1192,7 @@ class Concursos extends BaseController
 
 		log_message('info', '[COSPLAY-DESFILE] Tentando salvar inscrição. user_id: ' . ($user_id ?? 'NULL') . ' | concurso_id: ' . ($post['concurso_id'] ?? 'NULL'));
 
-		if ($this->inscricaoModel->skipvalidation(true)->protect(false)->save($inscricao)) {
+		if ($this->inscricaoModel->skipvalidation(true)->save($inscricao)) {
 			$inscricao_id = $this->inscricaoModel->getInsertID();
 			log_message('info', '[COSPLAY-DESFILE] Inscrição salva com sucesso! ID: ' . $inscricao_id);
 			$this->inscricaoModel
@@ -1359,7 +1359,7 @@ class Concursos extends BaseController
 		$inscricao->status = 'INICIADA';
 		$inscricao->video_led = $video->getName();
 
-		if ($this->inscricaoModel->skipvalidation(true)->protect(false)->save($inscricao)) {
+		if ($this->inscricaoModel->skipvalidation(true)->save($inscricao)) {
 			$inscricao_id = $this->inscricaoModel->getInsertID();
 			$this->inscricaoModel
 				->protect(false)
