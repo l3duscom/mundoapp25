@@ -381,13 +381,38 @@ fbq('track', 'Purchase', {
 
 <!-- UTMify Purchase Event -->
 <script>
-if (typeof window.pixelId !== 'undefined') {
-    window.utmifyPurchase = {
-        orderId: '<?= $order_id ?? '' ?>',
-        value: <?= $total ?? 0 ?>,
-        currency: 'BRL'
-    };
-}
+(function() {
+    function fireUtmifyPurchase() {
+        if (typeof window.utmify !== 'undefined' && typeof window.utmify.track === 'function') {
+            window.utmify.track('purchase', {
+                orderId: '<?= $order_id ?? '' ?>',
+                value: <?= $total ?? 0 ?>,
+                currency: 'BRL'
+            });
+        } else {
+            // Fallback: define o objeto para o pixel capturar
+            window.utmifyPurchase = {
+                orderId: '<?= $order_id ?? '' ?>',
+                value: <?= $total ?? 0 ?>,
+                currency: 'BRL'
+            };
+        }
+    }
+
+    // Tenta disparar imediatamente ou aguarda o pixel carregar
+    if (typeof window.utmify !== 'undefined') {
+        fireUtmifyPurchase();
+    } else {
+        var checkInterval = setInterval(function() {
+            if (typeof window.utmify !== 'undefined') {
+                clearInterval(checkInterval);
+                fireUtmifyPurchase();
+            }
+        }, 500);
+        // Timeout de 10s
+        setTimeout(function() { clearInterval(checkInterval); }, 10000);
+    }
+})();
 </script>
 
 <script src="<?php echo site_url('recursos/vendor/loadingoverlay/loadingoverlay.min.js') ?>"></script>

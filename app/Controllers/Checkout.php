@@ -428,6 +428,8 @@ class Checkout extends BaseController
 
 
 			if ($payment['status'] == 'paid' || $payment['status'] == 'CONFIRMED' || $payment['status'] == 'RECEIVED') {
+				session()->set('order_id', $pedido_id);
+				session()->set('total', $data['total'] ?? 0);
 				unset($_SESSION['carrinho']);
 				return redirect()->to(site_url("checkout/obrigado/"));
 			} else {
@@ -1018,9 +1020,13 @@ class Checkout extends BaseController
 
 
 			if ($payment['status'] == 'CONFIRMED' || $payment['status'] == 'RECEIVED') {
+				session()->set('order_id', $pedido_id);
+				session()->set('total', $data['total'] ?? 0);
 				unset($_SESSION['carrinho']);
 				return $this->response->setJSON($retorno);
 			} else {
+				session()->set('order_id', $pedido_id);
+				session()->set('total', $data['total'] ?? 0);
 				unset($_SESSION['carrinho']);
 				return redirect()->to('checkout/obrigado');
 			}
@@ -1455,7 +1461,9 @@ class Checkout extends BaseController
 					// Atribui pontos pela compra
 					$pontosService = new PontosCompraService();
 					$pontosService->atribuirPontosDoPedido($pedido_id);
-					
+
+					session()->set('order_id', $pedido_id);
+					session()->set('total', $data['total'] ?? 0);
 					unset($_SESSION['carrinho']);
 					return redirect()->to(site_url("checkout/obrigado/"));
 				} else {

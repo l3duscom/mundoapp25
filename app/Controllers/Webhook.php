@@ -123,8 +123,10 @@ class Webhook extends BaseController
 
                     // Notifica UTMify sobre a venda confirmada
                     try {
+                        log_message('info', 'UTMify: Iniciando notificação para pedido #' . $pedido->id);
                         $utmifyService = new UtmifyService();
-                        $utmifyService->notifyPurchase($pedido->id);
+                        $result_utmify = $utmifyService->notifyPurchase($pedido->id);
+                        log_message('info', 'UTMify: Resultado para pedido #' . $pedido->id . ': ' . ($result_utmify ? 'SUCESSO' : 'FALHA'));
                     } catch (\Exception $e) {
                         log_message('error', 'UTMify: Erro ao notificar venda do pedido #' . $pedido->id . ': ' . $e->getMessage());
                     }

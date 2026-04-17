@@ -359,18 +359,18 @@
 
 <?php
 if (!isset($_SESSION['frete'])) {
-    $_SESSION['frete'] = 'casa';
-    $_SESSION['valor_frete'] = 25;
+    $_SESSION['frete'] = 'impressao';
+    $_SESSION['valor_frete'] = 0;
 };
 if (!isset($_SESSION['casa'])) {
-    $_SESSION['casa'] = 'disabled';
-    $_SESSION['btn_texto_casa'] = 'Selecionado';
-    $_SESSION['btn_color_casa'] = 'success';
+    $_SESSION['casa'] = '';
+    $_SESSION['btn_texto_casa'] = 'Selecionar';
+    $_SESSION['btn_color_casa'] = 'muted';
 };
 if (!isset($_SESSION['impressao'])) {
-    $_SESSION['impressao'] = '';
-    $_SESSION['btn_texto_impressao'] = 'Selecionar';
-    $_SESSION['btn_color_impressao'] = 'muted';
+    $_SESSION['impressao'] = 'disabled';
+    $_SESSION['btn_texto_impressao'] = 'Selecionado';
+    $_SESSION['btn_color_impressao'] = 'success';
 };
 
 ?>
