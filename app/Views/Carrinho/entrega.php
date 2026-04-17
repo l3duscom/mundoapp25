@@ -319,12 +319,7 @@ if (isset($_GET['escolher'])) {
             <img class="mt-1" src="<?= site_url('recursos/front/images/asaas.png') ?>" width="100" height="auto" alt="Asaas">
         </div>
 
-    </div>
-</div>
-
-<div class="row justify-content-center mt-3 mb-4">
-    <div class="col-12">
-        <div class="text-muted" style="font-size: 11px; line-height: 1.6;">
+        <div class="text-muted mt-3 mb-4" style="font-size: 11px; line-height: 1.6;">
             <p class="mb-1"><strong>Precisa de ajuda?</strong> <a href="#" target="_blank">Entre em contato</a></p>
             <p class="mb-1">* O valor parcelado possui acréscimo.</p>
             <p class="mb-1"><strong>Meia entrada solidária</strong> (40% de desconto) disponível para qualquer pessoa que levar 1kg de alimento não perecível no dia do evento.</p>
@@ -332,6 +327,7 @@ if (isset($_GET['escolher'])) {
             <hr class="my-2">
             <p class="mb-0">MUNDO DREAM EVENTOS E PRODUCOES LTDA &copy; 2024 &mdash; 21.812.142/0001-23</p>
         </div>
+
     </div>
 </div>
 

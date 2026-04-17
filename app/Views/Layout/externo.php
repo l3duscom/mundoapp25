@@ -309,30 +309,27 @@
 
         <nav class="navbar navbar-expand gap-3 shadow" style="background: #2d2d2d;">
 
-            <div class="container justify-content-center mt-4 mb-4">
+            <div class="container d-flex align-items-center justify-content-center" style="min-height: 56px;">
                 <?php $evento = evento_selecionado_com_validacao(); ?>
                 <?php if ($evento && $evento->nome) : ?>
-                    <div style="padding:10px; text-align: center;">
-                        <?php if (!empty($evento->avatar)) : ?>
-                            <?php 
-                                // Verifica se o avatar já é uma URL completa
-                                if (strpos($evento->avatar, 'http') === 0) {
-                                    $avatarUrl = $evento->avatar;
-                                } elseif (strpos($evento->avatar, 'eventos/imagem/') === 0) {
-                                    $avatarUrl = 'https://backoffice.mundodream.com.br/' . $evento->avatar;
-                                } else {
-                                    $avatarUrl = 'https://backoffice.mundodream.com.br/eventos/imagem/' . $evento->avatar;
-                                }
-                            ?>
-                            <img src="<?= $avatarUrl ?>" alt="<?= esc($evento->nome) ?>" style="max-height: 80px; max-width: 200px; margin-bottom: 10px; object-fit: contain;">
-                        <?php else : ?>
-                            <h2 class="text-black mb-0" style="font-size: 16px; font-weight: bold; text-align: center;">
-                                <?= esc($evento->nome) ?>
-                            </h2>
-                        <?php endif; ?>
-                    </div>
+                    <?php if (!empty($evento->avatar)) : ?>
+                        <?php
+                            if (strpos($evento->avatar, 'http') === 0) {
+                                $avatarUrl = $evento->avatar;
+                            } elseif (strpos($evento->avatar, 'eventos/imagem/') === 0) {
+                                $avatarUrl = 'https://backoffice.mundodream.com.br/' . $evento->avatar;
+                            } else {
+                                $avatarUrl = 'https://backoffice.mundodream.com.br/eventos/imagem/' . $evento->avatar;
+                            }
+                        ?>
+                        <img src="<?= $avatarUrl ?>" alt="<?= esc($evento->nome) ?>" style="max-height: 45px; max-width: 160px; object-fit: contain;">
+                    <?php else : ?>
+                        <h2 class="mb-0" style="font-size: 15px; font-weight: bold; color: #fff;">
+                            <?= esc($evento->nome) ?>
+                        </h2>
+                    <?php endif; ?>
                 <?php else : ?>
-                    <a href="https://dreamfest.com.br" target="_blank"><img src="<?php echo site_url('recursos/front/'); ?>images/logo-25-2-negativo.png" alt="" width="180px" height="auto" style="padding:10px"></a>
+                    <a href="https://dreamfest.com.br" target="_blank"><img src="<?php echo site_url('recursos/front/'); ?>images/logo-25-2-negativo.png" alt="" style="max-height: 40px; width: auto;"></a>
                 <?php endif; ?>
             </div>
 

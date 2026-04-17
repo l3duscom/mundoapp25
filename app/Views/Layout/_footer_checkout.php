@@ -97,7 +97,7 @@ try {
     </div>
 
     <!-- Seção Inferior - Fundo Cinza Claro -->
-    <div class="footer-bottom py-4" style="background-color: #f5f5f5; border-top: 1px solid #e0e0e0;">
+    <div class="footer-bottom py-4" style="background-color: #2d2d2d; border-top: 1px solid #444;">
         <div class="container">
             <div class="row align-items-center">
                 <!-- Logo -->
@@ -126,7 +126,7 @@ try {
                 <!-- Links Rápidos -->
                 <div class="col-lg-4 col-md-6 mb-3 mb-lg-0 text-center">
                     <div class="d-flex justify-content-center gap-3 small">
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#politicaModal" class="text-secondary text-decoration-none">Política de Cancelamento</a>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#politicaModal" class="text-decoration-none" style="color: #aaa;">Política de Cancelamento</a>
                     </div>
                 </div>
 
@@ -134,16 +134,16 @@ try {
                 <div class="col-lg-4 col-md-12 text-lg-end text-center">
                     <div class="d-flex justify-content-lg-end justify-content-center gap-3">
                         <?php if (!empty($footerConfig['social_facebook'])): ?>
-                        <a href="<?= $footerConfig['social_facebook'] ?>" target="_blank" class="text-secondary"><i class="bx bxl-facebook-circle" style="font-size: 24px;"></i></a>
+                        <a href="<?= $footerConfig['social_facebook'] ?>" target="_blank" style="color: #aaa;"><i class="bx bxl-facebook-circle" style="font-size: 24px;"></i></a>
                         <?php endif; ?>
                         <?php if (!empty($footerConfig['social_instagram'])): ?>
-                        <a href="<?= $footerConfig['social_instagram'] ?>" target="_blank" class="text-secondary"><i class="bx bxl-instagram" style="font-size: 24px;"></i></a>
+                        <a href="<?= $footerConfig['social_instagram'] ?>" target="_blank" style="color: #aaa;"><i class="bx bxl-instagram" style="font-size: 24px;"></i></a>
                         <?php endif; ?>
                         <?php if (!empty($footerConfig['social_twitter'])): ?>
-                        <a href="<?= $footerConfig['social_twitter'] ?>" target="_blank" class="text-secondary"><i class="bx bxl-twitter" style="font-size: 24px;"></i></a>
+                        <a href="<?= $footerConfig['social_twitter'] ?>" target="_blank" style="color: #aaa;"><i class="bx bxl-twitter" style="font-size: 24px;"></i></a>
                         <?php endif; ?>
                         <?php if (!empty($footerConfig['social_linkedin'])): ?>
-                        <a href="<?= $footerConfig['social_linkedin'] ?>" target="_blank" class="text-secondary"><i class="bx bxl-linkedin" style="font-size: 24px;"></i></a>
+                        <a href="<?= $footerConfig['social_linkedin'] ?>" target="_blank" style="color: #aaa;"><i class="bx bxl-linkedin" style="font-size: 24px;"></i></a>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -152,7 +152,7 @@ try {
             <!-- Copyright -->
             <div class="row mt-3">
                 <div class="col-12 text-center">
-                    <small class="text-secondary">MUNDO DREAM EVENTOS E PRODUCOES LTDA © 2024 - Todos os direitos reservados</small>
+                    <small style="color: #999;">MUNDO DREAM EVENTOS E PRODUCOES LTDA © 2024 - Todos os direitos reservados</small>
                 </div>
             </div>
         </div>
