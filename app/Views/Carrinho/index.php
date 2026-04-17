@@ -516,6 +516,115 @@
         }
     }
 
+    /* Seletor de dia */
+    .day-selector-overlay {
+        max-width: 540px;
+        margin: 0 auto;
+    }
+
+    .day-selector-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 8px;
+    }
+
+    .day-selector-subtitle {
+        font-size: 14px;
+        color: #6b7280;
+        margin-bottom: 24px;
+    }
+
+    .day-option {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 20px;
+        border: 2px solid #e5e7eb;
+        border-radius: 14px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: #fff;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .day-option:hover {
+        border-color: #7c3aed;
+        background: #faf5ff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .day-option-icon {
+        width: 52px;
+        height: 52px;
+        min-width: 52px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+
+    .day-option-icon.sab {
+        background: #eff6ff;
+        color: #3b82f6;
+    }
+
+    .day-option-icon.dom {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .day-option-icon.combo {
+        background: #ecfdf5;
+        color: #059669;
+    }
+
+    .day-option-info {
+        flex: 1;
+    }
+
+    .day-option-name {
+        font-size: 16px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 2px;
+    }
+
+    .day-option-date {
+        font-size: 13px;
+        color: #6b7280;
+    }
+
+    .day-option-arrow {
+        font-size: 20px;
+        color: #9ca3af;
+        transition: transform 0.2s;
+    }
+
+    .day-option:hover .day-option-arrow {
+        transform: translateX(4px);
+        color: #7c3aed;
+    }
+
+    .day-option-badge {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 8px;
+        border-radius: 6px;
+        background: #ecfdf5;
+        color: #059669;
+    }
+
+    #carrinho-content {
+        display: none;
+    }
+
     html {
         scroll-behavior: smooth;
     }
@@ -658,7 +767,69 @@ if (isset($event_id)) {
 
 
 
-<h5 class="mb-0 mt-3">Quais ingressos você deseja?</h5>
+<!-- ETAPA 1: Seletor de Dia -->
+<div id="day-selector" class="day-selector-overlay mt-3">
+    <div class="day-selector-title">Qual dia voce quer participar?</div>
+    <div class="day-selector-subtitle">Escolha o dia para ver os ingressos disponiveis</div>
+
+    <div class="day-option" onclick="selecionarDia('sabado')">
+        <div class="day-option-icon sab">
+            <i class="bx bx-calendar"></i>
+        </div>
+        <div class="day-option-info">
+            <div class="day-option-name">Sabado</div>
+            <div class="day-option-date"><?php
+                if (isset($evento)) {
+                    $data_inicio = date_create($evento->data_inicio);
+                    $meses_sel = ['01'=>'janeiro','02'=>'fevereiro','03'=>'marco','04'=>'abril','05'=>'maio','06'=>'junho','07'=>'julho','08'=>'agosto','09'=>'setembro','10'=>'outubro','11'=>'novembro','12'=>'dezembro'];
+                    echo date_format($data_inicio, 'd') . ' de ' . $meses_sel[date_format($data_inicio, 'm')] . ' de ' . date_format($data_inicio, 'Y');
+                }
+            ?></div>
+        </div>
+        <div class="day-option-arrow"><i class="bx bx-chevron-right"></i></div>
+    </div>
+
+    <div class="day-option" onclick="selecionarDia('domingo')">
+        <div class="day-option-icon dom">
+            <i class="bx bx-calendar"></i>
+        </div>
+        <div class="day-option-info">
+            <div class="day-option-name">Domingo</div>
+            <div class="day-option-date"><?php
+                if (isset($evento)) {
+                    $data_fim = date_create($evento->data_fim);
+                    echo date_format($data_fim, 'd') . ' de ' . $meses_sel[date_format($data_fim, 'm')] . ' de ' . date_format($data_fim, 'Y');
+                }
+            ?></div>
+        </div>
+        <div class="day-option-arrow"><i class="bx bx-chevron-right"></i></div>
+    </div>
+
+    <div class="day-option" onclick="selecionarDia('passaporte')">
+        <div class="day-option-icon combo">
+            <i class="bx bx-calendar-star"></i>
+        </div>
+        <div class="day-option-info">
+            <div class="day-option-name">2 Dias <span class="day-option-badge">Melhor custo</span></div>
+            <div class="day-option-date"><?php
+                if (isset($evento)) {
+                    echo date_format($data_inicio, 'd') . ' e ' . date_format($data_fim, 'd') . ' de ' . $meses_sel[date_format($data_fim, 'm')] . ' de ' . date_format($data_fim, 'Y');
+                }
+            ?></div>
+        </div>
+        <div class="day-option-arrow"><i class="bx bx-chevron-right"></i></div>
+    </div>
+
+    <div class="text-center mt-3 mb-2">
+        <span style="font-size: 11px; color: #9ca3af;">Pagamento processado com seguranca por</span><br>
+        <img class="mt-1" src="<?php echo site_url('recursos/front/images/asaas.png'); ?>" width="80" height="auto" style="opacity: 0.6;">
+    </div>
+</div>
+
+<!-- ETAPA 2: Carrinho (escondido ate selecionar o dia) -->
+<div id="carrinho-content">
+
+<h5 class="mb-0 mt-3">Quais ingressos voce deseja?</h5>
 
 
 <div class="row mt-4">
@@ -736,6 +907,13 @@ if (isset($event_id)) {
                             }
                         }
                         ?>
+                        <!-- Botao trocar dia -->
+                        <div class="mb-3">
+                            <a href="javascript:void(0)" onclick="voltarSeletor()" style="font-size: 13px; color: #7c3aed; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                                <i class="bx bx-chevron-left"></i> Trocar dia
+                            </a>
+                        </div>
+
                         <!-- Tab Navigation com Setas -->
                         <div class="tab-navigation-wrapper">
                             <div class="tab-navigation-content">
@@ -3023,6 +3201,8 @@ if (isset($event_id)) {
 
 
 
+</div><!-- /carrinho-content -->
+
 <?php echo $this->endSection() ?>
 
 
@@ -3239,6 +3419,63 @@ function trackInitiateCheckout() {
     //})
 </script>
 <script>
+    // Volta para o seletor de dia
+    function voltarSeletor() {
+        document.getElementById('carrinho-content').style.display = 'none';
+        document.getElementById('day-selector').style.display = 'block';
+        localStorage.removeItem('diaSelecionado');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Seletor de dia - mostra carrinho e abre a aba correspondente
+    function selecionarDia(dia) {
+        // Esconde o seletor
+        document.getElementById('day-selector').style.display = 'none';
+        // Mostra o carrinho
+        document.getElementById('carrinho-content').style.display = 'block';
+
+        // Salva escolha
+        localStorage.setItem('diaSelecionado', dia);
+
+        // Clica na aba correspondente
+        var tabButtons = document.querySelectorAll('.tablinks');
+        tabButtons.forEach(function(btn) {
+            var onclick = btn.getAttribute('onclick');
+            if (onclick && onclick.indexOf("'" + dia + "'") !== -1) {
+                btn.click();
+            }
+        });
+
+        // Scroll para o topo
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Ao carregar, verifica se ja tem itens no carrinho ou dia selecionado
+    document.addEventListener('DOMContentLoaded', function() {
+        var temCarrinho = <?= (isset($_SESSION['carrinho']) && !empty(array_filter($_SESSION['carrinho'] ?? [], function($item) { return $item['quantidade'] > 0; }))) ? 'true' : 'false' ?>;
+        var temAdicionar = <?= isset($_GET['adicionar']) ? 'true' : 'false' ?>;
+        var temExcluir = <?= isset($_GET['excluir']) ? 'true' : 'false' ?>;
+
+        if (temCarrinho || temAdicionar || temExcluir) {
+            document.getElementById('day-selector').style.display = 'none';
+            document.getElementById('carrinho-content').style.display = 'block';
+
+            // Restaura aba salva
+            var abaSalva = localStorage.getItem('abaCarrinhoSelecionada');
+            if (abaSalva) {
+                var tabButtons = document.querySelectorAll('.tablinks');
+                tabButtons.forEach(function(btn) {
+                    var onclick = btn.getAttribute('onclick');
+                    if (onclick && onclick.indexOf("'" + abaSalva + "'") !== -1) {
+                        btn.click();
+                    }
+                });
+            } else {
+                document.getElementById("defaultOpen").click();
+            }
+        }
+    });
+
     function openCategoria(evt, categoria) {
         // Esconde todas as tabcontent
         var tabcontent = document.getElementsByClassName("tabcontent");
@@ -3459,15 +3696,19 @@ function trackInitiateCheckout() {
                 clearTimeout(instructionTimer);
             }, { once: true });
         }
-        var abaSalva = localStorage.getItem('abaCarrinhoSelecionada');
-        if (abaSalva) {
-            var btn = document.querySelector('.tab button[onclick*="' + abaSalva + '"]');
-            if (btn) {
-                btn.click();
+        // So abre aba automaticamente se o carrinho ja estiver visivel
+        var carrinhoContent = document.getElementById('carrinho-content');
+        if (carrinhoContent && carrinhoContent.style.display !== 'none') {
+            var abaSalva = localStorage.getItem('abaCarrinhoSelecionada');
+            if (abaSalva) {
+                var btn = document.querySelector('.tab button[onclick*="' + abaSalva + '"]');
+                if (btn) {
+                    btn.click();
+                }
+            } else {
+                var defaultBtn = document.getElementById('defaultOpen');
+                if (defaultBtn) defaultBtn.click();
             }
-        } else {
-            var defaultBtn = document.getElementById('defaultOpen');
-            if (defaultBtn) defaultBtn.click();
         }
     });
 </script>

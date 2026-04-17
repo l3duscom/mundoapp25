@@ -16,7 +16,8 @@
       "Bash(php -l app/Models/PedidoUtmModel.php)",
       "Bash(php -l app/Services/UtmifyService.php)",
       "Bash(php -l app/Database/Migrations/2026-04-16-120000_CreatePedidoUtmsTable.php)",
-      "Bash(where php:*)"
+      "Bash(where php:*)",
+      "Bash(xargs grep:*)"
     ]
   }
 }
