@@ -5,10 +5,288 @@
 
 <?php echo $this->section('estilos') ?>
 
-
 <link rel="stylesheet" type="text/css" href="<?php echo site_url('recursos/vendor/datatable/datatables-combinado.min.css') ?>" />
 
+<style>
+    .checkout-container {
+        max-width: 540px;
+        margin: 0 auto;
+    }
 
+    .checkout-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 24px;
+    }
+
+    .checkout-section {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+    }
+
+    .checkout-section-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .checkout-section-title i {
+        color: #9333ea;
+        font-size: 16px;
+    }
+
+    .checkout-input {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.2s;
+        outline: none;
+        background: #fff;
+    }
+
+    .checkout-input:focus {
+        border-color: #9333ea;
+        box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
+    }
+
+    .checkout-label {
+        font-size: 13px;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .checkout-field {
+        margin-bottom: 14px;
+    }
+
+    .checkout-field:last-child {
+        margin-bottom: 0;
+    }
+
+    /* Tabela de itens */
+    .item-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .item-row:last-child {
+        border-bottom: none;
+    }
+
+    .item-name {
+        font-size: 13px;
+        color: #374151;
+        flex: 1;
+    }
+
+    .item-qty {
+        font-size: 13px;
+        color: #6b7280;
+        min-width: 30px;
+        text-align: center;
+    }
+
+    .item-price {
+        font-size: 13px;
+        font-weight: 600;
+        color: #111827;
+        min-width: 80px;
+        text-align: right;
+    }
+
+    /* Cupom */
+    .coupon-row {
+        display: flex;
+        gap: 8px;
+    }
+
+    .coupon-row .checkout-input {
+        flex: 1;
+        text-transform: uppercase;
+    }
+
+    .btn-coupon {
+        padding: 12px 20px;
+        background: #9333ea;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background 0.2s;
+        white-space: nowrap;
+    }
+
+    .btn-coupon:hover {
+        background: #7c3aed;
+    }
+
+    /* Order bump */
+    .bump-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-bottom: 8px;
+    }
+
+    .bump-item:hover {
+        border-color: #a7f3d0;
+    }
+
+    .bump-item.checked {
+        border-color: #34d399;
+        background: #ecfdf5;
+    }
+
+    .bump-item .bump-check {
+        width: 20px;
+        height: 20px;
+        accent-color: #059669;
+        cursor: pointer;
+    }
+
+    .bump-img {
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        object-fit: cover;
+        background: #f3f4f6;
+    }
+
+    .bump-info {
+        flex: 1;
+    }
+
+    .bump-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .bump-desc {
+        font-size: 12px;
+        color: #6b7280;
+    }
+
+    .bump-price {
+        font-size: 14px;
+        font-weight: 700;
+        color: #059669;
+        white-space: nowrap;
+    }
+
+    /* Resumo */
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 0;
+        font-size: 14px;
+    }
+
+    .summary-row .label {
+        color: #6b7280;
+    }
+
+    .summary-row .value {
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .summary-row.discount .label,
+    .summary-row.discount .value {
+        color: #059669;
+    }
+
+    .summary-row.total {
+        padding-top: 12px;
+        margin-top: 8px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .summary-row.total .label {
+        font-size: 15px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .summary-row.total .value {
+        font-size: 20px;
+        font-weight: 700;
+        color: #7c3aed;
+    }
+
+    /* Botão finalizar */
+    .btn-checkout {
+        width: 100%;
+        padding: 16px;
+        background: #059669;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-checkout:hover {
+        background: #047857;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+    }
+
+    .checkout-hint {
+        font-size: 11px;
+        color: #9ca3af;
+    }
+
+    .checkout-footer-text {
+        max-width: 540px;
+        margin: 0 auto;
+        font-size: 11px;
+        color: #9ca3af;
+        line-height: 1.6;
+    }
+
+    .pix-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #ecfdf5;
+        color: #059669;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 6px;
+        margin-left: 8px;
+    }
+</style>
 
 <?php echo $this->endSection() ?>
 
@@ -17,36 +295,25 @@
 <?php echo $this->section('conteudo') ?>
 
 
-<h5 class="mb-0 mt-3">Quase lá! Agora é só efetuar o pagamento e garantir seus ingressos! </h5>
-
-
-<div class="row mt-4">
-    <div class="col-lg-8">
-        <div class="block">
-            <div class="block-body">
-                <div class="card shadow radius-10">
-                    <div class="card-body">
+<div class="checkout-container mt-3">
 
 
 
 
+    <!-- Exibirá os retornos do backend -->
+    <div id="response">
+        <?php if (session()->getFlashdata('erro')): ?>
+            <div class="alert alert-danger" style="border-radius: 10px;">
+                <?= session()->getFlashdata('erro') ?>
+            </div>
+        <?php endif; ?>
 
-
-
-                        <!-- Exibirá os retornos do backend -->
-                        <div id="response">
-                            <?php if (session()->getFlashdata('erro')): ?>
-                                <div class="alert alert-danger">
-                                    <?= session()->getFlashdata('erro') ?>
-                                </div>
-                            <?php endif; ?>
-                            
-                            <?php if (session()->getFlashdata('sucesso')): ?>
-                                <div class="alert alert-success">
-                                    <?= session()->getFlashdata('sucesso') ?>
-                                </div>
-                            <?php endif; ?>
-                        </div>
+        <?php if (session()->getFlashdata('sucesso')): ?>
+            <div class="alert alert-success" style="border-radius: 10px;">
+                <?= session()->getFlashdata('sucesso') ?>
+            </div>
+        <?php endif; ?>
+    </div>
 
 
                         <?php echo form_open('Checkout/finalizarpix/' . $event_id, ['id' => 'form']) ?>
@@ -76,299 +343,141 @@ $totalComDesconto = $totalIngressosComDesconto + $valorFrete;
 <input type="hidden" name="convite" value="<?= $_SESSION['convite'] ?>"> 
 
 
-                        <div class="d-flex align-items-center mt-0">
-                            <div class="card border shadow-none w-100">
+    <div class="checkout-section">
+        <div class="checkout-section-title"><i class="bx bx-user"></i> Seus dados</div>
+        <div class="checkout-field">
+            <label class="checkout-label">Nome completo</label>
+            <input type="text" name="nome" placeholder="Digite seu nome completo" class="checkout-input" required>
+        </div>
+        <div class="checkout-field">
+            <label class="checkout-label">Seu email</label>
+            <input type="email" name="email" placeholder="Digite seu email para receber seu ingresso" class="checkout-input" required>
+            <div id="email"></div>
+        </div>
+        <div class="checkout-field">
+            <label class="checkout-label">Celular</label>
+            <input type="text" name="telefone" placeholder="(00) 00000-0000" class="checkout-input sp_celphones">
+        </div>
+    </div>
 
-                                <div class="card-header py-3">
-                                    <h6 class="mb-0">Seus dados </h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="form-group col-md-12 ">
-                                            <label class="form-control-label">Nome completo</label>
-                                            <input type="text" name="nome" placeholder="Digite seu nome completo" class="form-control form-control-lg mb-2 shadow" style="font-size:medium; padding:13px" required>
-                                        </div>
-                                        <div class="form-group col-md-12">
-                                            <label class="form-control-label">Seu email</label>
-                                            <input type="email" name="email" placeholder="Digite seu email para receber seu ingresso" class="form-control form-control-lg mb-2 shadow" style="font-size:medium; padding:13px" required>
-                                            <div id="email"></div>
-                                        </div>
-                                        <div class="form-group col-md-12">
-                                            <label class="form-control-label">Celular</label>
-                                            <input type="text" name="telefone" placeholder="Insira o telefone" class="form-control sp_celphones mb-2 shadow" style="font-size:medium; padding:13px">
-                                        </div>
-                                    </div>
+    <div class="checkout-section">
+        <div class="checkout-section-title"><i class="bx bx-id-card"></i> CPF</div>
+        <div class="checkout-field">
+            <input type="text" name="cpf" placeholder="000.000.000-00" class="checkout-input cpf" required>
+            <span class="checkout-hint">Por exigência do Banco Central, o PIX precisa do seu CPF.</span>
+        </div>
+    </div>
 
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="d-flex align-items-center mt-0">
-                            <div class="card border shadow-none w-100">
-
-                                <div class="card-header py-3">
-                                    <h6 class="mb-0">Pagamento</h6>
-                                </div>
-                                <div class="card-body">
-
-                                    <div class="form-group col-md-12">
-                                        <label class="form-control-label">CPF</label>
-                                        <input type="text" name="cpf" placeholder="Digite o número do  seu CPF" class="form-control form-control-lg mb-2 shadow cpf" style="font-size:medium; padding:13px" required>
-                                        <span class="text-muted" style="font-size: 11px; padding-left: 5px">Por exigência do Banco Central, o boleto precisa ter seu CPF.</span>
-                                    </div>
-                                    <hr>
-
-
-
-                                    <div class="card-header py-3">
-                                        <h6 class="mb-0">Detalhes da compra</h6>
-                                    </div>
-                                    <div class="" style="padding: 5px;">
-                                        <?php if (isset($_SESSION['carrinho'])) : ?>
-                                            <table class="table mb-0 table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th scope="col" width="40%">Ingresso</th>
-                                                        <th scope="col" width="20%" style="align-items:center">
-                                                            &nbsp;&nbsp;&nbsp;&nbsp;Quantidade
-                                                        </th>
-                                                        <th scope="col" width="20%">Valor</th>
-                                                        <th scope="col" width="20%">Taxa</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-
-                                                    <?php foreach ($_SESSION['carrinho'] as $key => $value) : ?>
-                                                        <?php if ($value['quantidade'] != 0) : ?>
-                                                            <tr>
-                                                                <td><u><?= $value['nome']; ?></u></td>
-                                                                <td><?= $value['quantidade']; ?> </a></td>
-                                                                <td>R$ <?= number_format($value['quantidade'] * $value['unitario'], 2, ',', ''); ?></td>
-                                                                <td>R$ <?= number_format($value['quantidade'] * $value['taxa'], 2, ',', ''); ?></td>
-                                                            </tr>
-                                                        <?php endif; ?>
-
-
-                                                    <?php endforeach; ?>
-                                                <?php else : ?>
-                                                    <center>
-                                                        <i class="fadeIn animated bx bx-error-circle"></i><br>Oooops, seu carrinho está vazio, escolha um ingresso e venha viver a magia no Dreamfest!
-                                                    </center>
-                                                    </hr>
-                                                <?php endif; ?>
-
-
-                                                </tbody>
-                                            </table>
-                                    </div>
-
-
-                                </div>
-
-                            </div>
-
-
-                        </div>
-
-                        <!-- Seção de Cupom de Desconto -->
-                        <div class="card border shadow-none w-100 mt-3">
-                            <div class="card-header py-3">
-                                <h6 class="mb-0"><i class="bx bx-purchase-tag-alt me-2"></i>Cupom de desconto</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="row g-2 align-items-end">
-                                    <div class="col-8 col-md-9">
-                                        <input type="text" 
-                                               id="codigo-cupom" 
-                                               name="codigo_cupom"
-                                               class="form-control" 
-                                               placeholder="Digite seu cupom"
-                                               style="text-transform: uppercase;">
-                                    </div>
-                                    <div class="col-4 col-md-3">
-                                        <button type="button" 
-                                                id="btn-validar-cupom" 
-                                                class="btn w-100"
-                                                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; font-weight: 600;">
-                                            Aplicar
-                                        </button>
-                                    </div>
-                                </div>
-                                
-                                <!-- Área de resultado do cupom -->
-                                <div id="cupom-resultado" class="mt-3"></div>
-                                
-                                <!-- Campos hidden para armazenar o cupom validado -->
-                                <input type="hidden" name="cupom_id" id="cupom_id" value="">
-                                <input type="hidden" name="cupom_desconto" id="cupom_desconto" value="0">
-                        </div>
-                        </div>
-
-                        <!-- Seção de Order Bumps -->
-                        <?php if (isset($orderBumps) && !empty($orderBumps)): ?>
-                        <div class="card border shadow-none w-100 mt-3">
-                            <div class="card-header py-2 bg-white border-bottom">
-                                <span class="text-dark">Aproveite e compre junto:</span>
-                            </div>
-                            <div class="card-body py-3">
-                                <?php foreach ($orderBumps as $bump): ?>
-                                <div class="order-bump-item border rounded p-3 mb-2" 
-                                     style="cursor: pointer; transition: all 0.2s ease; background: #fff;"
-                                     data-bump-id="<?= $bump->id ?>"
-                                     data-bump-preco="<?= $bump->preco ?>">
-                                    
-                                    <div class="d-flex align-items-center">
-                                        <!-- Checkbox -->
-                                        <div class="me-3">
-                                            <input type="checkbox" 
-                                                   class="form-check-input order-bump-checkbox" 
-                                                   name="order_bumps[]" 
-                                                   value="<?= $bump->id ?>"
-                                                   id="bump_<?= $bump->id ?>"
-                                                   data-preco="<?= $bump->preco ?>"
-                                                   style="width: 20px; height: 20px; cursor: pointer; accent-color: #28a745;">
-                                        </div>
-                                        
-                                        <!-- Imagem -->
-                                        <div class="me-3" style="flex-shrink: 0;">
-                                            <?php if (!empty($bump->imagem)): ?>
-                                            <img src="<?= $bump->getImagemUrl() ?>" 
-                                                 alt="<?= esc($bump->nome) ?>" 
-                                                 class="rounded"
-                                                 style="width: 50px; height: 50px; object-fit: cover; background: #f8f9fa;">
-                                            <?php else: ?>
-                                            <div class="rounded d-flex align-items-center justify-content-center" 
-                                                 style="width: 50px; height: 50px; background: #e8f5e9;">
-                                                <i class="bx bx-package" style="font-size: 24px; color: #28a745;"></i>
-                                            </div>
-                                            <?php endif; ?>
-                                        </div>
-                                        
-                                        <!-- Info e Preço -->
-                                        <div class="flex-grow-1">
-                                            <div class="fw-bold text-dark"><?= esc($bump->nome) ?></div>
-                                            <?php if (!empty($bump->descricao)): ?>
-                                            <div class="text-muted small"><?= esc($bump->descricao) ?></div>
-                                            <?php endif; ?>
-                                            <div class="fw-bold text-success">R$ <?= number_format($bump->preco, 2, ',', '.') ?></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Footer produto adicionado (aparece quando selecionado) -->
-                                    <div class="order-bump-added small" style="display: none; background: #28a745; color: #fff; padding: 8px 16px; margin: 12px -12px -12px -12px; border-radius: 0 0 6px 6px; text-align: center;">
-                                        <i class="bx bx-check-circle me-1"></i>produto adicionado
-                                    </div>
-                                </div>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-                        <?php endif; ?>
-
-                        <!-- Resumo do Pedido -->
-                        <div class="card border shadow-none w-100 mt-3">
-                            <div class="card-header py-2" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <h6 class="mb-0 text-white"><i class="bx bx-receipt me-2"></i>Resumo do Pedido</h6>
-                            </div>
-                            <div class="card-body py-3">
-                                <div class="d-flex justify-content-between mb-2">
-                                    <span class="text-muted">Subtotal (ingressos)</span>
-                                    <strong class="resumo-subtotal">R$ <?= number_format($subtotalIngressos, 2, ',', '.') ?></strong>
-                                </div>
-                                
-                                <?php if ($valorFrete > 0): ?>
-                                <div class="d-flex justify-content-between mb-2">
-                                    <span class="text-muted"><i class="bx bx-package me-1"></i>Entrega</span>
-                                    <strong class="resumo-frete">R$ <?= number_format($valorFrete, 2, ',', '.') ?></strong>
-                                </div>
-                                <?php endif; ?>
-                                
-                                <div id="linha-desconto-cupom" class="d-flex justify-content-between mb-2" style="display: none !important;">
-                                    <span class="text-success"><i class="bx bx-purchase-tag me-1"></i>Desconto Cupom</span>
-                                    <strong class="text-success resumo-desconto-cupom">- R$ 0,00</strong>
-                                </div>
-                                
-                                <div id="linha-order-bumps" class="d-flex justify-content-between mb-2" style="display: none;">
-                                    <span class="text-primary"><i class="bx bx-gift me-1"></i>Adicionais</span>
-                                    <strong class="text-primary resumo-order-bumps">+ R$ 0,00</strong>
-                                </div>
-
-                                
-                                <div class="d-flex justify-content-between mb-2">
-                                    <span class="text-success"><i class="bx bx-check-circle me-1"></i>Desconto PIX (10%)</span>
-                                    <strong class="text-success resumo-desconto-pix">- R$ <?= number_format($descontoPix, 2, ',', '.') ?></strong>
-                                </div>
-                                
-                                <hr class="my-2">
-                                
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="fw-bold" style="font-size: 1.1rem;">Total a pagar</span>
-                                    <span class="fw-bold resumo-total-final" style="font-size: 1.3rem; color: #6C038F;">R$ <?= number_format($totalComDesconto, 2, ',', '.') ?></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="d-grid gap-2 mt-3">
-                            <button id="btn-salvar" type="submit" class="btn btn-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; padding: 15px; font-size: 1.1rem; font-weight: 600; border-radius: 10px;">
-                                <i class="bx bx-lock-alt me-2"></i>Finalizar Compra
-                            </button>
-                        </div>
-                        
-                        <?php echo form_close(); ?>
-
-                        <div class="text-center mt-3">
-                            <span class="text-muted" style="font-size: 10px;">Pagamento processado com segurança por</span><br>
-                            <img class="mt-1" src="<?php echo site_url('recursos/front/images/asaas.png'); ?>" width="80px" height="auto" style="opacity: 0.7;">
-                        </div>
-
-
+    <div class="checkout-section">
+        <div class="checkout-section-title"><i class="bx bx-receipt"></i> Detalhes da compra</div>
+        <?php if (isset($_SESSION['carrinho'])) : ?>
+            <?php foreach ($_SESSION['carrinho'] as $key => $value) : ?>
+                <?php if ($value['quantidade'] != 0) : ?>
+                    <div class="item-row">
+                        <span class="item-name"><?= $value['nome']; ?></span>
+                        <span class="item-qty"><?= $value['quantidade']; ?>x</span>
+                        <span class="item-price">R$ <?= number_format($value['quantidade'] * ($value['unitario'] + $value['taxa']), 2, ',', ''); ?></span>
                     </div>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        <?php else : ?>
+            <p class="text-center" style="color: #9ca3af;"><i class="bx bx-error-circle"></i> Carrinho vazio</p>
+        <?php endif; ?>
+    </div>
 
+    <div class="checkout-section">
+        <div class="checkout-section-title"><i class="bx bx-purchase-tag-alt"></i> Cupom de desconto</div>
+        <div class="coupon-row">
+            <input type="text" id="codigo-cupom" name="codigo_cupom" class="checkout-input" placeholder="DIGITE SEU CUPOM" style="text-transform: uppercase;">
+            <button type="button" id="btn-validar-cupom" class="btn-coupon">Aplicar</button>
+        </div>
+        <div id="cupom-resultado" class="mt-2"></div>
+        <input type="hidden" name="cupom_id" id="cupom_id" value="">
+        <input type="hidden" name="cupom_desconto" id="cupom_desconto" value="0">
+    </div>
 
-                </div>
-
+    <?php if (isset($orderBumps) && !empty($orderBumps)): ?>
+    <div class="checkout-section">
+        <div class="checkout-section-title"><i class="bx bx-gift"></i> Aproveite e compre junto</div>
+        <?php foreach ($orderBumps as $bump): ?>
+        <div class="order-bump-item bump-item" data-bump-id="<?= $bump->id ?>" data-bump-preco="<?= $bump->preco ?>">
+            <input type="checkbox" class="bump-check order-bump-checkbox" name="order_bumps[]" value="<?= $bump->id ?>" id="bump_<?= $bump->id ?>" data-preco="<?= $bump->preco ?>">
+            <?php if (!empty($bump->imagem)): ?>
+            <img src="<?= $bump->getImagemUrl() ?>" alt="<?= esc($bump->nome) ?>" class="bump-img">
+            <?php else: ?>
+            <div class="bump-img d-flex align-items-center justify-content-center" style="background: #ecfdf5;">
+                <i class="bx bx-package" style="font-size: 20px; color: #059669;"></i>
+            </div>
+            <?php endif; ?>
+            <div class="bump-info">
+                <div class="bump-name"><?= esc($bump->nome) ?></div>
+                <?php if (!empty($bump->descricao)): ?>
+                <div class="bump-desc"><?= esc($bump->descricao) ?></div>
+                <?php endif; ?>
+            </div>
+            <div class="bump-price">R$ <?= number_format($bump->preco, 2, ',', '.') ?></div>
+            <div class="order-bump-added small" style="display: none; background: #059669; color: #fff; padding: 6px 12px; margin: 10px -12px -12px -12px; border-radius: 0 0 9px 9px; text-align: center; width: calc(100% + 24px);">
+                <i class="bx bx-check-circle me-1"></i>adicionado
             </div>
         </div>
+        <?php endforeach; ?>
     </div>
-    <div class="col-lg-4">
-        <div class="card shadow radius-10">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
+    <?php endif; ?>
 
+    <div class="checkout-section">
+        <div class="checkout-section-title"><i class="bx bx-calculator"></i> Resumo do pedido</div>
 
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div class="">
-                                <h5 class="mb-0">Compra segura</h4>
-                                    <p class="mb-0">Ambiente seguro e autenticado</p>
-                                    <span class="text-muted" style="font-size: 10px;">Este site utiliza certificado SSL</span>
-                            </div>
-                            <div class="ms-auto fs-3 ">
-                                <i class="fadeIn animated bx bx-check-shield" style="font-size: 45px;"></i>
-                            </div>
-                        </div>
-                        <div class="progress mt-3" style="height: 5px;">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 42%"></div>
-                        </div>
-                    </div>
+        <div class="summary-row">
+            <span class="label">Subtotal (ingressos)</span>
+            <span class="value resumo-subtotal">R$ <?= number_format($subtotalIngressos, 2, ',', '.') ?></span>
+        </div>
 
+        <?php if ($valorFrete > 0): ?>
+        <div class="summary-row">
+            <span class="label">Entrega</span>
+            <span class="value resumo-frete">R$ <?= number_format($valorFrete, 2, ',', '.') ?></span>
+        </div>
+        <?php endif; ?>
 
-                </div>
-            </div>
+        <div id="linha-desconto-cupom" class="summary-row discount" style="display: none;">
+            <span class="label"><i class="bx bx-purchase-tag me-1"></i>Desconto Cupom</span>
+            <span class="value resumo-desconto-cupom">- R$ 0,00</span>
+        </div>
+
+        <div id="linha-order-bumps" class="summary-row" style="display: none;">
+            <span class="label" style="color: #7c3aed;"><i class="bx bx-gift me-1"></i>Adicionais</span>
+            <span class="value resumo-order-bumps" style="color: #7c3aed;">+ R$ 0,00</span>
+        </div>
+
+        <div class="summary-row discount">
+            <span class="label"><i class="bx bx-check-circle me-1"></i>Desconto PIX (10%)</span>
+            <span class="value resumo-desconto-pix">- R$ <?= number_format($descontoPix, 2, ',', '.') ?></span>
+        </div>
+
+        <div class="summary-row total">
+            <span class="label">Total a pagar</span>
+            <span class="value resumo-total-final">R$ <?= number_format($totalComDesconto, 2, ',', '.') ?></span>
         </div>
     </div>
 
-</div>
+    <button id="btn-salvar" type="submit" class="btn-checkout">
+        <i class="fa-brands fa-pix"></i> Pagar com PIX <span class="pix-tag">10% OFF</span>
+    </button>
 
-<div class="row" style="padding-left: 20px; padding-right: 20px">
-    <div class="col-8">
-        <div class="text-muted" style="font-size: 11px; ">
-            <p class="mb-0"><strong>Precisa de ajuda? </strong><a href="#" target="_blank">Entre em contato</a></p>
-            <p class="mt-0 mb-0">* O valor parcelado possui acréscimo.</p>
-            <p class="mt-0 mb-0"><strong>Meia entrada solidária </strong> (40% de desconto) disponível para qualquer pessoa que levar 1kg de alimento não perecível no dia do evento.</p>
-            <p class="mt-0 mb-0">Ao clicar em 'Comprar agora', eu concordo (i) com os termos de uso e regras do evento denominado Dreamfest 25 - Mega Festivalk Geek e estou ciente da Política de Privacidade e que sou maior de idade ou autorizado e acompanhado por um tutor legal.</p>
-        </div>
+    <?php echo form_close(); ?>
+
+    <div class="text-center mt-3 mb-2">
+        <span style="font-size: 11px; color: #9ca3af;">Pagamento processado com segurança por</span><br>
+        <img class="mt-1" src="<?php echo site_url('recursos/front/images/asaas.png'); ?>" width="80" height="auto" style="opacity: 0.6;">
     </div>
+
+    <div class="checkout-footer-text mt-3 mb-4">
+        <p class="mb-1"><strong>Precisa de ajuda?</strong> <a href="#" target="_blank">Entre em contato</a></p>
+        <p class="mb-1">* O valor parcelado possui acréscimo.</p>
+        <p class="mb-1"><strong>Meia entrada solidária</strong> (40% de desconto) disponível para qualquer pessoa que levar 1kg de alimento no dia do evento.</p>
+        <p class="mb-1">Ao clicar em "Pagar com PIX", eu concordo com os termos de uso e regras do evento Dreamfest 25 e estou ciente da Política de Privacidade.</p>
+    </div>
+
 </div>
 
 
@@ -537,18 +646,12 @@ function trackInitiateCheckoutPix() {
         $('.order-bump-checkbox').on('change', function() {
             var card = $(this).closest('.order-bump-item');
             var addedMsg = card.find('.order-bump-added');
-            
+
             if ($(this).is(':checked')) {
-                card.css({
-                    'border-color': '#81c784',
-                    'background-color': '#e8f5e9'
-                });
+                card.addClass('checked');
                 addedMsg.show();
             } else {
-                card.css({
-                    'border-color': '#dee2e6',
-                    'background-color': '#fff'
-                });
+                card.removeClass('checked');
                 addedMsg.hide();
             }
             atualizarValores();
