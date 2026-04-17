@@ -376,8 +376,12 @@ $event_id = session()->get('event_id');
             <div class="checkout-row">
                 <div class="checkout-field">
                     <label class="checkout-label">E-mail</label>
-                    <input type="email" name="email" placeholder="seu@email.com" class="checkout-input" value="<?php if ($data_cli) echo esc($data_cli['email']); ?>" <?php if (isset($data_cli['email'])) : ?> readonly <?php endif ?> required>
-                    <div id="email"></div>
+                    <?php if (isset($data_cli['email']) && !empty($data_cli['email'])) : ?>
+                        <input type="email" class="checkout-input" value="<?= esc($data_cli['email']) ?>" readonly>
+                        <input type="hidden" name="email" value="<?= esc($data_cli['email']) ?>">
+                    <?php else : ?>
+                        <input type="email" name="email" placeholder="seu@email.com" class="checkout-input" required>
+                    <?php endif ?>
                 </div>
                 <div class="checkout-field">
                     <label class="checkout-label">Celular</label>
