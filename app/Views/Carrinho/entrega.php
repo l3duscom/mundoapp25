@@ -10,7 +10,7 @@
 
 <style>
     .delivery-section {
-        max-width: 600px;
+        width: 100%;
     }
 
     .delivery-option {
@@ -266,7 +266,7 @@ if (isset($_GET['escolher'])) {
 ?>
 
 <div class="row mt-3 justify-content-center">
-    <div class="col-lg-7">
+    <div class="col-12">
 
         <div class="delivery-section">
             <h5 class="mb-3" style="font-weight: 700; color: #111827;">Como quer receber seus ingressos?</h5>
@@ -322,7 +322,7 @@ if (isset($_GET['escolher'])) {
 </div>
 
 <div class="row justify-content-center mt-3 mb-4">
-    <div class="col-lg-7">
+    <div class="col-12">
         <div class="text-muted" style="font-size: 11px; line-height: 1.6;">
             <p class="mb-1"><strong>Precisa de ajuda?</strong> <a href="#" target="_blank">Entre em contato</a></p>
             <p class="mb-1">* O valor parcelado possui acréscimo.</p>
