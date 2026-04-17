@@ -810,7 +810,7 @@ if (isset($event_id)) {
             <i class="bx bx-calendar-star"></i>
         </div>
         <div class="day-option-info">
-            <div class="day-option-name">2 Dias <span class="day-option-badge">Melhor custo</span></div>
+            <div class="day-option-name">2 Dias <span class="day-option-badge"><i class="bx bxs-crown" style="font-size: 10px;"></i> Recomendado</span></div>
             <div class="day-option-date"><?php
                 if (isset($evento)) {
                     echo date_format($data_inicio, 'd') . ' e ' . date_format($data_fim, 'd') . ' de ' . $meses_sel[date_format($data_fim, 'm')] . ' de ' . date_format($data_fim, 'Y');
@@ -914,167 +914,115 @@ if (isset($event_id)) {
                             </a>
                         </div>
 
+                        <?php
+                        // Monta array de categorias disponiveis com labels e icones
+                        $categoriasConfig = [
+                            'comum'   => ['label' => 'Comum',       'icon' => 'bx bx-ticket'],
+                            'premium' => ['label' => 'Premium',     'icon' => 'bx bx-star'],
+                            'epic'    => ['label' => 'EPIC PASS',   'icon' => 'bx bx-crown'],
+                            'vip'     => ['label' => 'VIP FULL',    'icon' => 'bx bx-diamond'],
+                            'camping' => ['label' => 'Camping',     'icon' => 'bx bx-tent'],
+                            'cosplay' => ['label' => 'Cosplayer',   'icon' => 'bx bx-mask'],
+                            'after'   => ['label' => 'After Dream', 'icon' => 'bx bx-moon'],
+                            'mae'     => ['label' => 'Especial',    'icon' => 'bx bx-heart'],
+                        ];
+
+                        // Descobre categorias que existem nos tickets (sem parent_ticket_id)
+                        $categoriasDisponiveis = [];
+                        foreach ($items as $item) {
+                            $cat = strtolower($item['categoria'] ?? '');
+                            if (!empty($cat) && empty($item['parent_ticket_id']) && !in_array($cat, $categoriasDisponiveis)) {
+                                $categoriasDisponiveis[] = $cat;
+                            }
+                        }
+                        // Super Pack (tickets com parent_ticket_id)
+                        $tem_super_pack = false;
+                        foreach ($items as $item) {
+                            if (!empty($item['parent_ticket_id'])) { $tem_super_pack = true; break; }
+                        }
+
+                        // Ordena tickets por preco (menor para maior)
+                        $itemsOrdenados = $items;
+                        uasort($itemsOrdenados, function($a, $b) {
+                            return $a['preco'] <=> $b['preco'];
+                        });
+                        ?>
+
                         <!-- Tab Navigation com Setas -->
                         <div class="tab-navigation-wrapper">
                             <div class="tab-navigation-content">
                                 <button class="nav-arrow left" onclick="scrollTabs('left')" id="scrollLeft" aria-label="Rolar para esquerda">
                                     <i class='bx bx-chevron-left'></i>
                                 </button>
-                                
+
                                 <div class="tab-container" id="tabContainer">
                                     <div class="tab" id="tabMenu">
-                                    <button class="tablinks" onclick="openCategoria(event, 'sabado')" id="defaultOpen">
-                                        <span class="day-name">sáb.</span>
-                                        <span class="day-date"><?php
-                                            if (isset($evento)) {
-                                                $data_inicio = date_create($evento->data_inicio);
-                                                echo date_format($data_inicio, 'd/m');
-                                            }
-                                        ?></span>
-                                    </button>
-                                    
-                                    <button class="tablinks" onclick="openCategoria(event, 'domingo')">
-                                        <span class="day-name">dom.</span>
-                                        <span class="day-date"><?php
-                                            if (isset($evento)) {
-                                                $data_fim = date_create($evento->data_fim);
-                                                echo date_format($data_fim, 'd/m');
-                                            }
-                                        ?></span>
-                                    </button>
-                                    
-                                    <button class="tablinks" onclick="openCategoria(event, 'passaporte')">
-                                        <span class="day-name">2 dias</span>
-                                        <span class="day-date"><?php
-                                            if (isset($evento)) {
-                                                $data_inicio = date_create($evento->data_inicio);
-                                                $data_fim = date_create($evento->data_fim);
-                                                echo date_format($data_inicio, 'd/m') . ' e ' . date_format($data_fim, 'd/m');
-                                            }
-                                        ?></span>
-                                    </button>
-                                    
-                                    <?php if ($tem_camping): ?>
-                                        <button class="tablinks" onclick="openCategoria(event, 'camping')">
-                                            <span class="day-name">Florinda</span>
-                                            <span class="day-date">Internacional</span>
-                                        </button>
-                                    <?php endif; ?>
-                                    
-                                    <?php if ($tem_epic): ?>
-                                        <button class="tablinks" onclick="openCategoria(event, 'epic')">
-                                            <span class="day-name">EPIC PASS</span>
-                                            <span class="day-date">Experiência Épica</span>
-                                        </button>
-                                    <?php endif; ?>
-                                    
-                                    <?php if ($tem_vip): ?>
-                                        <button class="tablinks" onclick="openCategoria(event, 'vip')">
-                                            <span class="day-name">VIP FULL</span>
-                                            <span class="day-date">Experiência Máxima</span>
-                                        </button>
-                                    <?php endif; ?>
-                                    
+                                    <?php $primeiraTab = true; ?>
+                                    <?php foreach ($categoriasConfig as $catKey => $catInfo): ?>
+                                        <?php if (in_array($catKey, $categoriasDisponiveis)): ?>
+                                            <button class="tablinks" onclick="openCategoria(event, '<?= $catKey ?>')" <?= $primeiraTab ? 'id="defaultOpen"' : '' ?>>
+                                                <span class="day-name"><i class="<?= $catInfo['icon'] ?>" style="font-size: 12px;"></i> <?= $catInfo['label'] ?></span>
+                                            </button>
+                                            <?php $primeiraTab = false; ?>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
                                     <?php if ($tem_super_pack): ?>
                                         <button class="tablinks" onclick="openCategoria(event, 'super_pack')">
-                                            <span class="day-name">SUPER PACK</span>
-                                            <span class="day-date">+ econômico</span>
+                                            <span class="day-name"><i class="bx bx-package" style="font-size: 12px;"></i> Super Pack</span>
                                         </button>
                                     <?php endif; ?>
-                                    
-                                    <button class="tablinks" onclick="openCategoria(event, 'cosplay')">
-                                        <span class="day-name">Cosplayer</span>
-                                        <span class="day-date">Promocional</span>
-                                    </button>
-                                    
-                                    <button class="tablinks" onclick="openCategoria(event, 'after')">
-                                        <span class="day-name">After Dream</span>
-                                        <span class="day-date">Festa</span>
-                                    </button>
                                     </div>
                                 </div>
-                                
+
                                 <button class="nav-arrow right" onclick="scrollTabs('right')" id="scrollRight" aria-label="Rolar para direita">
                                     <i class='bx bx-chevron-right'></i>
                                 </button>
                             </div>
-                            
+
                             <!-- Barra de scroll customizada -->
                             <div class="tab-scroll-indicator">
                                 <div class="tab-scroll-thumb" id="scrollThumb"></div>
                             </div>
-                            
-                            <!-- Instrução visual de scroll -->
+
+                            <!-- Instrucao visual de scroll -->
                             <div class="scroll-instruction" id="scrollInstruction">
                                 <i class='bx bx-chevrons-left'></i>
-                                <span>Deslize para ver todos os ingressos</span>
+                                <span>Deslize para ver todas as categorias</span>
                                 <i class='bx bx-chevrons-right'></i>
                             </div>
                         </div>
                         <div class="d-grid gap-2 mb-0">
                             <a class="btn btn-light" href="#pagar">
-                                <!-- <i class="bi bi-arrow-down-circle-fill" style="font-size: 25px; color: purple;"></i>-->
                                 <strong><i class='bx bx-down-arrow-circle'></i> Ver detalhes da compra</strong>
                             </a>
                         </div>
-                        <!-- Tab content -->
-                        <?php
-                        // SÁBADO
-                        $tem_sabado = false;
-                        foreach ($items as $key => $value) {
-                            if ((($value['categoria'] == 'comum' || $value['categoria'] == 'premium') && $value['tipo'] == 'individual' && $value['dia'] == 'sab' && empty($value['parent_ticket_id']))) {
-                                $tem_sabado = true;
-                                break;
-                            }
-                        }
-                        ?>
-                        <div id="sabado" class="tabcontent">
-                            <?php if (!$tem_sabado): ?>
-                                <div class="alert alert-warning text-center mt-3 mb-3">LOTE ESGOTADO, aguarde novo lote</div>
-                            <?php endif; ?>
-                            <!-- instruções e conteúdo já existentes da aba Sábado -->
-                            <p style="padding-top: 20px;">Este ingresso dá direito a participar do <?= isset($evento) ? esc($evento->nome) : 'evento' ?> <strong>somente no sábado</strong><?php
-                                if (isset($evento)) {
-                                    $data_inicio = date_create($evento->data_inicio);
-                                    $meses = [
-                                        '01' => 'janeiro', '02' => 'fevereiro', '03' => 'março', '04' => 'abril',
-                                        '05' => 'maio', '06' => 'junho', '07' => 'julho', '08' => 'agosto',
-                                        '09' => 'setembro', '10' => 'outubro', '11' => 'novembro', '12' => 'dezembro'
-                                    ];
-                                    $dia_inicio = date_format($data_inicio, 'd');
-                                    $mes = $meses[date_format($data_inicio, 'm')];
-                                    $ano = date_format($data_inicio, 'Y');
-                                    $hora_inicio = isset($evento->hora_inicio) ? $evento->hora_inicio : '11:00';
-                                    $hora_fim = isset($evento->hora_fim) ? $evento->hora_fim : '20:00';
-                                    echo ", dia $dia_inicio de $mes de $ano das $hora_inicio às $hora_fim";
-                                }
-                            ?></p>
-                            <p>Você receberá uma credencial exclusiva e colecionável que deverá ser apresentada na entrada e na saída do festival e sempre que for requisitada. Você terá direito à entrar e sair do evento sempre que quiser!</p>
-                            <hr>
-                            <div class="mb-0 mt-3 font-24" style="color: #333;">Selecione seu ingresso </div>
-                            <p>Apenas a promoção de maior desconto será aplicada ao final do carrinho.</p>
-                            
-                            <?php foreach ($items as $key => $value) : ?>
-                                <?php if ((($value['categoria'] == 'comum' || $value['categoria'] == 'premium') && $value['tipo'] == 'individual' && $value['dia'] == 'sab' && empty($value['parent_ticket_id']))) : ?>
-                                    <div class="card border border-muted px-3" data-item-id="<?= $key ?>">
+
+                        <!-- Tab contents por categoria -->
+                        <?php foreach ($categoriasConfig as $catKey => $catInfo): ?>
+                            <?php if (in_array($catKey, $categoriasDisponiveis)): ?>
+                                <div id="<?= $catKey ?>" class="tabcontent">
+                                    <div class="mb-0 mt-3 font-24" style="color: #333;">Selecione seu ingresso</div>
+                                    <p>Apenas a promocao de maior desconto sera aplicada ao final do carrinho.</p>
+
+                                    <?php
+                                    $temTicketNaCategoria = false;
+                                    foreach ($itemsOrdenados as $key => $value):
+                                        if (strtolower($value['categoria']) == $catKey && empty($value['parent_ticket_id'])):
+                                            $temTicketNaCategoria = true;
+                                            // Determina o filtro de dia: sabado=individual+sab, domingo=individual+dom, passaporte=combo
+                                            $ticketDia = '';
+                                            if ($value['tipo'] == 'individual' && $value['dia'] == 'sab') $ticketDia = 'sabado';
+                                            elseif ($value['tipo'] == 'individual' && $value['dia'] == 'dom') $ticketDia = 'domingo';
+                                            elseif ($value['tipo'] == 'combo') $ticketDia = 'passaporte';
+                                            else $ticketDia = 'todos'; // categorias como camping, cosplay, after nao filtram por dia
+                                    ?>
+                                    <div class="card border border-muted px-3 ticket-card" data-item-id="<?= $key ?>" data-dia="<?= $ticketDia ?>" data-categoria="<?= $catKey ?>">
                                         <div class="form-check mt-3 mb-3">
                                             <div class="row">
                                                 <div class="col-7">
-                                                    <span style="color: purple; font-size: 10px" class="ticket-info">Finaliza em: <?= date('d/m/Y', strtotime($value['data_lote'])) ?> </span><br>
+                                                    <span style="color: purple; font-size: 10px" class="ticket-info">Finaliza em: <?= date('d/m/Y', strtotime($value['data_lote'])) ?></span><br>
                                                     <strong class="item-name" style="color: #6C038F; font-size: 16px"><?= $value['nome'] ?></strong><br>
-                                                    <?php if (!empty($value['parent_ticket_id'])) : ?>
-                                                        <div class="mt-1 mb-1 badge-container">
-                                                            <span class="badge bg-success text-white me-2" style="font-size: 11px; padding: 4px 8px;">
-                                                                <i class="bi bi-check-circle-fill me-1"></i>Válido para 2 eventos: Dream25 + Anime Dream 25
-                                                            </span>
-                                                            <span class="badge bg-warning text-dark" style="font-size: 11px; padding: 4px 8px;">
-                                                                + Econômico
-                                                            </span>
-                                                        </div>
-                                                    <?php endif; ?>
                                                     <span class="text-muted ticket-info" style="font-size: 10px"><strong><?= $value['tipo'] ?> - <?= $value['lote'] ?> lote</strong></span>
-
-
                                                 </div>
                                                 <div class="col-5 text-right">
                                                     <?php if ($value['estoque'] > 0) : ?>
@@ -1088,7 +1036,7 @@ if (isset($event_id)) {
                                                                 <strong class="item-price" data-price="<?= $value['preco'] ?>" style="word-wrap: normal; font-size: 26px; line-height: 1; margin-bottom: 0;">
                                                                     <span style="font-size: 0.6em; vertical-align: middle;">R$</span> <?= number_format($value['preco'], 2, ',', ''); ?>
                                                                 </strong>
-                                                                <span class="text-muted service-fee" style="font-size: 11px; line-height: 1.1; margin-top: 0; margin-bottom: 0; padding-top: 0;">+ <?= (isset($_SESSION['carrinho'][$key]['taxa'])) ? 'R$ ' . number_format($_SESSION['carrinho'][$key]['taxa'], 2, ',', '') . ' taxa de serviço' : 'taxa de serviço' ?></span>
+                                                                <span class="text-muted service-fee" style="font-size: 11px; line-height: 1.1; margin-top: 0; margin-bottom: 0; padding-top: 0;">+ <?= (isset($_SESSION['carrinho'][$key]['taxa'])) ? 'R$ ' . number_format($_SESSION['carrinho'][$key]['taxa'], 2, ',', '') . ' taxa de servico' : 'taxa de servico' ?></span>
                                                             </div>
                                                         </div>
                                                     <?php else : ?>
@@ -1096,17 +1044,84 @@ if (isset($event_id)) {
                                                     <?php endif; ?>
                                                 </div>
                                                 <div class="col-11 mt-3 eligibility-section">
-                                                    <strong style="font-size: 13px;" class="mt-5"><i class='bx bx-info-circle'></i> Quem pode comprar? </strong>
+                                                    <strong style="font-size: 13px;" class="mt-5"><i class='bx bx-info-circle'></i> Quem pode comprar?</strong>
                                                     <div class="text-muted mt-1" style="font-size: 11px;"><?= $value['descricao'] ?></div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <?php endif; ?>
+                                    <?php endforeach; ?>
+
+                                    <?php if (!$temTicketNaCategoria): ?>
+                                        <div class="alert alert-warning text-center mt-3 mb-3">Nenhum ingresso disponivel nesta categoria</div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+
+                        <?php if ($tem_super_pack): ?>
+                        <div id="super_pack" class="tabcontent">
+                            <div class="mb-0 mt-3 font-24" style="color: #333;">Selecione seu ingresso</div>
+                            <p>Pacotes com desconto para multiplos eventos.</p>
+
+                            <?php foreach ($itemsOrdenados as $key => $value): ?>
+                                <?php if (!empty($value['parent_ticket_id'])):
+                                    $ticketDia = '';
+                                    if ($value['tipo'] == 'individual' && $value['dia'] == 'sab') $ticketDia = 'sabado';
+                                    elseif ($value['tipo'] == 'individual' && $value['dia'] == 'dom') $ticketDia = 'domingo';
+                                    elseif ($value['tipo'] == 'combo') $ticketDia = 'passaporte';
+                                    else $ticketDia = 'todos';
+                                ?>
+                                <div class="card border border-muted px-3 ticket-card" data-item-id="<?= $key ?>" data-dia="<?= $ticketDia ?>" data-categoria="super_pack">
+                                    <div class="form-check mt-3 mb-3">
+                                        <div class="row">
+                                            <div class="col-7">
+                                                <span style="color: purple; font-size: 10px" class="ticket-info">Finaliza em: <?= date('d/m/Y', strtotime($value['data_lote'])) ?></span><br>
+                                                <strong class="item-name" style="color: #6C038F; font-size: 16px"><?= $value['nome'] ?></strong><br>
+                                                <div class="mt-1 mb-1 badge-container">
+                                                    <span class="badge bg-success text-white me-2" style="font-size: 11px; padding: 4px 8px;">
+                                                        <i class="bi bi-check-circle-fill me-1"></i>Valido para 2 eventos
+                                                    </span>
+                                                    <span class="badge bg-warning text-dark" style="font-size: 11px; padding: 4px 8px;">
+                                                        + Economico
+                                                    </span>
+                                                </div>
+                                                <span class="text-muted ticket-info" style="font-size: 10px"><strong><?= $value['tipo'] ?> - <?= $value['lote'] ?> lote</strong></span>
+                                            </div>
+                                            <div class="col-5 text-right">
+                                                <?php if ($value['estoque'] > 0) : ?>
+                                                    <div class="col-12 mt-3 font-20 d-flex flex-column align-items-end justify-content-center quantity-section" style="gap:0;">
+                                                        <strong class="quantity-controls" style="font-size: 20px;">
+                                                            <a href="?excluir=<?= $key ?>"><i class="bi bi-dash-circle-fill" style="padding-right: 4px;"></i></a>
+                                                            <?= (isset($_SESSION['carrinho'][$key]['quantidade'])) ? $_SESSION['carrinho'][$key]['quantidade'] : '0' ?>
+                                                            <a href="?adicionar=<?= $key ?>"><i class="bi bi-plus-circle-fill" style="padding-left: 4px"></i></a>
+                                                        </strong>
+                                                        <div class="d-flex flex-column align-items-end price-section" style="margin-top: 2px;">
+                                                            <strong class="item-price" data-price="<?= $value['preco'] ?>" style="word-wrap: normal; font-size: 26px; line-height: 1; margin-bottom: 0;">
+                                                                <span style="font-size: 0.6em; vertical-align: middle;">R$</span> <?= number_format($value['preco'], 2, ',', ''); ?>
+                                                            </strong>
+                                                            <span class="text-muted service-fee" style="font-size: 11px; line-height: 1.1; margin-top: 0; margin-bottom: 0; padding-top: 0;">+ <?= (isset($_SESSION['carrinho'][$key]['taxa'])) ? 'R$ ' . number_format($_SESSION['carrinho'][$key]['taxa'], 2, ',', '') . ' taxa de servico' : 'taxa de servico' ?></span>
+                                                        </div>
+                                                    </div>
+                                                <?php else : ?>
+                                                    <strong style="color: red;">ESGOTADO</strong>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="col-11 mt-3 eligibility-section">
+                                                <strong style="font-size: 13px;" class="mt-5"><i class='bx bx-info-circle'></i> Quem pode comprar?</strong>
+                                                <div class="text-muted mt-1" style="font-size: 11px;"><?= $value['descricao'] ?></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <?php endif; ?>
                             <?php endforeach; ?>
-                            
                         </div>
+                        <?php endif; ?>
 
+                        <?php /* Inicio bloco antigo removido */
+                        if (false): ?>
                         <?php
                         // DOMINGO
                         $tem_domingo = false;
@@ -1823,6 +1838,7 @@ if (isset($event_id)) {
 
 
                     </div>
+                    <?php endif; /* Fim bloco antigo removido */ ?>
 
 
 
@@ -3419,6 +3435,9 @@ function trackInitiateCheckout() {
     //})
 </script>
 <script>
+    // Dia selecionado globalmente
+    var diaSelecionado = localStorage.getItem('diaSelecionado') || 'sabado';
+
     // Volta para o seletor de dia
     function voltarSeletor() {
         document.getElementById('carrinho-content').style.display = 'none';
@@ -3427,8 +3446,41 @@ function trackInitiateCheckout() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    // Filtra tickets visiveis com base no dia selecionado
+    function filtrarTicketsPorDia() {
+        document.querySelectorAll('.ticket-card').forEach(function(card) {
+            var ticketDia = card.getAttribute('data-dia');
+            // Mostra se: o dia bate, ou o ticket e para 'todos' (camping, cosplay, after, etc)
+            if (ticketDia === diaSelecionado || ticketDia === 'todos') {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // Verifica se alguma tab tem tickets visiveis e esconde tabs vazias
+        document.querySelectorAll('.tabcontent').forEach(function(tab) {
+            var cards = tab.querySelectorAll('.ticket-card');
+            var temVisivel = false;
+            cards.forEach(function(card) {
+                if (card.style.display !== 'none') temVisivel = true;
+            });
+            // Mostra/esconde aviso de vazio
+            var aviso = tab.querySelector('.alert-no-tickets');
+            if (aviso) aviso.remove();
+            if (!temVisivel && cards.length > 0) {
+                var div = document.createElement('div');
+                div.className = 'alert alert-warning text-center mt-3 mb-3 alert-no-tickets';
+                div.textContent = 'Nenhum ingresso disponivel para o dia selecionado nesta categoria';
+                tab.appendChild(div);
+            }
+        });
+    }
+
     // Seletor de dia - mostra carrinho e abre a aba correspondente
     function selecionarDia(dia) {
+        diaSelecionado = dia;
+
         // Esconde o seletor
         document.getElementById('day-selector').style.display = 'none';
         // Mostra o carrinho
@@ -3437,14 +3489,12 @@ function trackInitiateCheckout() {
         // Salva escolha
         localStorage.setItem('diaSelecionado', dia);
 
-        // Clica na aba correspondente
-        var tabButtons = document.querySelectorAll('.tablinks');
-        tabButtons.forEach(function(btn) {
-            var onclick = btn.getAttribute('onclick');
-            if (onclick && onclick.indexOf("'" + dia + "'") !== -1) {
-                btn.click();
-            }
-        });
+        // Filtra tickets pelo dia
+        filtrarTicketsPorDia();
+
+        // Abre primeira tab
+        var defaultBtn = document.getElementById('defaultOpen');
+        if (defaultBtn) defaultBtn.click();
 
         // Scroll para o topo
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -3459,6 +3509,13 @@ function trackInitiateCheckout() {
         if (temCarrinho || temAdicionar || temExcluir) {
             document.getElementById('day-selector').style.display = 'none';
             document.getElementById('carrinho-content').style.display = 'block';
+
+            // Restaura dia salvo
+            var diaSalvo = localStorage.getItem('diaSelecionado');
+            if (diaSalvo) diaSelecionado = diaSalvo;
+
+            // Filtra tickets pelo dia
+            filtrarTicketsPorDia();
 
             // Restaura aba salva
             var abaSalva = localStorage.getItem('abaCarrinhoSelecionada');
@@ -3699,6 +3756,11 @@ function trackInitiateCheckout() {
         // So abre aba automaticamente se o carrinho ja estiver visivel
         var carrinhoContent = document.getElementById('carrinho-content');
         if (carrinhoContent && carrinhoContent.style.display !== 'none') {
+            // Restaura dia e filtra
+            var diaSalvo = localStorage.getItem('diaSelecionado');
+            if (diaSalvo) diaSelecionado = diaSalvo;
+            if (typeof filtrarTicketsPorDia === 'function') filtrarTicketsPorDia();
+
             var abaSalva = localStorage.getItem('abaCarrinhoSelecionada');
             if (abaSalva) {
                 var btn = document.querySelector('.tab button[onclick*="' + abaSalva + '"]');
