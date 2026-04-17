@@ -102,9 +102,25 @@ try {
             <div class="row align-items-center">
                 <!-- Logo -->
                 <div class="col-lg-4 col-md-6 mb-3 mb-lg-0">
-                    <a href="<?= site_url() ?>">
-                        <img src="<?= site_url('recursos/front/images/logo-25-2-negativo.png') ?>" alt="Mundo Dream" height="40">
-                    </a>
+                    <?php $eventoFooter = evento_selecionado_com_validacao(); ?>
+                    <?php if ($eventoFooter && !empty($eventoFooter->avatar)) : ?>
+                        <?php
+                            if (strpos($eventoFooter->avatar, 'http') === 0) {
+                                $footerAvatarUrl = $eventoFooter->avatar;
+                            } elseif (strpos($eventoFooter->avatar, 'eventos/imagem/') === 0) {
+                                $footerAvatarUrl = 'https://backoffice.mundodream.com.br/' . $eventoFooter->avatar;
+                            } else {
+                                $footerAvatarUrl = 'https://backoffice.mundodream.com.br/eventos/imagem/' . $eventoFooter->avatar;
+                            }
+                        ?>
+                        <a href="<?= site_url() ?>">
+                            <img src="<?= $footerAvatarUrl ?>" alt="<?= esc($eventoFooter->nome) ?>" height="40" style="max-width: 200px; object-fit: contain;">
+                        </a>
+                    <?php else : ?>
+                        <a href="<?= site_url() ?>">
+                            <img src="<?= site_url('recursos/front/images/logo-25-2-negativo.png') ?>" alt="Mundo Dream" height="40">
+                        </a>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Links Rápidos -->

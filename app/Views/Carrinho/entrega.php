@@ -10,7 +10,8 @@
 
 <style>
     .delivery-section {
-        width: 100%;
+        max-width: 540px;
+        margin: 0 auto;
     }
 
     .delivery-option {

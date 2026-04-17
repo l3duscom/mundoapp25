@@ -307,7 +307,7 @@
 
     <header class="top-header">
 
-        <nav class="navbar navbar-expand gap-3 shadow">
+        <nav class="navbar navbar-expand gap-3 shadow" style="background: #2d2d2d;">
 
             <div class="container justify-content-center mt-4 mb-4">
                 <?php $evento = evento_selecionado_com_validacao(); ?>
