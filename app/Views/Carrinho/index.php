@@ -177,37 +177,44 @@
     .ticket-card-controls {
         display: inline-flex;
         align-items: center;
-        gap: 0;
+        gap: 4px;
         background: #f1f5f9;
         border-radius: 50px;
-        padding: 2px;
+        padding: 3px;
     }
 
-    .ticket-card-controls a {
+    .ticket-card-controls span[onclick] {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 34px;
-        height: 34px;
+        width: 42px;
+        height: 42px;
         border-radius: 50%;
-        color: #e07020;
+        color: #fff;
+        background: #16a34a;
         text-decoration: none;
-        transition: all 0.15s;
-        font-size: 18px;
+        transition: all .15s;
+        font-size: 22px;
+        cursor: pointer;
+        font-weight: 700;
     }
 
-    .ticket-card-controls a:hover {
-        background: #e2e8f0;
-        color: #c05010;
+    .ticket-card-controls span[onclick]:hover {
+        background: #15803d;
+        transform: scale(1.05);
+    }
+
+    .ticket-card-controls span[onclick]:active {
+        transform: scale(0.95);
     }
 
     .ticket-card-controls .qty-value {
-        font-size: 16px;
+        font-size: 18px;
         font-weight: 700;
         color: #1e293b;
-        min-width: 28px;
+        min-width: 32px;
         text-align: center;
-        padding: 0 2px;
+        padding: 0 4px;
     }
 
     .ticket-card.has-qty .ticket-card-controls .qty-value {
@@ -907,9 +914,9 @@ if (isset($event_id)) {
                                         <div class="ticket-card-right">
                                             <?php if ($value['estoque'] > 0) : ?>
                                             <div class="ticket-card-controls">
-                                                <a href="?excluir=<?= $key ?>"><i class="bx bx-minus"></i></a>
+                                                <span onclick="window.location.href='?excluir=<?= $key ?>'" style="cursor:pointer"><i class="bx bx-minus"></i></span>
                                                 <span class="qty-value"><?= $qty ?></span>
-                                                <a href="?adicionar=<?= $key ?>"><i class="bx bx-plus"></i></a>
+                                                <span onclick="window.location.href='?adicionar=<?= $key ?>'" style="cursor:pointer"><i class="bx bx-plus"></i></span>
                                             </div>
                                             <?php else : ?>
                                             <div class="ticket-card-esgotado">ESGOTADO</div>
@@ -2984,17 +2991,6 @@ function trackInitiateCheckout() {
         num_items: totalItems
     });
 }
-
-// Track AddToCart when items are added via URL parameters
-<?php if (isset($_GET['adicionar'])): ?>
-    <?php 
-    $idProduto = (int)$_GET['adicionar'];
-    if (isset($items[$idProduto])): 
-        $produto = $items[$idProduto];
-    ?>
-    trackAddToCart(<?= $idProduto ?>, '<?= $produto['nome'] ?>', <?= $produto['preco'] ?>);
-    <?php endif; ?>
-<?php endif; ?>
 </script>
 <?php endif; ?>
 
@@ -3007,27 +3003,23 @@ function trackInitiateCheckout() {
 
         <?php echo $this->include('Clientes/_viacep'); ?>
 
-        // Track AddToCart when items are added via AJAX
-        $(document).on('click', 'a[href*="adicionar="]', function(e) {
+        // Track AddToCart when items are added
+        $(document).on('click', '[onclick*="adicionar="]', function(e) {
             <?php if (isset($evento) && !empty($evento->meta_pixel_id)): ?>
-            let href = $(this).attr('href');
-            let itemId = href.match(/adicionar=(\d+)/);
+            let onclick = $(this).attr('onclick') || '';
+            let itemId = onclick.match(/adicionar=(\d+)/);
             if (itemId && itemId[1]) {
-                // Get item details from the page
                 let itemElement = $('[data-item-id="' + itemId[1] + '"]');
-                let itemName = itemElement.find('.item-name').text() || 'Ingresso';
-                let itemPrice = parseFloat(itemElement.find('.item-price').data('price')) || 0;
-                
-                // Track after a short delay to ensure the item is added to cart
-                setTimeout(function() {
-                    trackAddToCart(itemId[1], itemName, itemPrice);
-                }, 500);
+                let itemName = itemElement.find('.ticket-card-name').text() || 'Ingresso';
+                let priceText = itemElement.find('.ticket-card-price').text().replace('R$', '').replace(',', '.').trim();
+                let itemPrice = parseFloat(priceText) || 0;
+                trackAddToCart(itemId[1], itemName, itemPrice);
             }
             <?php endif; ?>
         });
 
         // Track InitiateCheckout when user clicks to go to payment
-        $(document).on('click', 'a[href*="evento/entrega"]', function(e) {
+        $(document).on('click', 'a[href*="evento/entrega"], .btn-continuar', function(e) {
             <?php if (isset($evento) && !empty($evento->meta_pixel_id)): ?>
             trackInitiateCheckout();
             <?php endif; ?>
