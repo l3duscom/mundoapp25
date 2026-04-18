@@ -694,10 +694,126 @@
         .nav-arrow {
             opacity: 1;
         }
-        
+
         .nav-arrow.disabled {
             opacity: 0.2;
         }
+    }
+
+    /* ===== Layout checkout (resumo/pagamento) ===== */
+    .checkout-container {
+        max-width: 540px;
+        margin: 0 auto;
+    }
+
+    .checkout-section {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+    }
+
+    .checkout-section-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .checkout-section-title i {
+        color: #7c3aed;
+        font-size: 16px;
+    }
+
+    .item-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #f3f4f6;
+        font-size: 14px;
+    }
+
+    .item-row:last-of-type {
+        border-bottom: none;
+    }
+
+    .item-row .item-name {
+        flex: 1;
+        color: #374151;
+        font-weight: 500;
+    }
+
+    .item-row .item-qty {
+        color: #9ca3af;
+        font-size: 13px;
+        margin: 0 12px;
+        white-space: nowrap;
+    }
+
+    .item-row .item-price {
+        font-weight: 600;
+        color: #111827;
+        white-space: nowrap;
+    }
+
+    .summary-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 0 0;
+        margin-top: 8px;
+        border-top: 2px solid #e5e7eb;
+    }
+
+    .summary-row .label {
+        font-size: 15px;
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .summary-row .value {
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .btn-checkout {
+        width: 100%;
+        padding: 16px;
+        background: #7c3aed;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-checkout:hover {
+        background: #6d28d9;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+    }
+
+    .polling-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border-top: 1px solid #e5e7eb;
+        padding: 12px 16px;
+        z-index: 1000;
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
     }
 </style>
 
@@ -829,23 +945,10 @@ if (isset($event_id)) {
 <!-- ETAPA 2: Carrinho (escondido ate selecionar o dia) -->
 <div id="carrinho-content">
 
-<h5 class="mb-0 mt-3">Quais ingressos voce deseja?</h5>
+<div class="checkout-container mt-3">
 
-
-<div class="row mt-4">
-    <div class="col-lg-8">
-        <div class="block">
-            <div class="block-body">
-                <div class="card shadow radius-10">
-                    <div class="card-body">
-
-
-
-                        <!-- Exibirá os retornos do backend -->
-                        <div id="response">
-
-
-                        </div>
+    <!-- Retornos do backend -->
+    <div id="response"></div>
 
 
 
@@ -1844,178 +1947,80 @@ if (isset($event_id)) {
 
 
 
-                    <!--
-                        <div class=" mt-1"></div>
-                        <div class="d-flex align-items-center">
-                            <div class="card shadow-none w-100">
-                                <div class="card-body shadow">
-                                    <div class="">
-                                        <h4 class="mb-0">Como você quer receber seus ingressos? </h4>
-                                    </div>
-                                    <div class="row" style="padding: 10px;">
-                                        <div class="col-lg-6">
-                                            s
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-
-                    -->
-
-
-
-
-
-                    <div class="" style="padding: 5px;">
-
-                        <?php if (isset($_SESSION['carrinho'])) : ?>
-
-
-                            <?php foreach ($_SESSION['carrinho'] as $key => $value) : ?>
-
-                                <?php
-
-                                $total_carrinho += $value['quantidade'] * $value['preco'];
-
-                                ?>
-
-                            <?php endforeach; ?>
-
-                        <?php endif; ?>
-
-                        <?php $_SESSION['total'] = $total_carrinho ?>
-
-                    </div>
-
-
-
-
-                    <?php $total_carrinho = 0; ?>
-                    <?php $total_taxa = 0; ?>
-
+                    <?php
+                    // Calcula total do carrinho
+                    $total_carrinho = 0;
+                    $total_taxa = 0;
+                    if (isset($_SESSION['carrinho'])) {
+                        foreach ($_SESSION['carrinho'] as $key => $value) {
+                            $total_carrinho += $value['quantidade'] * $value['preco'];
+                            $total_taxa += $value['quantidade'] * $value['taxa'];
+                        }
+                    }
+                    $_SESSION['total'] = $total_carrinho;
+                    ?>
 
                     <div id="pagar" class="mt-2"></div>
 
-
-
                     <?php if ($_SESSION['total'] != 0) : ?>
-                        <div class="card card-body">
+                    <!-- Resumo do pedido -->
+                    <div class="checkout-section">
+                        <div class="checkout-section-title"><i class="bx bx-receipt"></i> Resumo do pedido</div>
 
-                            <?php if (isset($_SESSION['carrinho'])) : ?>
-                                <table class="table mb-0 table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col" width="40%">Ingresso</th>
-                                            <th scope="col" width="20%" style="align-items:center">
-                                                &nbsp;&nbsp;&nbsp;&nbsp;Quantidade
-                                            </th>
-                                            <th scope="col" width="40%">Valor </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
+                        <?php if (isset($_SESSION['carrinho'])) : ?>
+                            <?php foreach ($_SESSION['carrinho'] as $key => $value) : ?>
+                                <?php if ($value['quantidade'] != 0) : ?>
+                                    <div class="item-row">
+                                        <span class="item-name"><?= $value['nome']; ?></span>
+                                        <span class="item-qty"><?= $value['quantidade']; ?>x</span>
+                                        <span class="item-price">R$ <?= number_format($value['quantidade'] * $value['unitario'], 2, ',', ''); ?></span>
+                                    </div>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
 
-                                        <?php foreach ($_SESSION['carrinho'] as $key => $value) : ?>
-                                            <?php if ($value['quantidade'] != 0) : ?>
-                                                <tr>
-                                                    <td><u><?= $value['nome']; ?></u></td>
-                                                    <td style="padding-left: 25px;"><a href="?excluir=<?= $key ?>"><i class="fadeIn animated bx bx-minus-circle" style="padding-right: 10px;"></i></a><?= $value['quantidade']; ?> <a href="?adicionar=<?= $key ?>"><i class="fadeIn animated bx bx-plus-circle" style="padding-left: 10px"></i></a></td>
-                                                    <td>R$ <strong><?= number_format($value['quantidade'] * $value['unitario'], 2, ',', ''); ?></strong><span style="font-size: 12px;"><br> + R$ <?= number_format($value['quantidade'] * $value['taxa'], 2, ',', ''); ?> taxa de ingresso</span> </td>
-                                                </tr>
-                                            <?php endif; ?>
-                                            <?php
-
-                                            $total_carrinho += $value['quantidade'] * $value['preco'];
-                                            $total_taxa += $value['quantidade'] * $value['taxa'];
-
-                                            ?>
-
-                                        <?php endforeach; ?>
-                                    <?php else : ?>
-                                        <center>
-                                            <i class="fadeIn animated bx bx-error-circle"></i><br>Oooops, seu carrinho está vazio, escolha um ingresso e venha viver a magia no Dreamfest!
-                                            <hr>
-                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Adicionar ingressos</button>
-                                            <hr>
-                                        </center>
-                                        </hr>
-                                    <?php endif; ?>
-
-                                    <?php $_SESSION['total'] = $total_carrinho ?>
-                                    </tbody>
-                                </table>
-
-
+                        <?php if ($total_taxa > 0): ?>
+                        <div style="font-size: 11px; color: #9ca3af; text-align: right; margin-top: 4px;">
+                            + R$ <?= number_format($total_taxa, 2, ',', '.') ?> taxa de servico
                         </div>
+                        <?php endif; ?>
 
-
-
-
-
-
-                        <div class="fixed-bottom bg-white shadow-lg">
-                            <div class="d-grid gap-2 mb-0" style="padding:10px">
-                                <a class="btn btn-sm btn-light" href="#pagar">
-                                    <!-- <i class="bi bi-arrow-down-circle-fill" style="font-size: 25px; color: purple;"></i>-->
-                                    <strong><i class='bx bx-down-arrow-circle'></i> Ver detalhes da compra</strong>
-                                </a>
-                                <center><span style="padding-top: 5px; margin-bottom: -5px">Total a pagar: <strong>R$ <?= number_format($_SESSION['total'], 2, ',', '')  ?></strong></span> </center>
-
-                                <a href="<?= site_url('/evento/entrega/'. $event_id) ?>" class="btn btn-lg mt-0" style="padding:10px; background-color: purple; border-color: purple; color: white;"> Ir para o pagamento <i class='bx bx-right-arrow-circle'></i></a>
-
-                            </div>
-                        </div>
-                        <?php echo form_close(); ?>
-
-
-                    <?php endif ?>
-
-                    <center>
-                        <span class="text-muted mb-1" style="font-size: 9px;">Processado por:</span><br>
-                                                    <img class="mt-1 mb-4" src="<?php echo site_url('recursos/front/images/asaas.png'); ?>" width="100px" height="auto">
-                    </center>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-4">
-
-        <div class="card shadow radius-10">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-
-
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div class="">
-                                <h5 class="mb-0">Compra segura
-                                    </h4>
-                                    <p class="mb-0">Ambiente seguro e autenticado</p>
-                                    <span class="text-muted" style="font-size: 10px;">Este site utiliza certificado SSL</span>
-                            </div>
-                            <div class="ms-auto fs-3 ">
-                                <i class="fadeIn animated bx bx-check-shield" style="font-size: 45px;"></i>
-                            </div>
-                        </div>
-                        <div class="progress mt-3" style="height: 5px;">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 42%"></div>
+                        <div class="summary-row total">
+                            <span class="label">Total</span>
+                            <span class="value" style="color: #7c3aed;">R$ <?= number_format($_SESSION['total'], 2, ',', '.') ?></span>
                         </div>
                     </div>
 
+                    <a href="<?= site_url('/evento/entrega/' . $event_id) ?>" class="btn-checkout" style="text-decoration: none; color: #fff;">
+                        <i class="bx bx-right-arrow-circle"></i> Ir para o pagamento
+                    </a>
+                    <?php endif ?>
 
+                    <div class="text-center mt-3 mb-2">
+                        <span style="font-size: 11px; color: #9ca3af;">Pagamento processado com seguranca por</span><br>
+                        <img class="mt-1" src="<?php echo site_url('recursos/front/images/asaas.png'); ?>" width="80" height="auto" style="opacity: 0.6;">
+                    </div>
 
+                    <div style="height: 100px;"></div>
 
-                </div>
-            </div>
+                    <?php if ($_SESSION['total'] != 0) : ?>
+                    <!-- Barra fixa inferior -->
+                    <div class="polling-bar">
+                        <div class="polling-bar-inner" style="max-width: 540px; margin: 0 auto;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+                                <div>
+                                    <div style="font-size: 12px; color: #6b7280;">Total</div>
+                                    <div style="font-size: 18px; font-weight: 700; color: #111827;">R$ <?= number_format($_SESSION['total'], 2, ',', '.') ?></div>
+                                </div>
+                                <a href="<?= site_url('/evento/entrega/' . $event_id) ?>" class="btn-checkout" style="text-decoration: none; color: #fff; flex: 1; max-width: 280px;">
+                                    Pagamento <i class="bx bx-right-arrow-circle"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif ?>
 
-        </div>
-
-
-    </div>
-
-</div>
+</div><!-- /checkout-container -->
 
 <div class="row" style="padding-left: 20px; padding-right: 20px">
     <div class="col-8">
