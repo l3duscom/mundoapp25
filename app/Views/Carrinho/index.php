@@ -105,24 +105,30 @@
     .ticket-card {
         background: #fff;
         border: 1px solid #e5e7eb;
-        border-left: 4px solid #e5e7eb;
         border-radius: 12px;
-        padding: 20px 20px 20px 18px;
+        padding: 18px 20px;
         margin-bottom: 12px;
         transition: all 0.2s;
     }
 
     .ticket-card.has-qty {
-        border-left-color: #22c55e;
+        border-color: #22c55e;
         background: #fafffe;
+    }
+
+    .ticket-card-lote-info {
+        font-size: 11px;
+        color: #7c3aed;
+        font-weight: 500;
+        margin-bottom: 4px;
     }
 
     .ticket-card-header {
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         justify-content: space-between;
         gap: 12px;
-        margin-bottom: 4px;
+        margin-bottom: 2px;
     }
 
     .ticket-card-name {
@@ -130,32 +136,42 @@
         font-weight: 700;
         color: #1a2332;
         line-height: 1.3;
+        flex: 1;
     }
 
-    .ticket-card-price {
-        font-size: 18px;
-        font-weight: 700;
-        color: #1a2332;
-        white-space: nowrap;
+    .ticket-card-right {
         flex-shrink: 0;
     }
 
-    .ticket-card-price .currency {
-        font-size: 13px;
-        font-weight: 600;
-    }
-
     .ticket-card-meta {
-        font-size: 12px;
+        font-size: 11px;
         color: #94a3b8;
-        margin-bottom: 14px;
+        font-weight: 600;
+        margin-bottom: 10px;
     }
 
-    .ticket-card-qty-label {
-        font-size: 13px;
+    .ticket-card-price-row {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .ticket-card-price {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1a2332;
+        white-space: nowrap;
+    }
+
+    .ticket-card-price .currency {
+        font-size: 14px;
         font-weight: 600;
-        color: #64748b;
-        margin-bottom: 8px;
+    }
+
+    .ticket-card-taxa {
+        font-size: 11px;
+        color: #94a3b8;
     }
 
     .ticket-card-controls {
@@ -171,10 +187,10 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 36px;
-        height: 36px;
+        width: 34px;
+        height: 34px;
         border-radius: 50%;
-        color: #64748b;
+        color: #e07020;
         text-decoration: none;
         transition: all 0.15s;
         font-size: 18px;
@@ -182,7 +198,7 @@
 
     .ticket-card-controls a:hover {
         background: #e2e8f0;
-        color: #334155;
+        color: #c05010;
     }
 
     .ticket-card-controls .qty-value {
@@ -202,10 +218,31 @@
         display: inline-block;
         background: #fef2f2;
         color: #dc2626;
-        font-size: 13px;
-        font-weight: 600;
+        font-size: 12px;
+        font-weight: 700;
         padding: 6px 14px;
         border-radius: 8px;
+    }
+
+    .ticket-card-elegibilidade {
+        border-top: 1px solid #f1f5f9;
+        padding-top: 10px;
+        margin-top: 4px;
+    }
+
+    .ticket-card-elegibilidade strong {
+        font-size: 12px;
+        color: #475569;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-bottom: 4px;
+    }
+
+    .ticket-card-elegibilidade-text {
+        font-size: 11px;
+        color: #94a3b8;
+        line-height: 1.5;
     }
 
     /* ===== Barra fixa inferior ===== */
@@ -821,23 +858,31 @@ if (isset($event_id)) {
                                             $isMeia = (stripos($value['nome'], 'meia') !== false);
                                     ?>
                                     <div class="ticket-card <?= $qty > 0 ? 'has-qty' : '' ?>" data-item-id="<?= $key ?>" data-dia="<?= $ticketDia ?>" data-categoria="<?= $catKey ?>" data-ticket-tipo="<?= $isMeia ? 'meia' : 'inteira' ?>">
+                                        <div class="ticket-card-lote-info">Finaliza em: <?= date('d/m/Y', strtotime($value['data_lote'])) ?></div>
                                         <div class="ticket-card-header">
                                             <div class="ticket-card-name"><?= $value['nome'] ?></div>
-                                            <div class="ticket-card-price"><span class="currency">R$</span> <?= number_format($value['preco'], 2, ',', '') ?></div>
-                                        </div>
-                                        <div class="ticket-card-meta">
-                                            Disponivel: <?= $value['estoque'] ?> &bull; max. por pedido: 10
-                                        </div>
-
-                                        <?php if ($value['estoque'] > 0) : ?>
-                                            <div class="ticket-card-qty-label">Quantidade</div>
-                                            <div class="ticket-card-controls">
-                                                <a href="?excluir=<?= $key ?>"><i class="bx bx-minus"></i></a>
-                                                <span class="qty-value"><?= $qty ?></span>
-                                                <a href="?adicionar=<?= $key ?>"><i class="bx bx-plus"></i></a>
+                                            <div class="ticket-card-right">
+                                                <?php if ($value['estoque'] > 0) : ?>
+                                                <div class="ticket-card-controls">
+                                                    <a href="?excluir=<?= $key ?>"><i class="bx bx-minus"></i></a>
+                                                    <span class="qty-value"><?= $qty ?></span>
+                                                    <a href="?adicionar=<?= $key ?>"><i class="bx bx-plus"></i></a>
+                                                </div>
+                                                <?php else : ?>
+                                                <div class="ticket-card-esgotado">ESGOTADO</div>
+                                                <?php endif; ?>
                                             </div>
-                                        <?php else : ?>
-                                            <div class="ticket-card-esgotado">Esgotado</div>
+                                        </div>
+                                        <div class="ticket-card-meta"><?= $value['tipo'] ?> - <?= $value['lote'] ?> lote</div>
+                                        <div class="ticket-card-price-row">
+                                            <div class="ticket-card-price"><span class="currency">R$</span> <?= number_format($value['preco'], 2, ',', '') ?></div>
+                                            <div class="ticket-card-taxa">+ <?= (isset($_SESSION['carrinho'][$key]['taxa'])) ? 'R$ ' . number_format($_SESSION['carrinho'][$key]['taxa'], 2, ',', '') . ' taxa de servico' : 'taxa de servico' ?></div>
+                                        </div>
+                                        <?php if (!empty($value['descricao'])): ?>
+                                        <div class="ticket-card-elegibilidade">
+                                            <strong><i class='bx bx-info-circle'></i> Quem pode comprar?</strong>
+                                            <div class="ticket-card-elegibilidade-text"><?= $value['descricao'] ?></div>
+                                        </div>
                                         <?php endif; ?>
                                     </div>
                                     <?php endif; ?>
@@ -862,23 +907,31 @@ if (isset($event_id)) {
                                     $qty = isset($_SESSION['carrinho'][$key]['quantidade']) ? $_SESSION['carrinho'][$key]['quantidade'] : 0;
                                 ?>
                                 <div class="ticket-card <?= $qty > 0 ? 'has-qty' : '' ?>" data-item-id="<?= $key ?>" data-dia="<?= $ticketDia ?>" data-categoria="super_pack" data-ticket-tipo="inteira">
+                                    <div class="ticket-card-lote-info">Finaliza em: <?= date('d/m/Y', strtotime($value['data_lote'])) ?></div>
                                     <div class="ticket-card-header">
                                         <div class="ticket-card-name"><?= $value['nome'] ?></div>
-                                        <div class="ticket-card-price"><span class="currency">R$</span> <?= number_format($value['preco'], 2, ',', '') ?></div>
-                                    </div>
-                                    <div class="ticket-card-meta">
-                                        Disponivel: <?= $value['estoque'] ?> &bull; Valido para 2 eventos
-                                    </div>
-
-                                    <?php if ($value['estoque'] > 0) : ?>
-                                        <div class="ticket-card-qty-label">Quantidade</div>
-                                        <div class="ticket-card-controls">
-                                            <a href="?excluir=<?= $key ?>"><i class="bx bx-minus"></i></a>
-                                            <span class="qty-value"><?= $qty ?></span>
-                                            <a href="?adicionar=<?= $key ?>"><i class="bx bx-plus"></i></a>
+                                        <div class="ticket-card-right">
+                                            <?php if ($value['estoque'] > 0) : ?>
+                                            <div class="ticket-card-controls">
+                                                <a href="?excluir=<?= $key ?>"><i class="bx bx-minus"></i></a>
+                                                <span class="qty-value"><?= $qty ?></span>
+                                                <a href="?adicionar=<?= $key ?>"><i class="bx bx-plus"></i></a>
+                                            </div>
+                                            <?php else : ?>
+                                            <div class="ticket-card-esgotado">ESGOTADO</div>
+                                            <?php endif; ?>
                                         </div>
-                                    <?php else : ?>
-                                        <div class="ticket-card-esgotado">Esgotado</div>
+                                    </div>
+                                    <div class="ticket-card-meta"><?= $value['tipo'] ?> - <?= $value['lote'] ?> lote</div>
+                                    <div class="ticket-card-price-row">
+                                        <div class="ticket-card-price"><span class="currency">R$</span> <?= number_format($value['preco'], 2, ',', '') ?></div>
+                                        <div class="ticket-card-taxa">+ <?= (isset($_SESSION['carrinho'][$key]['taxa'])) ? 'R$ ' . number_format($_SESSION['carrinho'][$key]['taxa'], 2, ',', '') . ' taxa de servico' : 'taxa de servico' ?></div>
+                                    </div>
+                                    <?php if (!empty($value['descricao'])): ?>
+                                    <div class="ticket-card-elegibilidade">
+                                        <strong><i class='bx bx-info-circle'></i> Quem pode comprar?</strong>
+                                        <div class="ticket-card-elegibilidade-text"><?= $value['descricao'] ?></div>
+                                    </div>
                                     <?php endif; ?>
                                 </div>
                                 <?php endif; ?>
