@@ -15,111 +15,45 @@
         padding: 0 16px;
     }
 
-    /* ===== Tabs de categoria ===== */
-    .tab-navigation-wrapper {
+    /* ===== Grid de categorias ===== */
+    .cat-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
         margin-bottom: 20px;
     }
 
-    .tab-navigation-content {
+    .cat-btn {
         display: flex;
         align-items: center;
-        gap: 8px;
-    }
-
-    .nav-arrow {
+        gap: 6px;
+        padding: 10px 16px;
         background: #fff;
         border: 1px solid #e5e7eb;
         border-radius: 10px;
-        width: 36px;
-        height: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        color: #6b7280;
+        font-size: 13px;
+        font-weight: 600;
         cursor: pointer;
         transition: all 0.2s;
-        flex-shrink: 0;
-    }
-
-    .nav-arrow:hover:not(.disabled) {
-        border-color: #2563eb;
-        background: #f0f6ff;
-    }
-
-    .nav-arrow i {
-        font-size: 20px;
-        color: #6b7280;
-    }
-
-    .nav-arrow:hover:not(.disabled) i {
-        color: #2563eb;
-    }
-
-    .nav-arrow.disabled {
-        opacity: 0.2;
-        cursor: not-allowed;
-        pointer-events: none;
-    }
-
-    .tab-container {
-        flex: 1;
-        overflow-x: auto;
-        overflow-y: hidden;
-        scroll-behavior: smooth;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-    }
-
-    .tab-container::-webkit-scrollbar {
-        display: none;
-    }
-
-    .tab {
-        display: flex;
-        gap: 0;
-        padding: 0;
-        background: #f3f4f6;
-        border-radius: 10px;
-        min-width: min-content;
-    }
-
-    .tab button {
-        background: transparent;
-        color: #6b7280;
-        border: none;
-        border-radius: 10px;
         outline: none;
-        cursor: pointer;
-        padding: 10px 18px;
-        transition: all 0.2s;
-        font-weight: 600;
-        font-size: 14px;
-        min-width: max-content;
-        flex-shrink: 0;
-        white-space: nowrap;
     }
 
-    .tab button .day-name {
-        font-size: 14px;
-        font-weight: 600;
+    .cat-btn i {
+        font-size: 15px;
     }
 
-    .tab button:hover:not(.active) {
-        color: #374151;
+    .cat-btn:hover:not(.active) {
+        border-color: #c7d2fe;
+        color: #4338ca;
+        background: #f5f3ff;
     }
 
-    .tab button.active {
-        color: #111827;
-        background: #fff;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    .tab-scroll-indicator {
-        display: none;
-    }
-
-    .scroll-instruction {
-        display: none;
+    .cat-btn.active {
+        background: #4338ca;
+        color: #fff;
+        border-color: #4338ca;
+        box-shadow: 0 2px 8px rgba(67, 56, 202, 0.3);
     }
 
     /* ===== Tab content ===== */
@@ -167,95 +101,101 @@
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
 
-    /* ===== Ticket card novo ===== */
+    /* ===== Ticket card ===== */
     .ticket-card {
         background: #fff;
-        border: 2px solid #e5e7eb;
-        border-radius: 14px;
-        padding: 20px;
+        border: 1px solid #e5e7eb;
+        border-left: 4px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px 20px 20px 18px;
         margin-bottom: 12px;
         transition: all 0.2s;
-        position: relative;
     }
 
     .ticket-card.has-qty {
-        border-color: #22c55e;
-        background: #f0fdf4;
+        border-left-color: #22c55e;
+        background: #fafffe;
     }
 
     .ticket-card-header {
         display: flex;
         align-items: flex-start;
         justify-content: space-between;
+        gap: 12px;
         margin-bottom: 4px;
     }
 
     .ticket-card-name {
         font-size: 16px;
         font-weight: 700;
-        color: #1f2937;
+        color: #1a2332;
         line-height: 1.3;
     }
 
     .ticket-card-price {
         font-size: 18px;
         font-weight: 700;
-        color: #1f2937;
+        color: #1a2332;
         white-space: nowrap;
-        text-align: right;
+        flex-shrink: 0;
     }
 
     .ticket-card-price .currency {
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 600;
     }
 
     .ticket-card-meta {
         font-size: 12px;
-        color: #9ca3af;
-        margin-bottom: 12px;
+        color: #94a3b8;
+        margin-bottom: 14px;
     }
 
     .ticket-card-qty-label {
         font-size: 13px;
         font-weight: 600;
-        color: #6b7280;
+        color: #64748b;
         margin-bottom: 8px;
     }
 
     .ticket-card-controls {
-        display: flex;
+        display: inline-flex;
         align-items: center;
         gap: 0;
-        background: #f3f4f6;
+        background: #f1f5f9;
         border-radius: 50px;
-        width: fit-content;
+        padding: 2px;
     }
 
     .ticket-card-controls a {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
-        color: #6b7280;
+        color: #64748b;
         text-decoration: none;
-        transition: all 0.2s;
-        font-size: 20px;
+        transition: all 0.15s;
+        font-size: 18px;
     }
 
     .ticket-card-controls a:hover {
-        background: #e5e7eb;
-        color: #374151;
+        background: #e2e8f0;
+        color: #334155;
     }
 
     .ticket-card-controls .qty-value {
         font-size: 16px;
         font-weight: 700;
-        color: #1f2937;
-        min-width: 32px;
+        color: #1e293b;
+        min-width: 28px;
         text-align: center;
+        padding: 0 2px;
+    }
+
+    .ticket-card.has-qty .ticket-card-controls .qty-value {
+        color: #16a34a;
     }
 
     .ticket-card-esgotado {
@@ -841,55 +781,26 @@ if (isset($event_id)) {
                         });
                         ?>
 
-                        <!-- Tab Navigation com Setas -->
-                        <div class="tab-navigation-wrapper">
-                            <div class="tab-navigation-content">
-                                <button class="nav-arrow left" onclick="scrollTabs('left')" id="scrollLeft" aria-label="Rolar para esquerda">
-                                    <i class='bx bx-chevron-left'></i>
+                        <!-- Categorias em grid -->
+                        <div class="cat-grid" id="tabMenu">
+                            <?php $primeiraTab = true; ?>
+                            <?php foreach ($categoriasConfig as $catKey => $catInfo): ?>
+                                <?php if (in_array($catKey, $categoriasDisponiveis)): ?>
+                                    <button class="cat-btn tablinks" onclick="openCategoria(event, '<?= $catKey ?>')" <?= $primeiraTab ? 'id="defaultOpen"' : '' ?>>
+                                        <i class="<?= $catInfo['icon'] ?>"></i>
+                                        <span><?= $catInfo['label'] ?></span>
+                                    </button>
+                                    <?php $primeiraTab = false; ?>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                            <?php if ($tem_super_pack): ?>
+                                <button class="cat-btn tablinks" onclick="openCategoria(event, 'super_pack')">
+                                    <i class="bx bx-package"></i>
+                                    <span>Super Pack</span>
                                 </button>
-
-                                <div class="tab-container" id="tabContainer">
-                                    <div class="tab" id="tabMenu">
-                                    <?php $primeiraTab = true; ?>
-                                    <?php foreach ($categoriasConfig as $catKey => $catInfo): ?>
-                                        <?php if (in_array($catKey, $categoriasDisponiveis)): ?>
-                                            <button class="tablinks" onclick="openCategoria(event, '<?= $catKey ?>')" <?= $primeiraTab ? 'id="defaultOpen"' : '' ?>>
-                                                <span class="day-name"><i class="<?= $catInfo['icon'] ?>" style="font-size: 12px;"></i> <?= $catInfo['label'] ?></span>
-                                            </button>
-                                            <?php $primeiraTab = false; ?>
-                                        <?php endif; ?>
-                                    <?php endforeach; ?>
-                                    <?php if ($tem_super_pack): ?>
-                                        <button class="tablinks" onclick="openCategoria(event, 'super_pack')">
-                                            <span class="day-name"><i class="bx bx-package" style="font-size: 12px;"></i> Super Pack</span>
-                                        </button>
-                                    <?php endif; ?>
-                                    </div>
-                                </div>
-
-                                <button class="nav-arrow right" onclick="scrollTabs('right')" id="scrollRight" aria-label="Rolar para direita">
-                                    <i class='bx bx-chevron-right'></i>
-                                </button>
-                            </div>
-
-                            <!-- Barra de scroll customizada -->
-                            <div class="tab-scroll-indicator">
-                                <div class="tab-scroll-thumb" id="scrollThumb"></div>
-                            </div>
-
-                            <!-- Instrucao visual de scroll -->
-                            <div class="scroll-instruction" id="scrollInstruction">
-                                <i class='bx bx-chevrons-left'></i>
-                                <span>Deslize para ver todas as categorias</span>
-                                <i class='bx bx-chevrons-right'></i>
-                            </div>
+                            <?php endif; ?>
                         </div>
-                        <!-- Sub-filtros (Todas, Inteira, Meia) -->
-                        <div class="sub-filter-bar" id="subFilterBar">
-                            <button class="sub-filter-btn active" onclick="filtrarTipo(this, 'todas')">Todas</button>
-                            <button class="sub-filter-btn" onclick="filtrarTipo(this, 'inteira')">Inteira</button>
-                            <button class="sub-filter-btn" onclick="filtrarTipo(this, 'meia')">Meia</button>
-                        </div>
+
 
                         <!-- Tab contents por categoria -->
                         <?php foreach ($categoriasConfig as $catKey => $catInfo): ?>
