@@ -1028,6 +1028,7 @@ if (isset($event_id)) {
                             'cosplay' => ['label' => 'Cosplayer',   'icon' => 'bx bx-mask'],
                             'after'   => ['label' => 'After Dream', 'icon' => 'bx bx-moon'],
                             'mae'     => ['label' => 'Especial',    'icon' => 'bx bx-heart'],
+                            'army'    => ['label' => 'Army',        'icon' => 'bx bx-group'],
                         ];
 
                         // Descobre categorias que existem nos tickets (sem parent_ticket_id)
