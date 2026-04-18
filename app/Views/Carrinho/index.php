@@ -177,44 +177,44 @@
     .ticket-card-controls {
         display: inline-flex;
         align-items: center;
-        gap: 4px;
-        background: #f1f5f9;
+        gap: 0;
+        border: 2px solid #e2e8f0;
         border-radius: 50px;
-        padding: 3px;
+        padding: 0;
+        background: #fff;
     }
 
     .ticket-card-controls span[onclick] {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 42px;
-        height: 42px;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
-        color: #fff;
-        background: #16a34a;
+        color: #475569;
+        background: transparent;
         text-decoration: none;
         transition: all .15s;
-        font-size: 22px;
+        font-size: 20px;
         cursor: pointer;
-        font-weight: 700;
     }
 
     .ticket-card-controls span[onclick]:hover {
-        background: #15803d;
-        transform: scale(1.05);
+        background: #f1f5f9;
+        color: #1e293b;
     }
 
     .ticket-card-controls span[onclick]:active {
-        transform: scale(0.95);
+        background: #e2e8f0;
     }
 
     .ticket-card-controls .qty-value {
-        font-size: 18px;
+        font-size: 17px;
         font-weight: 700;
         color: #1e293b;
-        min-width: 32px;
+        min-width: 30px;
         text-align: center;
-        padding: 0 4px;
+        padding: 0 2px;
     }
 
     .ticket-card.has-qty .ticket-card-controls .qty-value {
