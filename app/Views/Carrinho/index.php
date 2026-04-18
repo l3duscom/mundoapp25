@@ -710,41 +710,45 @@ if (isset($event_id)) {
 
 
                         <?php
-                        if (isset($_GET['adicionar'])) {
-                            $idProduto = (int)$_GET['adicionar'];
-                            if (isset($items[$idProduto])) {
-                                $produto = $items[$idProduto];
-                                if (isset($_SESSION['carrinho'][$idProduto])) {
-                                    $_SESSION['carrinho'][$idProduto]['quantidade']++;
-                                } else {
-                                    $_SESSION['carrinho'][$idProduto] = array(
-                                        'quantidade' => 1,
-                                        'nome' => $produto['nome'],
-                                        'preco' => $produto['preco'] + ($produto['preco'] * 0.07),
-                                        'tipo' => $produto['tipo'],
-                                        'taxa' => $produto['preco'] * 0.07,
-                                        'unitario' => $produto['preco'],
-                                        'ticket_id' => $produto['id']
-                                    );
-                                }
-                            }
-                        }
-
-                        if (isset($_GET['excluir'])) {
-                            $idProduto = (int)$_GET['excluir'];
-                            if (isset($items[$idProduto])) {
-                                $produto = $items[$idProduto];
-                                if (isset($_SESSION['carrinho'][$idProduto])) {
-                                    if ($_SESSION['carrinho'][$idProduto]['quantidade'] > 0) {
-                                        $_SESSION['carrinho'][$idProduto]['quantidade']--;
+                        if (isset($_GET['adicionar']) || isset($_GET['excluir'])) {
+                            if (isset($_GET['adicionar'])) {
+                                $idProduto = (int)$_GET['adicionar'];
+                                if (isset($items[$idProduto])) {
+                                    $produto = $items[$idProduto];
+                                    if (isset($_SESSION['carrinho'][$idProduto])) {
+                                        $_SESSION['carrinho'][$idProduto]['quantidade']++;
                                     } else {
-                                        unset($_SESSION['carrinho'][$idProduto]);
+                                        $_SESSION['carrinho'][$idProduto] = array(
+                                            'quantidade' => 1,
+                                            'nome' => $produto['nome'],
+                                            'preco' => $produto['preco'] + ($produto['preco'] * 0.07),
+                                            'tipo' => $produto['tipo'],
+                                            'taxa' => $produto['preco'] * 0.07,
+                                            'unitario' => $produto['preco'],
+                                            'ticket_id' => $produto['id']
+                                        );
                                     }
                                 }
                             }
+
+                            if (isset($_GET['excluir'])) {
+                                $idProduto = (int)$_GET['excluir'];
+                                if (isset($items[$idProduto])) {
+                                    if (isset($_SESSION['carrinho'][$idProduto])) {
+                                        if ($_SESSION['carrinho'][$idProduto]['quantidade'] > 0) {
+                                            $_SESSION['carrinho'][$idProduto]['quantidade']--;
+                                        } else {
+                                            unset($_SESSION['carrinho'][$idProduto]);
+                                        }
+                                    }
+                                }
+                            }
+
+                            // Redirect para limpar o GET param e evitar reprocessamento
+                            $url = strtok($_SERVER['REQUEST_URI'], '?');
+                            header('Location: ' . $url);
+                            exit;
                         }
-
-
                         ?>
                         <?php $total_carrinho = 0; ?>
 
@@ -854,9 +858,9 @@ if (isset($event_id)) {
                                             <div class="ticket-card-right">
                                                 <?php if ($value['estoque'] > 0) : ?>
                                                 <div class="ticket-card-controls">
-                                                    <a href="?excluir=<?= $key ?>"><i class="bx bx-minus"></i></a>
+                                                    <span onclick="window.location.href='?excluir=<?= $key ?>'" style="cursor:pointer"><i class="bx bx-minus"></i></span>
                                                     <span class="qty-value"><?= $qty ?></span>
-                                                    <a href="?adicionar=<?= $key ?>"><i class="bx bx-plus"></i></a>
+                                                    <span onclick="window.location.href='?adicionar=<?= $key ?>'" style="cursor:pointer"><i class="bx bx-plus"></i></span>
                                                 </div>
                                                 <?php else : ?>
                                                 <div class="ticket-card-esgotado">ESGOTADO</div>
