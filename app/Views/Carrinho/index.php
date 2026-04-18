@@ -8,146 +8,50 @@
 
 <link rel="stylesheet" type="text/css" href="<?php echo site_url('recursos/vendor/datatable/datatables-combinado.min.css') ?>" />
 <style>
-    /* Container do menu de navegação com setas */
+    /* ===== Layout base ===== */
+    .checkout-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 0 16px;
+    }
+
+    /* ===== Tabs de categoria ===== */
     .tab-navigation-wrapper {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        gap: 0;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
     }
 
     .tab-navigation-content {
         display: flex;
         align-items: center;
-        gap: 10px;
-        margin-bottom: 12px;
-    }
-
-    /* Barra de progresso customizada */
-    .tab-scroll-indicator {
-        width: 100%;
-        height: 4px;
-        background: #e8e8e8;
-        border-radius: 10px;
-        position: relative;
-        overflow: visible;
-        cursor: pointer;
-        transition: opacity 0.3s ease, height 0.2s ease;
-    }
-
-    .tab-scroll-indicator:hover {
-        height: 5px;
-        background: #dcdcdc;
-    }
-
-    .tab-scroll-thumb {
-        height: 100%;
-        background: linear-gradient(90deg, #5651e5 0%, #4541d8 100%);
-        border-radius: 10px;
-        transition: all 0.2s ease;
-        position: absolute;
-        left: 0;
-        box-shadow: 0 2px 6px rgba(86, 81, 229, 0.4);
-        cursor: grab;
-        min-width: 40px;
-    }
-
-    .tab-scroll-thumb:hover {
-        background: linear-gradient(90deg, #6b67ff 0%, #5853ed 100%);
-        box-shadow: 0 3px 8px rgba(86, 81, 229, 0.5);
-    }
-
-    .tab-scroll-thumb:active {
-        cursor: grabbing;
-        box-shadow: 0 2px 4px rgba(86, 81, 229, 0.6);
-    }
-
-    /* Instrução visual de scroll */
-    .scroll-instruction {
-        display: flex;
-        align-items: center;
-        justify-content: center;
         gap: 8px;
-        margin-top: 8px;
-        padding: 8px 16px;
-        background: linear-gradient(135deg, #f8f7ff 0%, #f0efff 100%);
-        border: 1px solid #e0dfff;
-        border-radius: 8px;
-        color: #5651e5;
-        font-size: 13px;
-        font-weight: 600;
-        animation: pulseInstruction 2s ease-in-out infinite;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        user-select: none;
     }
 
-    .scroll-instruction i {
-        font-size: 18px;
-        animation: slideArrows 1.5s ease-in-out infinite;
-    }
-
-    .scroll-instruction:hover {
-        background: linear-gradient(135deg, #f0efff 0%, #e8e7ff 100%);
-        border-color: #5651e5;
-        transform: scale(1.02);
-    }
-
-    /* Animação de pulse sutil */
-    @keyframes pulseInstruction {
-        0%, 100% {
-            box-shadow: 0 2px 8px rgba(86, 81, 229, 0.2);
-        }
-        50% {
-            box-shadow: 0 4px 16px rgba(86, 81, 229, 0.3);
-        }
-    }
-
-    /* Animação das setas */
-    @keyframes slideArrows {
-        0%, 100% {
-            transform: translateX(0);
-        }
-        50% {
-            transform: translateX(3px);
-        }
-    }
-
-    .scroll-instruction i:first-child {
-        animation-direction: reverse;
-    }
-
-    /* Setas de navegação */
     .nav-arrow {
-        background: #ffffff;
-        border: 1px solid #e0e0e0;
+        background: #fff;
+        border: 1px solid #e5e7eb;
         border-radius: 10px;
-        width: 40px;
-        height: 56px;
+        width: 36px;
+        height: 44px;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: all 0.2s;
         flex-shrink: 0;
-        z-index: 10;
     }
 
     .nav-arrow:hover:not(.disabled) {
-        background: #f8f8ff;
-        border-color: #5651e5;
-        transform: scale(1.05);
+        border-color: #2563eb;
+        background: #f0f6ff;
     }
 
     .nav-arrow i {
-        font-size: 22px;
-        color: #666;
-        transition: color 0.3s;
+        font-size: 20px;
+        color: #6b7280;
     }
 
     .nav-arrow:hover:not(.disabled) i {
-        color: #5651e5;
+        color: #2563eb;
     }
 
     .nav-arrow.disabled {
@@ -156,367 +60,389 @@
         pointer-events: none;
     }
 
-    /* Container scrollável */
     .tab-container {
         flex: 1;
         overflow-x: auto;
         overflow-y: hidden;
         scroll-behavior: smooth;
         -webkit-overflow-scrolling: touch;
-        padding-bottom: 0;
-        margin-bottom: 0;
-    }
-
-    /* Esconde scrollbar nativa em todos os dispositivos */
-    .tab-container {
-        scrollbar-width: none; /* Firefox */
-        -ms-overflow-style: none; /* IE e Edge */
+        scrollbar-width: none;
+        -ms-overflow-style: none;
     }
 
     .tab-container::-webkit-scrollbar {
-        display: none; /* Chrome, Safari, Opera */
+        display: none;
     }
 
-    /* Style the tab */
     .tab {
         display: flex;
-        gap: 10px;
+        gap: 0;
         padding: 0;
-        background-color: transparent;
-        font-size: 16px;
+        background: #f3f4f6;
+        border-radius: 10px;
         min-width: min-content;
     }
 
-    /* Style the buttons that are used to open the tab content */
     .tab button {
-        background-color: #ffffff;
-        color: #333;
-        border: 1px solid #e5e5e5;
-        border-radius: 12px;
+        background: transparent;
+        color: #6b7280;
+        border: none;
+        border-radius: 10px;
         outline: none;
         cursor: pointer;
-        padding: 10px 16px;
-        transition: all 0.25s ease;
-        font-weight: 500;
-        min-width: 110px;
+        padding: 10px 18px;
+        transition: all 0.2s;
+        font-weight: 600;
+        font-size: 14px;
+        min-width: max-content;
         flex-shrink: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
         white-space: nowrap;
-        position: relative;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
     .tab button .day-name {
         font-size: 14px;
         font-weight: 600;
-        margin-bottom: 3px;
+    }
+
+    .tab button:hover:not(.active) {
+        color: #374151;
+    }
+
+    .tab button.active {
+        color: #111827;
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .tab-scroll-indicator {
+        display: none;
+    }
+
+    .scroll-instruction {
+        display: none;
+    }
+
+    /* ===== Tab content ===== */
+    .tabcontent {
+        display: none;
+        padding: 0;
+        animation: fadeEffect 0.3s;
+    }
+
+    @keyframes fadeEffect {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    /* ===== Sub-filtros (Todas, Inteira, Meia) ===== */
+    .sub-filter-bar {
+        display: flex;
+        gap: 0;
+        background: #f3f4f6;
+        border-radius: 10px;
+        padding: 3px;
+        margin-bottom: 16px;
+    }
+
+    .sub-filter-btn {
+        flex: 1;
+        background: transparent;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #6b7280;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .sub-filter-btn:hover:not(.active) {
+        color: #374151;
+    }
+
+    .sub-filter-btn.active {
+        background: #fff;
+        color: #111827;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    /* ===== Ticket card novo ===== */
+    .ticket-card {
+        background: #fff;
+        border: 2px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 12px;
+        transition: all 0.2s;
+        position: relative;
+    }
+
+    .ticket-card.has-qty {
+        border-color: #22c55e;
+        background: #f0fdf4;
+    }
+
+    .ticket-card-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 4px;
+    }
+
+    .ticket-card-name {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1f2937;
+        line-height: 1.3;
+    }
+
+    .ticket-card-price {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1f2937;
+        white-space: nowrap;
+        text-align: right;
+    }
+
+    .ticket-card-price .currency {
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .ticket-card-meta {
+        font-size: 12px;
+        color: #9ca3af;
+        margin-bottom: 12px;
+    }
+
+    .ticket-card-qty-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #6b7280;
+        margin-bottom: 8px;
+    }
+
+    .ticket-card-controls {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        background: #f3f4f6;
+        border-radius: 50px;
+        width: fit-content;
+    }
+
+    .ticket-card-controls a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        color: #6b7280;
+        text-decoration: none;
+        transition: all 0.2s;
+        font-size: 20px;
+    }
+
+    .ticket-card-controls a:hover {
+        background: #e5e7eb;
+        color: #374151;
+    }
+
+    .ticket-card-controls .qty-value {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1f2937;
+        min-width: 32px;
+        text-align: center;
+    }
+
+    .ticket-card-esgotado {
+        display: inline-block;
+        background: #fef2f2;
+        color: #dc2626;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 6px 14px;
+        border-radius: 8px;
+    }
+
+    /* ===== Barra fixa inferior ===== */
+    .cart-bottom-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border-top: 1px solid #e5e7eb;
+        padding: 16px 20px;
+        z-index: 1000;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .cart-bottom-inner {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .cart-bottom-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+    }
+
+    .cart-bottom-info {
+        flex: 1;
+    }
+
+    .cart-bottom-fee {
+        font-size: 12px;
+        color: #6b7280;
+        margin-bottom: 2px;
+    }
+
+    .cart-bottom-fee span {
+        float: right;
+        color: #374151;
+        font-weight: 500;
+    }
+
+    .cart-bottom-total-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: #6b7280;
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
 
-    .tab button .day-date {
-        font-size: 11px;
-        font-weight: 400;
-        opacity: 0.65;
-        letter-spacing: 0.1px;
-    }
-
-    /* Change background color of buttons on hover */
-    .tab button:hover:not(.active) {
-        color: #5651e5;
-        background-color: #fafafa;
-        border-color: #d0d0d0;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    /* Create an active/current tablink class */
-    .tab button.active {
-        color: #FFFFFF;
-        background: linear-gradient(135deg, #5651e5 0%, #4541d8 100%);
-        border-color: #5651e5;
-        box-shadow: 0 6px 20px rgba(86, 81, 229, 0.4), 0 2px 8px rgba(86, 81, 229, 0.2);
-        transform: translateY(-1px);
-    }
-
-    .tab button.active:hover {
-        box-shadow: 0 6px 24px rgba(86, 81, 229, 0.45), 0 2px 8px rgba(86, 81, 229, 0.25);
-    }
-
-    .tab button.active .day-date {
-        opacity: 0.95;
-    }
-
-    .tab button.active .day-name {
+    .cart-bottom-total-value {
+        font-size: 22px;
         font-weight: 700;
+        color: #16a34a;
+        line-height: 1.2;
     }
 
-    /* Ajuste para botões específicos com mais texto */
-    .tab button:nth-child(n+4) {
-        min-width: 155px;
+    .cart-bottom-note {
+        font-size: 10px;
+        color: #9ca3af;
+        margin-top: 2px;
     }
 
-    /* Style the tab content */
-    .tabcontent {
+    .btn-continuar {
+        background: #22c55e;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 16px 32px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+        text-decoration: none;
+    }
+
+    .btn-continuar:hover {
+        background: #16a34a;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+        color: #fff;
+        text-decoration: none;
+    }
+
+    /* ===== Ver Resumo toggle ===== */
+    .ver-resumo-toggle {
+        text-align: center;
+        padding: 12px 0;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .ver-resumo-toggle a {
+        font-size: 13px;
+        font-weight: 600;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .ver-resumo-toggle a:hover {
+        color: #374151;
+    }
+
+    /* Resumo expandido */
+    .cart-summary-section {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
         display: none;
-        padding: 6px 12px;
     }
 
-    .tabcontent {
-        animation: fadeEffect 0.5s;
-        /* Fading effect takes 0.5 second */
+    .cart-summary-section.show {
+        display: block;
     }
 
-    /* Go from zero to full opacity */
-    @keyframes fadeEffect {
-        from {
-            opacity: 0;
-        }
-
-        to {
-            opacity: 1;
-        }
+    .summary-item-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #f3f4f6;
+        font-size: 14px;
     }
 
-
-
-    /* Estilos para dispositivos móveis */
-    @media screen and (max-width: 768px) {
-        .tab-navigation-wrapper {
-            margin-bottom: 24px;
-        }
-
-        .tab-navigation-content {
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-
-        .scroll-instruction {
-            font-size: 12px;
-            padding: 6px 12px;
-        }
-
-        .scroll-instruction i {
-            font-size: 16px;
-        }
-
-        .tab-scroll-indicator {
-            height: 6px;
-        }
-
-        .tab-scroll-indicator:hover {
-            height: 6px;
-        }
-
-        .tab-scroll-thumb {
-            min-width: 50px;
-        }
-
-        .nav-arrow {
-            width: 36px;
-            height: 54px;
-            border-radius: 12px;
-        }
-
-        .nav-arrow i {
-            font-size: 20px;
-        }
-
-        .tab {
-            gap: 8px;
-        }
-
-        .tab button {
-            min-width: 95px;
-            padding: 10px 14px;
-            border-radius: 10px;
-        }
-
-        .tab button .day-name {
-            font-size: 13px;
-            margin-bottom: 2px;
-        }
-
-        .tab button .day-date {
-            font-size: 10px;
-        }
-        
-        .card {
-            margin-bottom: 15px;
-            padding: 15px;
-        }
-        
-        .card-body {
-            padding: 15px;
-        }
-        
-        .item-name {
-            font-size: 14px !important;
-            line-height: 1.3;
-        }
-        
-        .item-price {
-            font-size: 20px !important;
-        }
-        
-        .badge {
-            font-size: 10px !important;
-            padding: 3px 6px !important;
-            margin-bottom: 5px;
-            display: inline-block;
-            word-wrap: break-word;
-            white-space: normal;
-            line-height: 1.2;
-        }
-        
-        .badge-container {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        
-        .badge-container .badge {
-            width: 100%;
-            margin-right: 0 !important;
-        }
-        
-        .quantity-controls {
-            font-size: 36px !important;
-        }
-        
-        .quantity-controls a {
-            padding: 4px 6px;
-        }
-        
-        .quantity-controls i {
-            font-size: 20px !important;
-        }
-        
-        .service-fee {
-            font-size: 10px !important;
-        }
-        
-        .ticket-info {
-            font-size: 9px !important;
-            margin-bottom: 5px !important;
-        }
-        
-        .quantity-section {
-            margin-top: 10px !important;
-        }
-        
-        .price-section {
-            margin-top: 15px !important;
-        }
-        
-        .eligibility-section {
-            margin-top: 10px !important;
-        }
-        
-        .eligibility-section strong {
-            font-size: 12px !important;
-        }
-        
-        .eligibility-section .text-muted {
-            font-size: 10px !important;
-        }
-    }
-    
-    /* Estilos para dispositivos muito pequenos */
-    @media screen and (max-width: 480px) {
-        .tab-navigation-wrapper {
-            margin-bottom: 20px;
-        }
-
-        .tab-navigation-content {
-            gap: 6px;
-            margin-bottom: 8px;
-        }
-
-        .tab-scroll-indicator {
-            height: 6px;
-        }
-
-        .tab-scroll-indicator:hover {
-            height: 6px;
-        }
-
-        .tab-scroll-thumb {
-            min-width: 45px;
-        }
-
-        .nav-arrow {
-            width: 32px;
-            height: 50px;
-        }
-
-        .nav-arrow i {
-            font-size: 18px;
-        }
-
-        .tab {
-            gap: 6px;
-        }
-
-        .tab button {
-            min-width: 85px;
-            padding: 8px 12px;
-        }
-
-        .tab button .day-name {
-            font-size: 12px;
-            margin-bottom: 2px;
-        }
-
-        .tab button .day-date {
-            font-size: 9px;
-        }
-
-        .tab button:nth-child(n+4) {
-            min-width: 105px;
-        }
-
-        .scroll-instruction {
-            font-size: 11px;
-            padding: 5px 10px;
-            gap: 6px;
-        }
-
-        .scroll-instruction i {
-            font-size: 14px;
-        }
-        
-        .col-7, .col-5 {
-            width: 100% !important;
-            margin-bottom: 10px;
-        }
-        
-        .text-right {
-            text-align: center !important;
-        }
-        
-        .d-flex.align-items-end {
-            align-items: center !important;
-        }
-        
-        .item-price {
-            font-size: 18px !important;
-        }
-        
-        .quantity-controls {
-            font-size: 32px !important;
-        }
-        
-        .quantity-controls i {
-            font-size: 18px !important;
-        }
+    .summary-item-row:last-of-type {
+        border-bottom: none;
     }
 
-    /* Seletor de dia */
+    .summary-item-name {
+        flex: 1;
+        color: #374151;
+        font-weight: 500;
+    }
+
+    .summary-item-qty {
+        color: #9ca3af;
+        font-size: 13px;
+        margin: 0 12px;
+    }
+
+    .summary-item-price {
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .summary-total-row {
+        display: flex;
+        justify-content: space-between;
+        padding-top: 12px;
+        margin-top: 8px;
+        border-top: 2px solid #e5e7eb;
+    }
+
+    .summary-total-row .label {
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .summary-total-row .value {
+        font-size: 18px;
+        font-weight: 700;
+        color: #16a34a;
+    }
+
+    /* ===== Seletor de dia ===== */
     .day-selector-overlay {
         max-width: 540px;
         margin: 0 auto;
@@ -551,10 +477,10 @@
     }
 
     .day-option:hover {
-        border-color: #7c3aed;
-        background: #faf5ff;
+        border-color: #2563eb;
+        background: #f0f6ff;
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
         color: inherit;
         text-decoration: none;
     }
@@ -570,24 +496,11 @@
         font-size: 24px;
     }
 
-    .day-option-icon.sab {
-        background: #eff6ff;
-        color: #3b82f6;
-    }
+    .day-option-icon.sab { background: #eff6ff; color: #3b82f6; }
+    .day-option-icon.dom { background: #fef3c7; color: #d97706; }
+    .day-option-icon.combo { background: #ecfdf5; color: #059669; }
 
-    .day-option-icon.dom {
-        background: #fef3c7;
-        color: #d97706;
-    }
-
-    .day-option-icon.combo {
-        background: #ecfdf5;
-        color: #059669;
-    }
-
-    .day-option-info {
-        flex: 1;
-    }
+    .day-option-info { flex: 1; }
 
     .day-option-name {
         font-size: 16px;
@@ -609,7 +522,7 @@
 
     .day-option:hover .day-option-arrow {
         transform: translateX(4px);
-        color: #7c3aed;
+        color: #2563eb;
     }
 
     .day-option-badge {
@@ -629,191 +542,67 @@
         scroll-behavior: smooth;
     }
 
-    /* Desktop - experiência limpa e moderna */
-    @media screen and (min-width: 769px) {
-        .tab-navigation-wrapper {
-            margin-bottom: 32px;
-        }
-
-        .tab-navigation-content {
-            gap: 12px;
-            margin-bottom: 10px;
-        }
-
-        .tab-scroll-indicator {
-            height: 4px;
-        }
-
-        .tab-scroll-indicator:hover {
-            height: 5px;
-        }
-
-        .tab {
-            gap: 10px;
-        }
-
-        .tab button {
-            min-width: 120px;
-            padding: 10px 18px;
-        }
-
-        .tab button:nth-child(n+4) {
-            min-width: 140px;
-        }
-
-        /* Esconder setas quando não há overflow */
-        .nav-arrow.disabled {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .scroll-instruction {
-            font-size: 13px;
-            padding: 8px 20px;
-        }
-
-        .scroll-instruction i {
-            font-size: 18px;
-        }
+    /* Spacer para barra fixa */
+    .bottom-spacer {
+        height: 140px;
     }
 
-    /* Telas muito largas */
-    @media screen and (min-width: 1200px) {
-        .tab button {
-            min-width: 130px;
-            padding: 12px 20px;
-        }
-
-        .tab button:nth-child(n+4) {
-            min-width: 150px;
-        }
-    }
-
-    /* Comportamento das setas no mobile */
+    /* ===== Responsivo ===== */
     @media screen and (max-width: 768px) {
-        .nav-arrow {
-            opacity: 1;
+        .checkout-container {
+            padding: 0 12px;
         }
 
-        .nav-arrow.disabled {
-            opacity: 0.2;
+        .ticket-card {
+            padding: 16px;
+        }
+
+        .ticket-card-name {
+            font-size: 15px;
+        }
+
+        .ticket-card-price {
+            font-size: 16px;
+        }
+
+        .btn-continuar {
+            padding: 14px 24px;
+            font-size: 15px;
+        }
+
+        .cart-bottom-total-value {
+            font-size: 20px;
+        }
+
+        .tab button {
+            padding: 8px 14px;
+            font-size: 13px;
+        }
+
+        .tab button .day-name {
+            font-size: 13px;
         }
     }
 
-    /* ===== Layout checkout (resumo/pagamento) ===== */
-    .checkout-container {
-        max-width: 540px;
-        margin: 0 auto;
-    }
+    @media screen and (max-width: 480px) {
+        .ticket-card-header {
+            flex-direction: column;
+            gap: 4px;
+        }
 
-    .checkout-section {
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 16px;
-    }
+        .ticket-card-price {
+            text-align: left;
+        }
 
-    .checkout-section-title {
-        font-size: 14px;
-        font-weight: 600;
-        color: #374151;
-        margin-bottom: 16px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
+        .cart-bottom-row {
+            flex-direction: column;
+            gap: 12px;
+        }
 
-    .checkout-section-title i {
-        color: #7c3aed;
-        font-size: 16px;
-    }
-
-    .item-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 10px 0;
-        border-bottom: 1px solid #f3f4f6;
-        font-size: 14px;
-    }
-
-    .item-row:last-of-type {
-        border-bottom: none;
-    }
-
-    .item-row .item-name {
-        flex: 1;
-        color: #374151;
-        font-weight: 500;
-    }
-
-    .item-row .item-qty {
-        color: #9ca3af;
-        font-size: 13px;
-        margin: 0 12px;
-        white-space: nowrap;
-    }
-
-    .item-row .item-price {
-        font-weight: 600;
-        color: #111827;
-        white-space: nowrap;
-    }
-
-    .summary-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 14px 0 0;
-        margin-top: 8px;
-        border-top: 2px solid #e5e7eb;
-    }
-
-    .summary-row .label {
-        font-size: 15px;
-        font-weight: 600;
-        color: #374151;
-    }
-
-    .summary-row .value {
-        font-size: 20px;
-        font-weight: 700;
-    }
-
-    .btn-checkout {
-        width: 100%;
-        padding: 16px;
-        background: #7c3aed;
-        color: #fff;
-        border: none;
-        border-radius: 10px;
-        font-size: 16px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-    }
-
-    .btn-checkout:hover {
-        background: #6d28d9;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
-    }
-
-    .polling-bar {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: #fff;
-        border-top: 1px solid #e5e7eb;
-        padding: 12px 16px;
-        z-index: 1000;
-        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+        .btn-continuar {
+            width: 100%;
+            justify-content: center;
+        }
     }
 </style>
 
@@ -1095,70 +884,56 @@ if (isset($event_id)) {
                                 <i class='bx bx-chevrons-right'></i>
                             </div>
                         </div>
-                        <div class="d-grid gap-2 mb-0">
-                            <a class="btn btn-light" href="#pagar">
-                                <strong><i class='bx bx-down-arrow-circle'></i> Ver detalhes da compra</strong>
-                            </a>
+                        <!-- Sub-filtros (Todas, Inteira, Meia) -->
+                        <div class="sub-filter-bar" id="subFilterBar">
+                            <button class="sub-filter-btn active" onclick="filtrarTipo(this, 'todas')">Todas</button>
+                            <button class="sub-filter-btn" onclick="filtrarTipo(this, 'inteira')">Inteira</button>
+                            <button class="sub-filter-btn" onclick="filtrarTipo(this, 'meia')">Meia</button>
                         </div>
 
                         <!-- Tab contents por categoria -->
                         <?php foreach ($categoriasConfig as $catKey => $catInfo): ?>
                             <?php if (in_array($catKey, $categoriasDisponiveis)): ?>
                                 <div id="<?= $catKey ?>" class="tabcontent">
-                                    <div class="mb-0 mt-3 font-24" style="color: #333;">Selecione seu ingresso</div>
-                                    <p>Apenas a promocao de maior desconto sera aplicada ao final do carrinho.</p>
 
                                     <?php
                                     $temTicketNaCategoria = false;
                                     foreach ($itemsOrdenados as $key => $value):
                                         if (strtolower($value['categoria']) == $catKey && empty($value['parent_ticket_id'])):
                                             $temTicketNaCategoria = true;
-                                            // Determina o filtro de dia: sabado=individual+sab, domingo=individual+dom, passaporte=combo
                                             $ticketDia = '';
                                             if ($value['tipo'] == 'individual' && $value['dia'] == 'sab') $ticketDia = 'sabado';
                                             elseif ($value['tipo'] == 'individual' && $value['dia'] == 'dom') $ticketDia = 'domingo';
                                             elseif ($value['tipo'] == 'combo') $ticketDia = 'passaporte';
-                                            else $ticketDia = 'todos'; // categorias como camping, cosplay, after nao filtram por dia
+                                            else $ticketDia = 'todos';
+                                            $qty = isset($_SESSION['carrinho'][$key]['quantidade']) ? $_SESSION['carrinho'][$key]['quantidade'] : 0;
+                                            $isMeia = (stripos($value['nome'], 'meia') !== false);
                                     ?>
-                                    <div class="card border border-muted px-3 ticket-card" data-item-id="<?= $key ?>" data-dia="<?= $ticketDia ?>" data-categoria="<?= $catKey ?>">
-                                        <div class="form-check mt-3 mb-3">
-                                            <div class="row">
-                                                <div class="col-7">
-                                                    <span style="color: purple; font-size: 10px" class="ticket-info">Finaliza em: <?= date('d/m/Y', strtotime($value['data_lote'])) ?></span><br>
-                                                    <strong class="item-name" style="color: #6C038F; font-size: 16px"><?= $value['nome'] ?></strong><br>
-                                                    <span class="text-muted ticket-info" style="font-size: 10px"><strong><?= $value['tipo'] ?> - <?= $value['lote'] ?> lote</strong></span>
-                                                </div>
-                                                <div class="col-5 text-right">
-                                                    <?php if ($value['estoque'] > 0) : ?>
-                                                        <div class="col-12 mt-3 font-20 d-flex flex-column align-items-end justify-content-center quantity-section" style="gap:0;">
-                                                            <strong class="quantity-controls" style="font-size: 20px;">
-                                                                <a href="?excluir=<?= $key ?>"><i class="bi bi-dash-circle-fill" style="padding-right: 4px;"></i></a>
-                                                                <?= (isset($_SESSION['carrinho'][$key]['quantidade'])) ? $_SESSION['carrinho'][$key]['quantidade'] : '0' ?>
-                                                                <a href="?adicionar=<?= $key ?>"><i class="bi bi-plus-circle-fill" style="padding-left: 4px"></i></a>
-                                                            </strong>
-                                                            <div class="d-flex flex-column align-items-end price-section" style="margin-top: 2px;">
-                                                                <strong class="item-price" data-price="<?= $value['preco'] ?>" style="word-wrap: normal; font-size: 26px; line-height: 1; margin-bottom: 0;">
-                                                                    <span style="font-size: 0.6em; vertical-align: middle;">R$</span> <?= number_format($value['preco'], 2, ',', ''); ?>
-                                                                </strong>
-                                                                <span class="text-muted service-fee" style="font-size: 11px; line-height: 1.1; margin-top: 0; margin-bottom: 0; padding-top: 0;">+ <?= (isset($_SESSION['carrinho'][$key]['taxa'])) ? 'R$ ' . number_format($_SESSION['carrinho'][$key]['taxa'], 2, ',', '') . ' taxa de servico' : 'taxa de servico' ?></span>
-                                                            </div>
-                                                        </div>
-                                                    <?php else : ?>
-                                                        <strong style="color: red;">ESGOTADO</strong>
-                                                    <?php endif; ?>
-                                                </div>
-                                                <div class="col-11 mt-3 eligibility-section">
-                                                    <strong style="font-size: 13px;" class="mt-5"><i class='bx bx-info-circle'></i> Quem pode comprar?</strong>
-                                                    <div class="text-muted mt-1" style="font-size: 11px;"><?= $value['descricao'] ?></div>
-                                                </div>
-                                            </div>
+                                    <div class="ticket-card <?= $qty > 0 ? 'has-qty' : '' ?>" data-item-id="<?= $key ?>" data-dia="<?= $ticketDia ?>" data-categoria="<?= $catKey ?>" data-ticket-tipo="<?= $isMeia ? 'meia' : 'inteira' ?>">
+                                        <div class="ticket-card-header">
+                                            <div class="ticket-card-name"><?= $value['nome'] ?></div>
+                                            <div class="ticket-card-price"><span class="currency">R$</span> <?= number_format($value['preco'], 2, ',', '') ?></div>
                                         </div>
+                                        <div class="ticket-card-meta">
+                                            Disponivel: <?= $value['estoque'] ?> &bull; max. por pedido: 10
+                                        </div>
+
+                                        <?php if ($value['estoque'] > 0) : ?>
+                                            <div class="ticket-card-qty-label">Quantidade</div>
+                                            <div class="ticket-card-controls">
+                                                <a href="?excluir=<?= $key ?>"><i class="bx bx-minus"></i></a>
+                                                <span class="qty-value"><?= $qty ?></span>
+                                                <a href="?adicionar=<?= $key ?>"><i class="bx bx-plus"></i></a>
+                                            </div>
+                                        <?php else : ?>
+                                            <div class="ticket-card-esgotado">Esgotado</div>
+                                        <?php endif; ?>
                                     </div>
                                     <?php endif; ?>
                                     <?php endforeach; ?>
 
                                     <?php if (!$temTicketNaCategoria): ?>
-                                        <div class="alert alert-warning text-center mt-3 mb-3">Nenhum ingresso disponivel nesta categoria</div>
+                                        <div style="text-align: center; padding: 24px; color: #9ca3af; font-size: 14px;">Nenhum ingresso disponivel nesta categoria</div>
                                     <?php endif; ?>
                                 </div>
                             <?php endif; ?>
@@ -1166,9 +941,6 @@ if (isset($event_id)) {
 
                         <?php if ($tem_super_pack): ?>
                         <div id="super_pack" class="tabcontent">
-                            <div class="mb-0 mt-3 font-24" style="color: #333;">Selecione seu ingresso</div>
-                            <p>Pacotes com desconto para multiplos eventos.</p>
-
                             <?php foreach ($itemsOrdenados as $key => $value): ?>
                                 <?php if (!empty($value['parent_ticket_id'])):
                                     $ticketDia = '';
@@ -1176,48 +948,27 @@ if (isset($event_id)) {
                                     elseif ($value['tipo'] == 'individual' && $value['dia'] == 'dom') $ticketDia = 'domingo';
                                     elseif ($value['tipo'] == 'combo') $ticketDia = 'passaporte';
                                     else $ticketDia = 'todos';
+                                    $qty = isset($_SESSION['carrinho'][$key]['quantidade']) ? $_SESSION['carrinho'][$key]['quantidade'] : 0;
                                 ?>
-                                <div class="card border border-muted px-3 ticket-card" data-item-id="<?= $key ?>" data-dia="<?= $ticketDia ?>" data-categoria="super_pack">
-                                    <div class="form-check mt-3 mb-3">
-                                        <div class="row">
-                                            <div class="col-7">
-                                                <span style="color: purple; font-size: 10px" class="ticket-info">Finaliza em: <?= date('d/m/Y', strtotime($value['data_lote'])) ?></span><br>
-                                                <strong class="item-name" style="color: #6C038F; font-size: 16px"><?= $value['nome'] ?></strong><br>
-                                                <div class="mt-1 mb-1 badge-container">
-                                                    <span class="badge bg-success text-white me-2" style="font-size: 11px; padding: 4px 8px;">
-                                                        <i class="bi bi-check-circle-fill me-1"></i>Valido para 2 eventos
-                                                    </span>
-                                                    <span class="badge bg-warning text-dark" style="font-size: 11px; padding: 4px 8px;">
-                                                        + Economico
-                                                    </span>
-                                                </div>
-                                                <span class="text-muted ticket-info" style="font-size: 10px"><strong><?= $value['tipo'] ?> - <?= $value['lote'] ?> lote</strong></span>
-                                            </div>
-                                            <div class="col-5 text-right">
-                                                <?php if ($value['estoque'] > 0) : ?>
-                                                    <div class="col-12 mt-3 font-20 d-flex flex-column align-items-end justify-content-center quantity-section" style="gap:0;">
-                                                        <strong class="quantity-controls" style="font-size: 20px;">
-                                                            <a href="?excluir=<?= $key ?>"><i class="bi bi-dash-circle-fill" style="padding-right: 4px;"></i></a>
-                                                            <?= (isset($_SESSION['carrinho'][$key]['quantidade'])) ? $_SESSION['carrinho'][$key]['quantidade'] : '0' ?>
-                                                            <a href="?adicionar=<?= $key ?>"><i class="bi bi-plus-circle-fill" style="padding-left: 4px"></i></a>
-                                                        </strong>
-                                                        <div class="d-flex flex-column align-items-end price-section" style="margin-top: 2px;">
-                                                            <strong class="item-price" data-price="<?= $value['preco'] ?>" style="word-wrap: normal; font-size: 26px; line-height: 1; margin-bottom: 0;">
-                                                                <span style="font-size: 0.6em; vertical-align: middle;">R$</span> <?= number_format($value['preco'], 2, ',', ''); ?>
-                                                            </strong>
-                                                            <span class="text-muted service-fee" style="font-size: 11px; line-height: 1.1; margin-top: 0; margin-bottom: 0; padding-top: 0;">+ <?= (isset($_SESSION['carrinho'][$key]['taxa'])) ? 'R$ ' . number_format($_SESSION['carrinho'][$key]['taxa'], 2, ',', '') . ' taxa de servico' : 'taxa de servico' ?></span>
-                                                        </div>
-                                                    </div>
-                                                <?php else : ?>
-                                                    <strong style="color: red;">ESGOTADO</strong>
-                                                <?php endif; ?>
-                                            </div>
-                                            <div class="col-11 mt-3 eligibility-section">
-                                                <strong style="font-size: 13px;" class="mt-5"><i class='bx bx-info-circle'></i> Quem pode comprar?</strong>
-                                                <div class="text-muted mt-1" style="font-size: 11px;"><?= $value['descricao'] ?></div>
-                                            </div>
-                                        </div>
+                                <div class="ticket-card <?= $qty > 0 ? 'has-qty' : '' ?>" data-item-id="<?= $key ?>" data-dia="<?= $ticketDia ?>" data-categoria="super_pack" data-ticket-tipo="inteira">
+                                    <div class="ticket-card-header">
+                                        <div class="ticket-card-name"><?= $value['nome'] ?></div>
+                                        <div class="ticket-card-price"><span class="currency">R$</span> <?= number_format($value['preco'], 2, ',', '') ?></div>
                                     </div>
+                                    <div class="ticket-card-meta">
+                                        Disponivel: <?= $value['estoque'] ?> &bull; Valido para 2 eventos
+                                    </div>
+
+                                    <?php if ($value['estoque'] > 0) : ?>
+                                        <div class="ticket-card-qty-label">Quantidade</div>
+                                        <div class="ticket-card-controls">
+                                            <a href="?excluir=<?= $key ?>"><i class="bx bx-minus"></i></a>
+                                            <span class="qty-value"><?= $qty ?></span>
+                                            <a href="?adicionar=<?= $key ?>"><i class="bx bx-plus"></i></a>
+                                        </div>
+                                    <?php else : ?>
+                                        <div class="ticket-card-esgotado">Esgotado</div>
+                                    <?php endif; ?>
                                 </div>
                                 <?php endif; ?>
                             <?php endforeach; ?>
@@ -1961,60 +1712,52 @@ if (isset($event_id)) {
                     $_SESSION['total'] = $total_carrinho;
                     ?>
 
-                    <div id="pagar" class="mt-2"></div>
-
                     <?php if ($_SESSION['total'] != 0) : ?>
-                    <!-- Resumo do pedido -->
-                    <div class="checkout-section">
-                        <div class="checkout-section-title"><i class="bx bx-receipt"></i> Resumo do pedido</div>
+                    <!-- Ver Resumo toggle -->
+                    <div class="ver-resumo-toggle" onclick="toggleResumo()">
+                        <a href="javascript:void(0)" id="resumoToggleLink">VER RESUMO <i class="bx bx-chevron-up"></i></a>
+                    </div>
 
+                    <!-- Resumo expandivel -->
+                    <div class="cart-summary-section" id="cartSummary">
                         <?php if (isset($_SESSION['carrinho'])) : ?>
                             <?php foreach ($_SESSION['carrinho'] as $key => $value) : ?>
                                 <?php if ($value['quantidade'] != 0) : ?>
-                                    <div class="item-row">
-                                        <span class="item-name"><?= $value['nome']; ?></span>
-                                        <span class="item-qty"><?= $value['quantidade']; ?>x</span>
-                                        <span class="item-price">R$ <?= number_format($value['quantidade'] * $value['unitario'], 2, ',', ''); ?></span>
+                                    <div class="summary-item-row">
+                                        <span class="summary-item-name"><?= $value['nome']; ?></span>
+                                        <span class="summary-item-qty"><?= $value['quantidade']; ?>x</span>
+                                        <span class="summary-item-price">R$ <?= number_format($value['quantidade'] * $value['unitario'], 2, ',', ''); ?></span>
                                     </div>
                                 <?php endif; ?>
                             <?php endforeach; ?>
                         <?php endif; ?>
 
-                        <?php if ($total_taxa > 0): ?>
-                        <div style="font-size: 11px; color: #9ca3af; text-align: right; margin-top: 4px;">
-                            + R$ <?= number_format($total_taxa, 2, ',', '.') ?> taxa de servico
-                        </div>
-                        <?php endif; ?>
-
-                        <div class="summary-row total">
+                        <div class="summary-total-row">
                             <span class="label">Total</span>
-                            <span class="value" style="color: #7c3aed;">R$ <?= number_format($_SESSION['total'], 2, ',', '.') ?></span>
+                            <span class="value">R$ <?= number_format($_SESSION['total'], 2, ',', '.') ?></span>
                         </div>
                     </div>
-
-                    <a href="<?= site_url('/evento/entrega/' . $event_id) ?>" class="btn-checkout" style="text-decoration: none; color: #fff;">
-                        <i class="bx bx-right-arrow-circle"></i> Ir para o pagamento
-                    </a>
                     <?php endif ?>
 
-                    <div class="text-center mt-3 mb-2">
-                        <span style="font-size: 11px; color: #9ca3af;">Pagamento processado com seguranca por</span><br>
-                        <img class="mt-1" src="<?php echo site_url('recursos/front/images/asaas.png'); ?>" width="80" height="auto" style="opacity: 0.6;">
-                    </div>
-
-                    <div style="height: 100px;"></div>
+                    <div class="bottom-spacer"></div>
 
                     <?php if ($_SESSION['total'] != 0) : ?>
                     <!-- Barra fixa inferior -->
-                    <div class="polling-bar">
-                        <div class="polling-bar-inner" style="max-width: 540px; margin: 0 auto;">
-                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
-                                <div>
-                                    <div style="font-size: 12px; color: #6b7280;">Total</div>
-                                    <div style="font-size: 18px; font-weight: 700; color: #111827;">R$ <?= number_format($_SESSION['total'], 2, ',', '.') ?></div>
+                    <div class="cart-bottom-bar">
+                        <div class="cart-bottom-inner">
+                            <?php if ($total_taxa > 0): ?>
+                            <div class="cart-bottom-fee">
+                                Taxa de servico (plataforma) <span>R$ <?= number_format($total_taxa, 2, ',', '.') ?></span>
+                            </div>
+                            <?php endif; ?>
+                            <div class="cart-bottom-row">
+                                <div class="cart-bottom-info">
+                                    <div class="cart-bottom-total-label">TOTAL</div>
+                                    <div class="cart-bottom-total-value">R$ <?= number_format($_SESSION['total'], 2, ',', '.') ?></div>
+                                    <div class="cart-bottom-note">Cupom, PIX, ofertas extras e tipo de entrega podem alterar o total final.</div>
                                 </div>
-                                <a href="<?= site_url('/evento/entrega/' . $event_id) ?>" class="btn-checkout" style="text-decoration: none; color: #fff; flex: 1; max-width: 280px;">
-                                    Pagamento <i class="bx bx-right-arrow-circle"></i>
+                                <a href="<?= site_url('/evento/entrega/' . $event_id) ?>" class="btn-continuar">
+                                    CONTINUAR <i class="bx bx-chevron-right"></i>
                                 </a>
                             </div>
                         </div>
@@ -2023,18 +1766,15 @@ if (isset($event_id)) {
 
 </div><!-- /checkout-container -->
 
-<div class="row" style="padding-left: 20px; padding-right: 20px">
-    <div class="col-8">
-        <div class="text-muted" style="font-size: 11px; ">
-            <p class="mb-0"><strong>Precisa de ajuda? </strong><a href="#" target="_blank">Entre em contato</a></p>
-            <p class="mt-0 mb-0">* O valor parcelado possui acréscimo.</p>
-            <p class="mt-0 mb-0"><strong>Meia entrada solidária </strong> (40% de desconto) disponível para qualquer pessoa que levar 1kg de alimento não perecível no dia do evento.</p>
-            <p class="mt-0 mb-0">Ao clicar em 'Comprar agora', eu concordo (i) com os termos de uso e regras do evento denominado Dreamfest 25 - Mega Festivalk Geek e estou ciente da Política de Privacidade e que sou maior de idade ou autorizado e acompanhado por um tutor legal.</p>
-
-            <hr>
-            <p class="mt-0 mb-0">MUNDO DREAM EVENTOS E PRODUCOES LTDA © 2024 - Todos os direitos reservados</p>
-            <p class="mt-0 mb-0">21.812.142/0001-23</p>
-        </div>
+<div style="max-width: 600px; margin: 0 auto; padding: 0 16px 20px;">
+    <div style="font-size: 11px; color: #9ca3af; line-height: 1.6;">
+        <p class="mb-1"><strong>Precisa de ajuda?</strong> <a href="#" target="_blank">Entre em contato</a></p>
+        <p class="mb-1">* O valor parcelado possui acrescimo.</p>
+        <p class="mb-1"><strong>Meia entrada solidaria</strong> (40% de desconto) disponivel para qualquer pessoa que levar 1kg de alimento no dia do evento.</p>
+        <p class="mb-1">Ao clicar em "Continuar", eu concordo com os termos de uso e regras do evento e estou ciente da Politica de Privacidade.</p>
+        <hr style="border-color: #e5e7eb;">
+        <p class="mb-0">MUNDO DREAM EVENTOS E PRODUCOES LTDA &copy; 2024</p>
+        <p class="mb-0">21.812.142/0001-23</p>
     </div>
 </div>
 
@@ -3555,6 +3295,44 @@ function trackInitiateCheckout() {
         evt.currentTarget.className += " active";
         // Salva a aba selecionada no localStorage
         localStorage.setItem('abaCarrinhoSelecionada', categoria);
+        // Reseta sub-filtro para "Todas" ao trocar de aba
+        var subBtns = document.querySelectorAll('.sub-filter-btn');
+        subBtns.forEach(function(b) { b.classList.remove('active'); });
+        if (subBtns.length > 0) subBtns[0].classList.add('active');
+        filtrarTipo(null, 'todas');
+    }
+
+    // Sub-filtro: Todas / Inteira / Meia
+    function filtrarTipo(btn, tipo) {
+        if (btn) {
+            document.querySelectorAll('.sub-filter-btn').forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+        }
+        // Filtra apenas os tickets da aba ativa
+        var abaAtiva = document.querySelector('.tabcontent[style*="display: block"], .tabcontent[style*="display:block"]');
+        if (!abaAtiva) return;
+        var cards = abaAtiva.querySelectorAll('.ticket-card');
+        cards.forEach(function(card) {
+            if (tipo === 'todas') {
+                card.style.display = '';
+            } else {
+                var ticketTipo = card.getAttribute('data-ticket-tipo');
+                card.style.display = (ticketTipo === tipo) ? '' : 'none';
+            }
+        });
+    }
+
+    // Toggle resumo do pedido
+    function toggleResumo() {
+        var summary = document.getElementById('cartSummary');
+        var link = document.getElementById('resumoToggleLink');
+        if (summary.classList.contains('show')) {
+            summary.classList.remove('show');
+            link.innerHTML = 'VER RESUMO <i class="bx bx-chevron-up"></i>';
+        } else {
+            summary.classList.add('show');
+            link.innerHTML = 'OCULTAR RESUMO <i class="bx bx-chevron-down"></i>';
+        }
     }
 
     // Função para controlar o scroll horizontal das tabs
