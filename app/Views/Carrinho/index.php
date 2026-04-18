@@ -772,8 +772,8 @@ if (isset($event_id)) {
                         ?>
                         <!-- Botao trocar dia -->
                         <div class="mb-3">
-                            <a href="javascript:void(0)" onclick="voltarSeletor()" style="font-size: 13px; color: #7c3aed; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-                                <i class="bx bx-chevron-left"></i> Trocar dia
+                            <a href="javascript:void(0)" onclick="voltarSeletor()" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 10px; color: #7c3aed; font-size: 14px; font-weight: 600; text-decoration: none; transition: all 0.2s;" onmouseover="this.style.background='#ede9fe';this.style.borderColor='#c4b5fd'" onmouseout="this.style.background='#f5f3ff';this.style.borderColor='#ddd6fe'">
+                                <i class="bx bx-calendar" style="font-size: 18px;"></i> Trocar dia
                             </a>
                         </div>
 
