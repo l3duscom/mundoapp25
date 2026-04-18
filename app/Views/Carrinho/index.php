@@ -363,11 +363,10 @@
         border-radius: 12px;
         padding: 20px;
         margin-bottom: 16px;
-        display: none;
     }
 
-    .cart-summary-section.show {
-        display: block;
+    .cart-summary-section.hidden {
+        display: none;
     }
 
     .summary-item-row {
@@ -562,15 +561,6 @@
     }
 
     @media screen and (max-width: 480px) {
-        .ticket-card-header {
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .ticket-card-price {
-            text-align: left;
-        }
-
         .cart-bottom-row {
             flex-direction: column;
             gap: 12px;
@@ -1679,7 +1669,7 @@ if (isset($event_id)) {
                     <?php if ($_SESSION['total'] != 0) : ?>
                     <!-- Ver Resumo toggle -->
                     <div class="ver-resumo-toggle" onclick="toggleResumo()">
-                        <a href="javascript:void(0)" id="resumoToggleLink">VER RESUMO <i class="bx bx-chevron-up"></i></a>
+                        <a href="javascript:void(0)" id="resumoToggleLink">OCULTAR RESUMO <i class="bx bx-chevron-down"></i></a>
                     </div>
 
                     <!-- Resumo expandivel -->
@@ -3295,12 +3285,12 @@ function trackInitiateCheckout() {
     function toggleResumo() {
         var summary = document.getElementById('cartSummary');
         var link = document.getElementById('resumoToggleLink');
-        if (summary.classList.contains('show')) {
-            summary.classList.remove('show');
-            link.innerHTML = 'VER RESUMO <i class="bx bx-chevron-up"></i>';
-        } else {
-            summary.classList.add('show');
+        if (summary.classList.contains('hidden')) {
+            summary.classList.remove('hidden');
             link.innerHTML = 'OCULTAR RESUMO <i class="bx bx-chevron-down"></i>';
+        } else {
+            summary.classList.add('hidden');
+            link.innerHTML = 'VER RESUMO <i class="bx bx-chevron-up"></i>';
         }
     }
 
