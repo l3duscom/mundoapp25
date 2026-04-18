@@ -3194,33 +3194,12 @@ function trackInitiateCheckout() {
 
     // Filtra tickets visiveis com base no dia selecionado
     function filtrarTicketsPorDia() {
-        document.querySelectorAll('.ticket-card').forEach(function(card) {
-            var ticketDia = card.getAttribute('data-dia');
-            // Mostra se: o dia bate, ou o ticket e para 'todos' (camping, cosplay, after, etc)
-            if (ticketDia === diaSelecionado || ticketDia === 'todos') {
-                card.style.display = '';
-            } else {
-                card.style.display = 'none';
-            }
-        });
-
-        // Verifica se alguma tab tem tickets visiveis e esconde tabs vazias
-        document.querySelectorAll('.tabcontent').forEach(function(tab) {
-            var cards = tab.querySelectorAll('.ticket-card');
-            var temVisivel = false;
-            cards.forEach(function(card) {
-                if (card.style.display !== 'none') temVisivel = true;
-            });
-            // Mostra/esconde aviso de vazio
-            var aviso = tab.querySelector('.alert-no-tickets');
-            if (aviso) aviso.remove();
-            if (!temVisivel && cards.length > 0) {
-                var div = document.createElement('div');
-                div.className = 'alert alert-warning text-center mt-3 mb-3 alert-no-tickets';
-                div.textContent = 'Nenhum ingresso disponivel para o dia selecionado nesta categoria';
-                tab.appendChild(div);
-            }
-        });
+        // Reseta sub-filtro ao trocar de dia
+        subFiltroAtual = 'todas';
+        var subBtns = document.querySelectorAll('.sub-filter-btn');
+        subBtns.forEach(function(b) { b.classList.remove('active'); });
+        if (subBtns.length > 0) subBtns[0].classList.add('active');
+        aplicarFiltros();
     }
 
     // Seletor de dia - mostra carrinho e abre a aba correspondente
@@ -3303,21 +3282,47 @@ function trackInitiateCheckout() {
     }
 
     // Sub-filtro: Todas / Inteira / Meia
+    var subFiltroAtual = 'todas';
+
     function filtrarTipo(btn, tipo) {
         if (btn) {
             document.querySelectorAll('.sub-filter-btn').forEach(function(b) { b.classList.remove('active'); });
             btn.classList.add('active');
         }
-        // Filtra apenas os tickets da aba ativa
-        var abaAtiva = document.querySelector('.tabcontent[style*="display: block"], .tabcontent[style*="display:block"]');
-        if (!abaAtiva) return;
-        var cards = abaAtiva.querySelectorAll('.ticket-card');
-        cards.forEach(function(card) {
-            if (tipo === 'todas') {
-                card.style.display = '';
-            } else {
-                var ticketTipo = card.getAttribute('data-ticket-tipo');
-                card.style.display = (ticketTipo === tipo) ? '' : 'none';
+        subFiltroAtual = tipo;
+        aplicarFiltros();
+    }
+
+    // Aplica ambos os filtros (dia + tipo) simultaneamente
+    function aplicarFiltros() {
+        document.querySelectorAll('.ticket-card').forEach(function(card) {
+            var ticketDia = card.getAttribute('data-dia');
+            var ticketTipo = card.getAttribute('data-ticket-tipo');
+
+            // Filtro de dia
+            var passaDia = (!diaSelecionado || ticketDia === diaSelecionado || ticketDia === 'todos');
+
+            // Filtro de tipo (inteira/meia)
+            var passaTipo = (subFiltroAtual === 'todas' || ticketTipo === subFiltroAtual);
+
+            card.style.display = (passaDia && passaTipo) ? '' : 'none';
+        });
+
+        // Verifica se alguma tab tem tickets visiveis
+        document.querySelectorAll('.tabcontent').forEach(function(tab) {
+            var cards = tab.querySelectorAll('.ticket-card');
+            var temVisivel = false;
+            cards.forEach(function(card) {
+                if (card.style.display !== 'none') temVisivel = true;
+            });
+            var aviso = tab.querySelector('.alert-no-tickets');
+            if (aviso) aviso.remove();
+            if (!temVisivel && cards.length > 0) {
+                var div = document.createElement('div');
+                div.className = 'alert-no-tickets';
+                div.style.cssText = 'text-align: center; padding: 24px; color: #9ca3af; font-size: 14px;';
+                div.textContent = 'Nenhum ingresso disponivel para o dia selecionado nesta categoria';
+                tab.appendChild(div);
             }
         });
     }
