@@ -2594,12 +2594,6 @@ function trackInitiateCheckout() {
             <?php endif; ?>
         });
 
-        // Track InitiateCheckout when user clicks to go to payment
-        $(document).on('click', 'a[href*="evento/entrega"]', function(e) {
-            <?php if (isset($evento) && !empty($evento->meta_pixel_id)): ?>
-            trackInitiateCheckout();
-            <?php endif; ?>
-        });
 
         $("#form").on('submit', function(e) {
 
