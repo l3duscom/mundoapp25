@@ -377,11 +377,11 @@ $event_id = $event_id ?? null;
             <div class="checkout-row">
                 <div class="checkout-field">
                     <label class="checkout-label">E-mail</label>
-                    <?php if (isset($data_cli['email']) && !empty($data_cli['email'])) : ?>
-                        <input type="email" class="checkout-input" value="<?= esc($data_cli['email']) ?>" readonly>
+                    <?php if (!empty($data_cli['cliente_existe']) && !empty($data_cli['email'])) : ?>
                         <input type="hidden" name="email" value="<?= esc($data_cli['email']) ?>">
+                        <div class="info-badge mt-1"><i class="bx bx-check-circle"></i> E-mail cadastrado</div>
                     <?php else : ?>
-                        <input type="email" name="email" placeholder="seu@email.com" class="checkout-input" required>
+                        <input type="email" name="email" value="<?= esc($data_cli['email'] ?? '') ?>" placeholder="seu@email.com" class="checkout-input" required>
                     <?php endif ?>
                 </div>
                 <div class="checkout-field">

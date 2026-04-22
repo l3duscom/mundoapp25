@@ -569,6 +569,7 @@ class Checkout extends BaseController
 
 		if ($cliente != null) {
 			$data_cli = [
+				'cliente_existe' => true,
 				'user_id' => $cliente->usuario_id,
 				'credit_card_token' => $cliente->credit_card_token,
 				'nome' => $cliente->nome,
@@ -578,6 +579,7 @@ class Checkout extends BaseController
 			];
 		} else {
 			$data_cli = [
+				'cliente_existe' => false,
 				'nome' => null,
 				'email' => $email,
 				'cpf' => null,
