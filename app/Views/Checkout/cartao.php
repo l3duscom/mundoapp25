@@ -372,7 +372,12 @@ $event_id = $event_id ?? null;
             <div class="checkout-section-title"><i class="bx bx-user"></i> Seus dados</div>
             <div class="checkout-field">
                 <label class="checkout-label">Nome completo</label>
-                <input type="text" name="nome" placeholder="Digite seu nome completo" class="checkout-input" value="<?php if ($data_cli) echo esc($data_cli['nome']); ?>" required>
+                <?php if (!empty($data_cli['cliente_existe']) && !empty($data_cli['nome'])) : ?>
+                    <input type="hidden" name="nome" value="<?= esc($data_cli['nome']) ?>">
+                    <div class="info-badge mt-1"><i class="bx bx-check-circle"></i> Nome cadastrado</div>
+                <?php else : ?>
+                    <input type="text" name="nome" placeholder="Digite seu nome completo" class="checkout-input" value="<?= esc($data_cli['nome'] ?? '') ?>" required>
+                <?php endif ?>
             </div>
             <div class="checkout-row">
                 <div class="checkout-field">
