@@ -338,7 +338,8 @@ $valorFrete = isset($_SESSION['valor_frete']) ? floatval($_SESSION['valor_frete'
 // Total = ingressos + frete (frete nao tem desconto do cupom)
 $totalFinal = $subtotalIngressos + $valorFrete;
 
-$event_id = session()->get('event_id');
+// O controller já fornece `event_id`; não depende de sessão aqui.
+$event_id = $event_id ?? null;
 ?>
 
 <div class="checkout-container mt-3">

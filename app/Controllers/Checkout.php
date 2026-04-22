@@ -540,7 +540,12 @@ class Checkout extends BaseController
 		$post = $this->request->getPost();
 		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term'], $post['subid'], $post['src'], $post['sck'], $post['utm_id']);
 
-		$email = $post['email'];
+		// O step 2 depende do email do step 1. Em alguns fluxos (refresh/voltar),
+		// o POST pode vir vazio; então persistimos em sessão como fallback.
+		$email = $post['email'] ?? session()->get('checkout_email');
+		if (!empty($post['email'])) {
+			session()->set('checkout_email', $post['email']);
+		}
 		$data_cli = [];
 
 		// Buscar dados do evento para o pixel

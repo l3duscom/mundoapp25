@@ -143,7 +143,7 @@
             <span class="total-bar-value">R$ <?= number_format($_SESSION['total'] + $_SESSION['valor_frete'], 2, ',', '.') ?></span>
         </div>
 
-        <form method="POST" action="<?= site_url('Checkout/cartao_step_2/' . $event_id) ?>">
+        <form method="POST" action="<?= site_url('checkout/cartao_step_2/' . $event_id) ?>">
             <?= csrf_field() ?>
 
             <input type="hidden" name="valor_total" id="valor_total" value="<?= $_SESSION['total'] * 100 ?>" required>
