@@ -542,9 +542,10 @@ class Checkout extends BaseController
 
 		// O step 2 depende do email do step 1. Em alguns fluxos (refresh/voltar),
 		// o POST pode vir vazio; então persistimos em sessão como fallback.
-		$email = $post['email'] ?? session()->get('checkout_email');
-		if (!empty($post['email'])) {
-			session()->set('checkout_email', $post['email']);
+		$emailPost = !empty($post['email']) ? trim((string) $post['email']) : null;
+		$email = $emailPost ?? session()->get('checkout_email');
+		if (!empty($emailPost)) {
+			session()->set('checkout_email', $emailPost);
 		}
 		$data_cli = [];
 
@@ -577,11 +578,15 @@ class Checkout extends BaseController
 				'cpf' => $cliente->cpf,
 				'telefone' => $cliente->telefone
 			];
+			// Garante o email na sessão mesmo para cliente existente (fallback universal).
+			if (!empty($cliente->email)) {
+				session()->set('checkout_email', $cliente->email);
+			}
 		} else {
 			$data_cli = [
 				'cliente_existe' => false,
 				'nome' => null,
-				'email' => $email,
+				'email' => $email ?: '',
 				'cpf' => null,
 				'telefone' => null
 			];
@@ -1382,7 +1387,15 @@ class Checkout extends BaseController
 			$post = $this->request->getPost();
 		unset($post['utm_source'], $post['utm_medium'], $post['utm_campaign'], $post['utm_content'], $post['utm_term'], $post['subid'], $post['src'], $post['sck'], $post['utm_id']);
 
-			if (!isset($post['email'], $post['valor_total'], $_SESSION['carrinho'])) {
+			// Fallback do email pela sessão caso o POST tenha perdido o campo
+			if (empty($post['email'])) {
+				$emailSessao = session()->get('checkout_email');
+				if (!empty($emailSessao)) {
+					$post['email'] = $emailSessao;
+				}
+			}
+
+			if (!isset($post['email'], $post['valor_total'], $_SESSION['carrinho']) || empty($post['email'])) {
 				return redirect()->to(site_url("checkout/cartao/"))->with('erro', "Dados incompletos");
 			}
 
@@ -2271,6 +2284,13 @@ class Checkout extends BaseController
 
 	private function enviaEmailPedidoCartao(object $cliente, int $event_id = null): void
 	{
+		// Guard-clause: se o cliente não tiver email, tenta recuperar da sessão; se ainda assim não houver, aborta com log.
+		$destinatario = !empty($cliente->email) ? $cliente->email : session()->get('checkout_email');
+		if (empty($destinatario)) {
+			log_message('error', 'enviaEmailPedidoCartao: email do cliente vazio, e-mail não será enviado.');
+			return;
+		}
+
 		// Buscar dados do evento se o event_id foi fornecido
 		$evento = null;
 		if ($event_id) {
@@ -2284,14 +2304,14 @@ class Checkout extends BaseController
 
 		$mensagem = view('Pedidos/email_pedido_cartao', $data);
 
-		// Enviar via Resend
+		// Enviar via Resend (captura \Throwable para cobrir TypeError/Error, não só Exception)
 		try {
 			$this->resendService->enviarEmail(
-				$cliente->email,
+				$destinatario,
 				'Pedido realizado com sucesso!',
 				$mensagem
 			);
-		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 			log_message('error', 'Erro ao enviar email de pedido cartão: ' . $e->getMessage());
 		}
 	}
