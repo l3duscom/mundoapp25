@@ -378,6 +378,7 @@ $event_id = $event_id ?? null;
                 <div class="checkout-field">
                     <label class="checkout-label">E-mail</label>
                     <?php
+                        // O email é coletado no step 1 e não pode ser alterado no step 2.
                         // Fallback em cadeia: data_cli -> request POST -> old() -> sessão
                         $emailPreenchido = $data_cli['email']
                             ?? (function_exists('service') ? service('request')->getPost('email') : null)
@@ -385,12 +386,8 @@ $event_id = $event_id ?? null;
                             ?? session()->get('checkout_email')
                             ?? '';
                     ?>
-                    <?php if (!empty($data_cli['cliente_existe']) && !empty($data_cli['email'])) : ?>
-                        <input type="hidden" name="email" value="<?= esc($data_cli['email']) ?>">
-                        <div class="info-badge mt-1"><i class="bx bx-check-circle"></i> E-mail cadastrado</div>
-                    <?php else : ?>
-                        <input type="email" name="email" value="<?= esc($emailPreenchido) ?>" placeholder="seu@email.com" class="checkout-input" required>
-                    <?php endif ?>
+                    <input type="hidden" name="email" value="<?= esc($emailPreenchido) ?>">
+                    <div class="info-badge mt-1"><i class="bx bx-check-circle"></i> E-mail cadastrado</div>
                 </div>
                 <div class="checkout-field">
                     <label class="checkout-label">Celular</label>
