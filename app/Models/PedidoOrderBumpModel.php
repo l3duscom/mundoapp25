@@ -26,10 +26,16 @@ class PedidoOrderBumpModel extends Model
 
     /**
      * Salva os orderbumps de um pedido
-     * 
+     *
+     * Aceita dois formatos:
+     *  - Associativo: [order_bump_id => quantidade]
+     *  - Lista (compat): [order_bump_id, order_bump_id, ...] — qtd = 1
+     *
+     * Respeita limites de `max_por_pedido` e `estoque` do order bump.
+     *
      * @param int $pedidoId
-     * @param array $orderBumps Array de IDs dos orderbumps selecionados
-     * @param OrderBumpModel $orderBumpModel Model para buscar dados do orderbump
+     * @param array $orderBumps
+     * @param OrderBumpModel $orderBumpModel
      * @return bool
      */
     public function salvaOrderBumpsDoPedido(int $pedidoId, array $orderBumps, $orderBumpModel): bool
@@ -38,20 +44,54 @@ class PedidoOrderBumpModel extends Model
             return true;
         }
 
-        foreach ($orderBumps as $orderBumpId) {
-            $orderBump = $orderBumpModel->find($orderBumpId);
-            
-            if ($orderBump) {
-                $this->insert([
-                    'pedido_id' => $pedidoId,
-                    'order_bump_id' => $orderBumpId,
-                    'quantidade' => 1,
-                    'preco_unitario' => $orderBump->preco,
-                ]);
+        // Normaliza para [id => qtd]
+        $mapa = [];
+        $ehLista = array_keys($orderBumps) === range(0, count($orderBumps) - 1);
 
-                // Decrementa o estoque
-                $orderBumpModel->decrementaEstoque($orderBumpId, 1);
+        foreach ($orderBumps as $chave => $valor) {
+            if ($ehLista) {
+                $id = (int) $valor;
+                $qtd = 1;
+            } else {
+                $id = (int) $chave;
+                $qtd = (int) $valor;
             }
+
+            if ($id <= 0 || $qtd <= 0) {
+                continue;
+            }
+
+            $mapa[$id] = ($mapa[$id] ?? 0) + $qtd;
+        }
+
+        foreach ($mapa as $orderBumpId => $quantidade) {
+            $orderBump = $orderBumpModel->find($orderBumpId);
+            if (!$orderBump) {
+                continue;
+            }
+
+            // Limita pela máximo permitido por pedido (se configurado > 0)
+            $max = (int) ($orderBump->max_por_pedido ?? 0);
+            if ($max > 0) {
+                $quantidade = min($quantidade, $max);
+            }
+
+            // Limita pelo estoque disponível
+            $estoque = (int) ($orderBump->estoque ?? 0);
+            $quantidade = min($quantidade, $estoque);
+
+            if ($quantidade <= 0) {
+                continue;
+            }
+
+            $this->insert([
+                'pedido_id' => $pedidoId,
+                'order_bump_id' => $orderBumpId,
+                'quantidade' => $quantidade,
+                'preco_unitario' => $orderBump->preco,
+            ]);
+
+            $orderBumpModel->decrementaEstoque($orderBumpId, $quantidade);
         }
 
         return true;

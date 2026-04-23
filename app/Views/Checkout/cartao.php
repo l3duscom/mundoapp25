@@ -171,7 +171,6 @@
         padding: 12px;
         border: 1px solid #e5e7eb;
         border-radius: 10px;
-        cursor: pointer;
         transition: all 0.2s;
         margin-bottom: 8px;
     }
@@ -190,6 +189,49 @@
         height: 20px;
         accent-color: #059669;
         cursor: pointer;
+    }
+
+    .bump-qty-control {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: #f3f4f6;
+        border-radius: 8px;
+        padding: 2px;
+    }
+
+    .bump-qty-btn {
+        width: 28px;
+        height: 28px;
+        border: none;
+        background: #fff;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: 700;
+        color: #374151;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        transition: background 0.15s;
+    }
+
+    .bump-qty-btn:hover:not(:disabled) {
+        background: #e5e7eb;
+    }
+
+    .bump-qty-btn:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+    }
+
+    .bump-qty-display {
+        min-width: 22px;
+        text-align: center;
+        font-weight: 700;
+        color: #111827;
+        font-size: 14px;
     }
 
     .bump-img {
@@ -560,8 +602,18 @@ $event_id = $event_id ?? null;
         <div class="checkout-section">
             <div class="checkout-section-title"><i class="bx bx-gift"></i> Aproveite e compre junto</div>
             <?php foreach ($orderBumps as $bump): ?>
-            <div class="order-bump-item bump-item" data-bump-id="<?= $bump->id ?>" data-bump-preco="<?= $bump->preco ?>">
-                <input type="checkbox" class="bump-check order-bump-checkbox" name="order_bumps[]" value="<?= $bump->id ?>" id="bump_<?= $bump->id ?>" data-preco="<?= $bump->preco ?>">
+                <?php
+                    $bumpMax = (int) ($bump->max_por_pedido ?? 0);
+                    $bumpEstoque = (int) ($bump->estoque ?? 0);
+                    $bumpLimite = $bumpMax > 0 ? min($bumpMax, $bumpEstoque) : $bumpEstoque;
+                ?>
+            <div class="order-bump-item bump-item"
+                 data-bump-id="<?= $bump->id ?>"
+                 data-bump-preco="<?= $bump->preco ?>"
+                 data-bump-max="<?= $bumpMax ?>"
+                 data-bump-estoque="<?= $bumpEstoque ?>"
+                 data-bump-limite="<?= $bumpLimite ?>">
+                <input type="hidden" class="order-bump-qtd-input" name="order_bumps_qtd[<?= $bump->id ?>]" id="bump_qtd_<?= $bump->id ?>" value="0" data-preco="<?= $bump->preco ?>">
                 <?php if (!empty($bump->imagem)): ?>
                 <img src="<?= $bump->getImagemUrl() ?>" alt="<?= esc($bump->nome) ?>" class="bump-img">
                 <?php else: ?>
@@ -575,9 +627,14 @@ $event_id = $event_id ?? null;
                     <div class="bump-desc"><?= esc($bump->descricao) ?></div>
                     <?php endif; ?>
                 </div>
+                <div class="bump-qty-control" aria-label="Selecionar quantidade">
+                    <button type="button" class="bump-qty-btn bump-qty-minus" aria-label="Diminuir" disabled>&minus;</button>
+                    <span class="bump-qty-display">0</span>
+                    <button type="button" class="bump-qty-btn bump-qty-plus" aria-label="Aumentar" <?= $bumpLimite <= 0 ? 'disabled' : '' ?>>+</button>
+                </div>
                 <div class="bump-price">R$ <?= number_format($bump->preco, 2, ',', '.') ?></div>
                 <div class="order-bump-added small" style="display: none; background: #059669; color: #fff; padding: 6px 12px; margin: 10px -12px -12px -12px; border-radius: 0 0 9px 9px; text-align: center; width: calc(100% + 24px);">
-                    <i class="bx bx-check-circle me-1"></i>adicionado
+                    <i class="bx bx-check-circle me-1"></i><span class="order-bump-added-text">adicionado</span>
                 </div>
             </div>
             <?php endforeach; ?>
@@ -777,10 +834,32 @@ function trackInitiateCheckoutCartao() {
 
         function calcularOrderBumps() {
             var total = 0;
-            $('.order-bump-checkbox:checked').each(function() {
-                total += parseFloat($(this).data('preco')) || 0;
+            $('.order-bump-item').each(function() {
+                var qtd = parseInt($(this).find('.order-bump-qtd-input').val(), 10) || 0;
+                var preco = parseFloat($(this).data('bumpPreco')) || 0;
+                total += qtd * preco;
             });
             return total;
+        }
+
+        function atualizarCardOrderBump($card) {
+            var qtd = parseInt($card.find('.order-bump-qtd-input').val(), 10) || 0;
+            var limite = parseInt($card.data('bumpLimite'), 10);
+            if (isNaN(limite) || limite < 0) limite = 0;
+
+            $card.find('.bump-qty-display').text(qtd);
+
+            if (qtd > 0) {
+                $card.addClass('checked');
+                $card.find('.order-bump-added').show();
+                $card.find('.order-bump-added-text').text(qtd + ' adicionado' + (qtd > 1 ? 's' : ''));
+            } else {
+                $card.removeClass('checked');
+                $card.find('.order-bump-added').hide();
+            }
+
+            $card.find('.bump-qty-minus').prop('disabled', qtd <= 0);
+            $card.find('.bump-qty-plus').prop('disabled', limite <= 0 || qtd >= limite);
         }
 
         function atualizarValores() {
@@ -828,24 +907,36 @@ function trackInitiateCheckoutCartao() {
         // ORDER BUMPS
         // ========================================
 
-        $('.order-bump-checkbox').on('change', function() {
-            var card = $(this).closest('.order-bump-item');
-            var addedMsg = card.find('.order-bump-added');
-
-            if ($(this).is(':checked')) {
-                card.addClass('checked');
-                addedMsg.show();
-            } else {
-                card.removeClass('checked');
-                addedMsg.hide();
+        $('.bump-qty-plus').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var $card = $(this).closest('.order-bump-item');
+            var $input = $card.find('.order-bump-qtd-input');
+            var qtd = parseInt($input.val(), 10) || 0;
+            var limite = parseInt($card.data('bumpLimite'), 10);
+            if (isNaN(limite) || limite < 0) limite = 0;
+            if (qtd < limite) {
+                $input.val(qtd + 1);
+                atualizarCardOrderBump($card);
+                atualizarValores();
             }
-            atualizarValores();
         });
 
-        $('.order-bump-item').on('click', function(e) {
-            if ($(e.target).is('input[type="checkbox"]')) return;
-            var checkbox = $(this).find('.order-bump-checkbox');
-            checkbox.prop('checked', !checkbox.prop('checked')).trigger('change');
+        $('.bump-qty-minus').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var $card = $(this).closest('.order-bump-item');
+            var $input = $card.find('.order-bump-qtd-input');
+            var qtd = parseInt($input.val(), 10) || 0;
+            if (qtd > 0) {
+                $input.val(qtd - 1);
+                atualizarCardOrderBump($card);
+                atualizarValores();
+            }
+        });
+
+        $('.order-bump-item').each(function() {
+            atualizarCardOrderBump($(this));
         });
 
         // Evento de clique no botao Aplicar

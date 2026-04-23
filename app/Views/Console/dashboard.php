@@ -1103,8 +1103,21 @@
                                             </div>
                                         <?php endif; ?>
                                         <div class="flex-grow-1" style="min-width: 0;">
-                                            <p class="mb-1 text-white fw-semibold text-truncate" style="font-size: 0.9rem;"><?= esc($ob->nome) ?></p>
-                                            <small class="text-muted d-block">R$ <?= number_format($ob->preco_unitario, 2, ',', '.') ?></small>
+                                            <?php $obQtd = max(1, (int) ($ob->quantidade ?? 1)); ?>
+                                            <p class="mb-1 text-white fw-semibold text-truncate d-flex align-items-center gap-2" style="font-size: 0.9rem;">
+                                                <span class="text-truncate"><?= esc($ob->nome) ?></span>
+                                                <?php if ($obQtd > 1) : ?>
+                                                    <span class="badge" style="background:#a855f7; color:#fff; font-size: 0.65rem;">x<?= $obQtd ?></span>
+                                                <?php endif; ?>
+                                            </p>
+                                            <small class="text-muted d-block">
+                                                <?php if ($obQtd > 1) : ?>
+                                                    <?= $obQtd ?> × R$ <?= number_format($ob->preco_unitario, 2, ',', '.') ?>
+                                                    <span class="text-white-50">&nbsp;=&nbsp;R$ <?= number_format($ob->preco_unitario * $obQtd, 2, ',', '.') ?></span>
+                                                <?php else : ?>
+                                                    R$ <?= number_format($ob->preco_unitario, 2, ',', '.') ?>
+                                                <?php endif; ?>
+                                            </small>
                                             <small class="text-muted text-truncate d-block" style="font-size: 0.7rem;">#<?= esc($ob->pedido_codigo) ?></small>
                                         </div>
                                         <div class="text-end" style="flex-shrink: 0;">
