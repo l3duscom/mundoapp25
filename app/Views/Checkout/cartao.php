@@ -452,7 +452,11 @@ $event_id = $event_id ?? null;
                             ?? '';
                     ?>
                     <input type="hidden" name="email" value="<?= esc($emailPreenchido) ?>">
-                    <div class="info-badge mt-1"><i class="bx bx-check-circle"></i> E-mail cadastrado</div>
+                    <?php if (!empty($data_cli['cliente_existe'])) : ?>
+                        <div class="info-badge mt-1"><i class="bx bx-check-circle"></i> E-mail cadastrado</div>
+                    <?php else : ?>
+                        <small class="text-muted d-block mt-1"><?= esc($emailPreenchido) ?></small>
+                    <?php endif; ?>
                 </div>
                 <div class="checkout-field">
                     <label class="checkout-label">Celular</label>
