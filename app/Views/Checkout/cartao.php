@@ -264,6 +264,19 @@
         white-space: nowrap;
     }
 
+    /* Saudacao cliente recorrente */
+    .checkout-greeting {
+        font-size: 18px;
+        font-weight: 700;
+        color: #111827;
+        margin: 8px 0 14px 0;
+        padding: 12px 14px;
+        background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+        border: 1px solid #ddd6fe;
+        border-radius: 10px;
+        line-height: 1.35;
+    }
+
     /* Resumo */
     .summary-row {
         display: flex;
@@ -400,6 +413,11 @@ $event_id = $event_id ?? null;
             </div>
         <?php endif; ?>
     </div>
+
+    <?php if (!empty($data_cli['cliente_existe']) && !empty($data_cli['nome'])) : ?>
+        <?php $primeiroNome = trim(strtok($data_cli['nome'], ' ')); ?>
+        <h2 class="checkout-greeting">Olá, <?= esc($primeiroNome) ?>! Que bom ver você novamente 💜</h2>
+    <?php endif; ?>
 
     <form method="POST" action="<?= site_url('Checkout/finalizarcartao/' . $event_id) ?>" id="form">
         <?= csrf_field() ?>
