@@ -914,15 +914,14 @@ function trackInitiateCheckoutCartao() {
 
             $('#valor_total').val(novoTotalFinal);
 
-            // Atualiza as parcelas
-            $('#installmentCount').html(
-                '<option></option>' +
-                '<option value="1">1x de R$ ' + formatarReal(novoTotalFinal) + '</option>' +
-                '<option value="2">2x de R$ ' + formatarReal((novoTotalFinal + (novoTotalFinal * juros * 2)) / 2) + '</option>' +
-                '<option value="3">3x de R$ ' + formatarReal((novoTotalFinal + (novoTotalFinal * juros * 3)) / 3) + '</option>' +
-                '<option value="4">4x de R$ ' + formatarReal((novoTotalFinal + (novoTotalFinal * juros * 4)) / 4) + '</option>' +
-                '<option value="5">5x de R$ ' + formatarReal((novoTotalFinal + (novoTotalFinal * juros * 5)) / 5) + '</option>'
-            );
+            // Atualiza o TEXTO das parcelas (sem recriar as <option>),
+            // preservando a seleção atual do usuário.
+            for (var i = 1; i <= 5; i++) {
+                var valorParcela = i === 1
+                    ? novoTotalFinal
+                    : (novoTotalFinal + (novoTotalFinal * juros * i)) / i;
+                $('#installmentCount option[value="' + i + '"]').text(i + 'x de R$ ' + formatarReal(valorParcela));
+            }
         }
 
         // ========================================
