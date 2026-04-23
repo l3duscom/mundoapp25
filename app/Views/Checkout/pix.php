@@ -140,6 +140,7 @@
     /* Order bump */
     .bump-item {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
         gap: 12px;
         padding: 12px;
@@ -156,6 +157,11 @@
     .bump-item.checked {
         border-color: #34d399;
         background: #ecfdf5;
+    }
+
+    .bump-item .order-bump-added {
+        flex: 0 0 100%;
+        box-sizing: border-box;
     }
 
     .bump-item .bump-check {
