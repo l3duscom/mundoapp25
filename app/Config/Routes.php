@@ -111,6 +111,14 @@ $routes->group('api/cronograma-item', ['filter' => 'secureApi'], function ($rout
 });
 
 // ========================================
+// Rotas da API de Lineup
+// ========================================
+$routes->group('api/lineup', ['filter' => 'secureApi'], function ($routes) {
+    // Rotas protegidas (requer JWT token válido)
+    $routes->get('evento/(:num)', 'Api\Lineup::byEvento/$1', ['filter' => 'jwtAuth']); // Lineup por evento
+});
+
+// ========================================
 // Rotas da API de Conquistas
 // ========================================
 $routes->group('api/conquistas', ['filter' => 'secureApi'], function ($routes) {
