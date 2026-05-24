@@ -64,7 +64,7 @@ class Lineup extends BaseController
                     'dia'        => $item->dia ? (is_object($item->dia) ? $item->dia->format('Y-m-d') : $item->dia) : null,
                     'tipo'       => $item->tipo,
                     'descricao'  => $item->descricao,
-                    'imagem'     => $item->imagem,
+                    'imagem'     => !empty($item->imagem) ? 'https://backoffice.mundodream.com.br/lineup/imagem/' . $item->imagem : null,
                     'ordem'      => (int)$item->ordem,
                     'ativo'      => (int)$item->ativo,
                     'created_at' => $item->created_at,
@@ -96,6 +96,20 @@ class Lineup extends BaseController
                     'error' => ENVIRONMENT === 'development' ? $e->getMessage() : 'Erro interno'
                 ])
                 ->setStatusCode(500);
+        }
+    }
+
+    /**
+     * Serve uma imagem do lineup
+     * GET /api/lineup/imagem/{arquivo}
+     *
+     * @param string|null $arquivo Nome do arquivo de imagem
+     * @return void
+     */
+    public function imagem(string $arquivo = null)
+    {
+        if ($arquivo !== null) {
+            $this->exibeArquivo('lineup', $arquivo);
         }
     }
 }

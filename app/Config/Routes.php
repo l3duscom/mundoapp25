@@ -118,6 +118,9 @@ $routes->group('api/lineup', ['filter' => 'secureApi'], function ($routes) {
     $routes->get('evento/(:num)', 'Api\Lineup::byEvento/$1', ['filter' => 'jwtAuth']); // Lineup por evento
 });
 
+// Serve a imagem do lineup (pública, para uso em <img src>)
+$routes->get('lineup/imagem/(:segment)', 'Api\Lineup::imagem/$1');
+
 // ========================================
 // Rotas da API de Conquistas
 // ========================================
