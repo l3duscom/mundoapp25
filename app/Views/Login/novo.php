@@ -65,10 +65,11 @@
   </div>
 
   <!-- Bottom Section - Eventos & Promoções -->
+  <?php /*
   <?php if (!empty($eventos)): ?>
   <div class="bottom-section">
     <div class="bottom-content">
-      
+
       <?php if (!empty($eventos)): ?>
       <div class="events-section">
         <h3 class="section-title">
@@ -112,6 +113,7 @@
     </div>
   </div>
   <?php endif; ?>
+  */ ?>
 
 </div>
 

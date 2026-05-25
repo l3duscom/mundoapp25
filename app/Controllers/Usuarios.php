@@ -722,92 +722,110 @@ class Usuarios extends BaseController
             return redirect()->back();
         }
 
-        $retorno['token'] = csrf_hash();
-        $usuario = usuario_logado();
-        $clienteModel = new \App\Models\ClienteModel();
-        $usuarioModel = $this->usuarioModel;
-        $post = $this->request->getPost();
+        $retorno = ['token' => csrf_hash()];
 
-        // Se vai alterar senha, valida a senha atual
-        if (!empty($post['password'])) {
-            if (empty($post['senha_atual'])) {
-                $retorno['erro'] = 'Para alterar a senha, informe a senha atual';
-                $retorno['erros_model'] = ['senha_atual' => 'Senha atual é obrigatória para trocar a senha'];
-                return $this->response->setJSON($retorno);
+        try {
+            $usuario = usuario_logado();
+            $clienteModel = new \App\Models\ClienteModel();
+            $usuarioModel = $this->usuarioModel;
+            $post = $this->request->getPost();
+
+            // Se vai alterar senha, valida a senha atual
+            if (!empty($post['password'])) {
+                if (empty($post['senha_atual'])) {
+                    $retorno['erro'] = 'Para alterar a senha, informe a senha atual';
+                    $retorno['erros_model'] = ['senha_atual' => 'Senha atual é obrigatória para trocar a senha'];
+                    return $this->response->setJSON($retorno);
+                }
+
+                if (!$usuario->verificaPassword($post['senha_atual'])) {
+                    $retorno['erro'] = 'Senha atual incorreta';
+                    $retorno['erros_model'] = ['senha_atual' => 'A senha atual informada está incorreta'];
+                    return $this->response->setJSON($retorno);
+                }
             }
 
-            if (!$usuario->verificaPassword($post['senha_atual'])) {
-                $retorno['erro'] = 'Senha atual incorreta';
-                $retorno['erros_model'] = ['senha_atual' => 'A senha atual informada está incorreta'];
-                return $this->response->setJSON($retorno);
+            // Upload de imagem (opcional)
+            $arquivoImagem = $this->request->getFile('imagem');
+            if ($arquivoImagem && $arquivoImagem->isValid() && !$arquivoImagem->hasMoved()) {
+                $mime = $arquivoImagem->getMimeType() ?: $arquivoImagem->getClientMimeType();
+                if (!in_array($mime, ['image/jpeg', 'image/png', 'image/webp', 'image/gif'])) {
+                    $retorno['erro'] = 'Tipo de imagem não suportado';
+                    $retorno['erros_model'] = ['imagem' => 'Use jpg, png, webp ou gif'];
+                    return $this->response->setJSON($retorno);
+                }
+
+                $dimensoes = @getimagesize($arquivoImagem->getPathName());
+                if (!$dimensoes || $dimensoes[0] < 300 || $dimensoes[1] < 300) {
+                    $retorno['erro'] = 'A imagem precisa ter no mínimo 300x300 pixels';
+                    $retorno['erros_model'] = ['imagem' => 'Dimensão mínima 300x300'];
+                    return $this->response->setJSON($retorno);
+                }
+
+                $caminhoRelativo = $arquivoImagem->store('usuarios');
+                $caminhoCompleto = WRITEPATH . "uploads/$caminhoRelativo";
+                $nomeArquivo = basename($caminhoRelativo);
+
+                try {
+                    service('image')
+                        ->withFile($caminhoCompleto)
+                        ->fit(300, 300, 'center')
+                        ->save($caminhoCompleto);
+                } catch (\Throwable $imgEx) {
+                    log_message('warning', 'Falha ao redimensionar imagem de perfil: ' . $imgEx->getMessage());
+                    // segue mesmo sem redimensionar — o arquivo já foi salvo
+                }
+
+                $imagemAntiga = $usuario->imagem;
+                $usuario->imagem = $nomeArquivo;
+
+                if (!empty($imagemAntiga) && $imagemAntiga !== $nomeArquivo) {
+                    $this->removeImagemDoFileSystem($imagemAntiga);
+                }
             }
-        }
 
-        // Upload de imagem (opcional)
-        $arquivoImagem = $this->request->getFile('imagem');
-        if ($arquivoImagem && $arquivoImagem->isValid() && !$arquivoImagem->hasMoved()) {
-            if (!in_array($arquivoImagem->getMimeType(), ['image/jpeg', 'image/png', 'image/webp', 'image/gif'])) {
-                $retorno['erro'] = 'Tipo de imagem não suportado';
-                $retorno['erros_model'] = ['imagem' => 'Use jpg, png, webp ou gif'];
-                return $this->response->setJSON($retorno);
+            // Atualiza cliente
+            $cliente = $clienteModel->where('usuario_id', $usuario->id)->first();
+            if ($cliente) {
+                $cliente->fill($post);
+                if ($cliente->hasChanged() && !$clienteModel->save($cliente)) {
+                    $retorno['erro'] = 'Por favor verifique os erros abaixo e tente novamente';
+                    $retorno['erros_model'] = $clienteModel->errors();
+                    return $this->response->setJSON($retorno);
+                }
             }
 
-            $dimensoes = @getimagesize($arquivoImagem->getPathName());
-            if (!$dimensoes || $dimensoes[0] < 300 || $dimensoes[1] < 300) {
-                $retorno['erro'] = 'A imagem precisa ter no mínimo 300x300 pixels';
-                $retorno['erros_model'] = ['imagem' => 'Dimensão mínima 300x300'];
-                return $this->response->setJSON($retorno);
+            // Atualiza e-mail em usuarios se mudou
+            if (isset($post['email']) && $post['email'] !== $usuario->email) {
+                $usuario->email = $post['email'];
             }
-
-            $caminhoRelativo = $arquivoImagem->store('usuarios');
-            $caminhoCompleto = WRITEPATH . "uploads/$caminhoRelativo";
-
-            service('image')
-                ->withFile($caminhoCompleto)
-                ->fit(300, 300, 'center')
-                ->save($caminhoCompleto);
-
-            $imagemAntiga = $usuario->imagem;
-            $usuario->imagem = $arquivoImagem->getName();
-
-            if (!empty($imagemAntiga)) {
-                $this->removeImagemDoFileSystem($imagemAntiga);
+            // Atualiza nome se mudou
+            if (isset($post['nome']) && $post['nome'] !== $usuario->nome) {
+                $usuario->nome = $post['nome'];
             }
-        }
-
-        // Atualiza cliente
-        $cliente = $clienteModel->where('usuario_id', $usuario->id)->first();
-        if ($cliente) {
-            $cliente->fill($post);
-            if (!$clienteModel->save($cliente)) {
-                $retorno['erro'] = 'Por favor verifique os erros abaixo e tente novamente';
-                $retorno['erros_model'] = $clienteModel->errors();
-                return $this->response->setJSON($retorno);
+            // Atualiza senha se informada
+            if (!empty($post['password'])) {
+                $usuario->password = $post['password'];
+                $usuario->password_confirmation = $post['password_confirmation'] ?? $post['password'];
             }
-        }
-
-        // Atualiza e-mail em usuarios se mudou
-        if (isset($post['email']) && $post['email'] !== $usuario->email) {
-            $usuario->email = $post['email'];
-        }
-        // Atualiza nome se mudou
-        if (isset($post['nome']) && $post['nome'] !== $usuario->nome) {
-            $usuario->nome = $post['nome'];
-        }
-        // Atualiza senha se informada
-        if (!empty($post['password'])) {
-            $usuario->password = $post['password'];
-            $usuario->password_confirmation = $post['password_confirmation'] ?? $post['password'];
-        }
-        if ($usuario->hasChanged()) {
-            if (!$usuarioModel->save($usuario)) {
-                $retorno['erro'] = 'Por favor verifique os erros abaixo e tente novamente';
-                $retorno['erros_model'] = $usuarioModel->errors();
-                return $this->response->setJSON($retorno);
+            if ($usuario->hasChanged()) {
+                if (!$usuarioModel->save($usuario)) {
+                    $retorno['erro'] = 'Por favor verifique os erros abaixo e tente novamente';
+                    $retorno['erros_model'] = $usuarioModel->errors();
+                    return $this->response->setJSON($retorno);
+                }
             }
+            $retorno['sucesso'] = 'Perfil atualizado com sucesso!';
+            return $this->response->setJSON($retorno);
+
+        } catch (\Throwable $e) {
+            log_message('error', 'Erro ao atualizar perfil: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+            $retorno['erro'] = 'Erro ao atualizar perfil';
+            $retorno['erros_model'] = [
+                'exception' => $e->getMessage() . ' em ' . basename($e->getFile()) . ':' . $e->getLine()
+            ];
+            return $this->response->setJSON($retorno)->setStatusCode(200);
         }
-        $retorno['sucesso'] = 'Perfil atualizado com sucesso!';
-        return $this->response->setJSON($retorno);
     }
 
 
