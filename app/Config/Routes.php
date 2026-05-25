@@ -126,6 +126,7 @@ $routes->get('lineup/imagem/(:segment)', 'Api\Lineup::imagem/$1');
 // ========================================
 $routes->group('api/banners', ['filter' => 'secureApi'], function ($routes) {
     // Rotas protegidas (requer JWT token válido)
+    $routes->get('/', 'Api\Banners::index', ['filter' => 'jwtAuth']); // Lista todos os banners (filtros: event_id, ativo)
     $routes->get('evento/(:num)', 'Api\Banners::byEvento/$1', ['filter' => 'jwtAuth']); // Banners por evento
 });
 
