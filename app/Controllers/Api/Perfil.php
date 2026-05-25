@@ -334,19 +334,24 @@ class Perfil extends BaseController
 
             $caminhoRelativo = $arquivo->store('usuarios');
             $caminhoCompleto = WRITEPATH . "uploads/$caminhoRelativo";
+            $nomeArquivo = basename($caminhoRelativo);
 
-            // Redimensiona e corta para 300x300
-            service('image')
-                ->withFile($caminhoCompleto)
-                ->fit(300, 300, 'center')
-                ->save($caminhoCompleto);
+            // Redimensiona e corta para 300x300 (não bloqueia o upload se falhar)
+            try {
+                service('image')
+                    ->withFile($caminhoCompleto)
+                    ->fit(300, 300, 'center')
+                    ->save($caminhoCompleto);
+            } catch (\Throwable $imgEx) {
+                log_message('warning', 'Falha ao redimensionar imagem de perfil API: ' . $imgEx->getMessage());
+            }
 
             $imagemAntiga = $usuario->imagem;
-            $usuario->imagem = $arquivo->getName();
+            $usuario->imagem = $nomeArquivo;
             $this->usuarioModel->save($usuario);
 
             // Remove imagem antiga
-            if (!empty($imagemAntiga)) {
+            if (!empty($imagemAntiga) && $imagemAntiga !== $nomeArquivo) {
                 $antigaPath = WRITEPATH . "uploads/usuarios/$imagemAntiga";
                 if (is_file($antigaPath)) {
                     @unlink($antigaPath);
