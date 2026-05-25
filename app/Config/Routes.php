@@ -122,6 +122,17 @@ $routes->group('api/lineup', ['filter' => 'secureApi'], function ($routes) {
 $routes->get('lineup/imagem/(:segment)', 'Api\Lineup::imagem/$1');
 
 // ========================================
+// Rotas da API de Banners
+// ========================================
+$routes->group('api/banners', ['filter' => 'secureApi'], function ($routes) {
+    // Rotas protegidas (requer JWT token válido)
+    $routes->get('evento/(:num)', 'Api\Banners::byEvento/$1', ['filter' => 'jwtAuth']); // Banners por evento
+});
+
+// Serve a imagem do banner (pública, para uso em <img src>)
+$routes->get('banners/imagem/(:segment)', 'Api\Banners::imagem/$1');
+
+// ========================================
 // Rotas da API de Conquistas
 // ========================================
 $routes->group('api/conquistas', ['filter' => 'secureApi'], function ($routes) {
