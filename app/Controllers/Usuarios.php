@@ -784,10 +784,12 @@ class Usuarios extends BaseController
                 }
             }
 
-            // Atualiza cliente
+            // Atualiza cliente — apenas campos permitidos para evitar "Não há dados para update"
             $cliente = $clienteModel->where('usuario_id', $usuario->id)->first();
             if ($cliente) {
-                $cliente->fill($post);
+                $camposCliente = ['nome', 'cpf', 'telefone', 'email', 'cep', 'endereco', 'numero', 'bairro', 'cidade', 'estado'];
+                $dadosCliente = array_intersect_key($post, array_flip($camposCliente));
+                $cliente->fill($dadosCliente);
                 if ($cliente->hasChanged() && !$clienteModel->save($cliente)) {
                     $retorno['erro'] = 'Por favor verifique os erros abaixo e tente novamente';
                     $retorno['erros_model'] = $clienteModel->errors();
