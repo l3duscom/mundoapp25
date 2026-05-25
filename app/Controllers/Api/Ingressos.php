@@ -16,6 +16,7 @@ class Ingressos extends BaseController
     private $pedidoModel;
     private $cartaoModel;
     private $ticketModel;
+    private $eventoModel;
 
     public function __construct()
     {
@@ -24,6 +25,7 @@ class Ingressos extends BaseController
         $this->pedidoModel = new \App\Models\PedidoModel();
         $this->cartaoModel = new \App\Models\CartaoModel();
         $this->ticketModel = new \App\Models\TicketModel();
+        $this->eventoModel = new \App\Models\EventoModel();
     }
 
     /**
@@ -97,6 +99,17 @@ class Ingressos extends BaseController
                     'pedido_id' => $ingresso->pedido_id ?? null,
                     'created_at' => $ingresso->created_at ?? null,
                     'qr_code' => $qrCodeBase64,
+                    'evento' => [
+                        'id'          => $ingresso->evento_id ?? null,
+                        'nome'        => $ingresso->nome_evento ?? null,
+                        'slug'        => $ingresso->slug ?? null,
+                        'data_inicio' => $ingresso->data_inicio ?? null,
+                        'data_fim'    => $ingresso->data_fim ?? null,
+                        'hora_inicio' => $ingresso->hora_inicio ?? null,
+                        'hora_fim'    => $ingresso->hora_fim ?? null,
+                        'local'       => $ingresso->local ?? null,
+                        'avatar'      => $ingresso->evento_avatar ?? null,
+                    ],
                 ];
 
                 // Adiciona informações do ticket se existir
@@ -241,6 +254,12 @@ class Ingressos extends BaseController
             // Busca ticket vinculado
             $ticket = $this->ticketModel->find($ingresso->ticket_id ?? null);
 
+            // Busca evento via pedido
+            $pedido = $this->pedidoModel->find($ingresso->pedido_id ?? null);
+            $evento = ($pedido && !empty($pedido->evento_id))
+                ? $this->eventoModel->find($pedido->evento_id)
+                : null;
+
             // Gera QR Code
             $qrCodeBase64 = null;
             if ($ingresso->codigo) {
@@ -264,6 +283,21 @@ class Ingressos extends BaseController
                 'created_at' => $ingresso->created_at ?? null,
                 'qr_code' => $qrCodeBase64,
             ];
+
+            // Adiciona dados do evento
+            if ($evento) {
+                $ingressoData['evento'] = [
+                    'id'          => $evento->id,
+                    'nome'        => $evento->nome ?? null,
+                    'slug'        => $evento->slug ?? null,
+                    'data_inicio' => $evento->data_inicio ?? null,
+                    'data_fim'    => $evento->data_fim ?? null,
+                    'hora_inicio' => $evento->hora_inicio ?? null,
+                    'hora_fim'    => $evento->hora_fim ?? null,
+                    'local'       => $evento->local ?? null,
+                    'avatar'      => $evento->avatar ?? null,
+                ];
+            }
 
             // Adiciona informações do ticket
             if ($ticket) {
@@ -350,6 +384,17 @@ class Ingressos extends BaseController
                         'nome' => $ingresso->nome ?? null,
                         'status' => $ingresso->status ?? null,
                         'qr_code' => $qrCodeBase64,
+                        'evento' => [
+                            'id'          => $ingresso->evento_id ?? null,
+                            'nome'        => $ingresso->nome_evento ?? null,
+                            'slug'        => $ingresso->slug ?? null,
+                            'data_inicio' => $ingresso->data_inicio ?? null,
+                            'data_fim'    => $ingresso->data_fim ?? null,
+                            'hora_inicio' => $ingresso->hora_inicio ?? null,
+                            'hora_fim'    => $ingresso->hora_fim ?? null,
+                            'local'       => $ingresso->local ?? null,
+                            'avatar'      => $ingresso->evento_avatar ?? null,
+                        ],
                     ];
 
                     if ($ticket) {
