@@ -349,6 +349,18 @@ $routes->group('api/auth', ['filter' => 'secureApi'], function ($routes) {
 });
 
 // ========================================
+// Rotas da API de Perfil
+// ========================================
+$routes->group('api/perfil', ['filter' => 'secureApi'], function ($routes) {
+    // Rotas protegidas (requer JWT token válido)
+    $routes->get('/', 'Api\Perfil::index', ['filter' => 'jwtAuth']);             // Dados do perfil
+    $routes->put('/', 'Api\Perfil::update', ['filter' => 'jwtAuth']);            // Atualiza nome/email/cliente
+    $routes->patch('/', 'Api\Perfil::update', ['filter' => 'jwtAuth']);          // Atualiza parcialmente
+    $routes->post('senha', 'Api\Perfil::senha', ['filter' => 'jwtAuth']);        // Altera senha
+    $routes->post('imagem', 'Api\Perfil::imagem', ['filter' => 'jwtAuth']);      // Upload de foto
+});
+
+// ========================================
 // Rotas da API de Ingressos
 // ========================================
 $routes->group('api/ingressos', ['filter' => 'secureApi'], function ($routes) {

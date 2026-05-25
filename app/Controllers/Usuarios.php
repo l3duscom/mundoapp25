@@ -728,6 +728,53 @@ class Usuarios extends BaseController
         $usuarioModel = $this->usuarioModel;
         $post = $this->request->getPost();
 
+        // Se vai alterar senha, valida a senha atual
+        if (!empty($post['password'])) {
+            if (empty($post['senha_atual'])) {
+                $retorno['erro'] = 'Para alterar a senha, informe a senha atual';
+                $retorno['erros_model'] = ['senha_atual' => 'Senha atual é obrigatória para trocar a senha'];
+                return $this->response->setJSON($retorno);
+            }
+
+            if (!$usuario->verificaPassword($post['senha_atual'])) {
+                $retorno['erro'] = 'Senha atual incorreta';
+                $retorno['erros_model'] = ['senha_atual' => 'A senha atual informada está incorreta'];
+                return $this->response->setJSON($retorno);
+            }
+        }
+
+        // Upload de imagem (opcional)
+        $arquivoImagem = $this->request->getFile('imagem');
+        if ($arquivoImagem && $arquivoImagem->isValid() && !$arquivoImagem->hasMoved()) {
+            if (!in_array($arquivoImagem->getMimeType(), ['image/jpeg', 'image/png', 'image/webp', 'image/gif'])) {
+                $retorno['erro'] = 'Tipo de imagem não suportado';
+                $retorno['erros_model'] = ['imagem' => 'Use jpg, png, webp ou gif'];
+                return $this->response->setJSON($retorno);
+            }
+
+            $dimensoes = @getimagesize($arquivoImagem->getPathName());
+            if (!$dimensoes || $dimensoes[0] < 300 || $dimensoes[1] < 300) {
+                $retorno['erro'] = 'A imagem precisa ter no mínimo 300x300 pixels';
+                $retorno['erros_model'] = ['imagem' => 'Dimensão mínima 300x300'];
+                return $this->response->setJSON($retorno);
+            }
+
+            $caminhoRelativo = $arquivoImagem->store('usuarios');
+            $caminhoCompleto = WRITEPATH . "uploads/$caminhoRelativo";
+
+            service('image')
+                ->withFile($caminhoCompleto)
+                ->fit(300, 300, 'center')
+                ->save($caminhoCompleto);
+
+            $imagemAntiga = $usuario->imagem;
+            $usuario->imagem = $arquivoImagem->getName();
+
+            if (!empty($imagemAntiga)) {
+                $this->removeImagemDoFileSystem($imagemAntiga);
+            }
+        }
+
         // Atualiza cliente
         $cliente = $clienteModel->where('usuario_id', $usuario->id)->first();
         if ($cliente) {

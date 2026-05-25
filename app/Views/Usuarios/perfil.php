@@ -12,7 +12,19 @@
         <div class="block">
             <div class="block-body">
                 <div id="response"></div>
-                <?php echo form_open('/', ['id' => 'form-perfil']); ?>
+                <?php echo form_open_multipart('/', ['id' => 'form-perfil']); ?>
+                <div class="row mb-3">
+                    <div class="col-md-3 text-center">
+                        <?php $imgFile = !empty($usuario->imagem) ? site_url('usuarios/imagem/' . $usuario->imagem) : site_url('recursos/img/user-default.png'); ?>
+                        <img id="preview-imagem" src="<?php echo $imgFile; ?>" alt="Foto de perfil" style="width:150px;height:150px;object-fit:cover;border-radius:50%;border:2px solid #ddd;">
+                    </div>
+                    <div class="col-md-9">
+                        <label class="form-control-label">Foto de perfil</label>
+                        <input type="file" name="imagem" id="input-imagem" class="form-control" accept="image/jpeg,image/png,image/webp,image/gif">
+                        <small class="text-muted">JPG, PNG, WEBP ou GIF. Mínimo 300x300px. Será redimensionada para 300x300.</small>
+                    </div>
+                </div>
+                <hr>
                 <div class="row">
                     <div class="form-group col-md-6">
                         <label class="form-control-label">Nome completo</label>
@@ -57,14 +69,20 @@
                     </div>
                 </div>
                 <hr>
+                <h5>Alterar senha</h5>
+                <p class="text-muted small">Preencha apenas se desejar trocar a senha.</p>
                 <div class="row">
-                    <div class="form-group col-md-6">
-                        <label class="form-control-label">Nova senha</label>
-                        <input type="password" name="password" class="form-control" placeholder="Deixe em branco para não alterar">
+                    <div class="form-group col-md-4">
+                        <label class="form-control-label">Senha atual</label>
+                        <input type="password" name="senha_atual" class="form-control" placeholder="Informe a senha atual" autocomplete="current-password">
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
+                        <label class="form-control-label">Nova senha</label>
+                        <input type="password" name="password" class="form-control" placeholder="Deixe em branco para não alterar" autocomplete="new-password">
+                    </div>
+                    <div class="form-group col-md-4">
                         <label class="form-control-label">Confirmação de senha</label>
-                        <input type="password" name="password_confirmation" class="form-control" placeholder="Confirme a nova senha">
+                        <input type="password" name="password_confirmation" class="form-control" placeholder="Confirme a nova senha" autocomplete="new-password">
                     </div>
                 </div>
                 <div class="form-group mt-4">
@@ -85,6 +103,18 @@
 $(document).ready(function(){
     // Aplica máscara ao campo CEP
     $('[name=cep]').mask('00000-000');
+
+    // Preview da imagem ao selecionar arquivo
+    $('#input-imagem').on('change', function(e){
+        var file = e.target.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function(ev){
+                $('#preview-imagem').attr('src', ev.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
     $("#form-perfil").on('submit', function(e){
         e.preventDefault();
         $.ajax({
