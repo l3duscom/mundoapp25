@@ -69,22 +69,22 @@
                         };
                         ?>
 
+                        <h5 class="mt-2 mb-3"><i class="bx bx-time-five"></i> Evento atual</h5>
                         <?php if (!empty($meetsAtuais)) : ?>
-                            <h5 class="mt-2 mb-3"><i class="bx bx-time-five"></i> Evento atual</h5>
                             <?php foreach ($meetsAtuais as $meet) : ?>
                                 <?php $renderMeet($meet, true); ?>
                             <?php endforeach; ?>
+                        <?php else : ?>
+                            <p class="text-muted font-13">Nenhum meet & greet para o evento atual.</p>
                         <?php endif; ?>
 
+                        <h5 class="mt-4 mb-3 text-muted"><i class="bx bx-archive"></i> Eventos anteriores</h5>
                         <?php if (!empty($meetsAnteriores)) : ?>
-                            <h5 class="mt-4 mb-3 text-muted"><i class="bx bx-archive"></i> Eventos anteriores</h5>
                             <?php foreach ($meetsAnteriores as $meet) : ?>
                                 <?php $renderMeet($meet, false); ?>
                             <?php endforeach; ?>
-                        <?php endif; ?>
-
-                        <?php if (empty($meetsAtuais) && empty($meetsAnteriores)) : ?>
-                            <p class="text-muted">Você ainda não possui meet & greet.</p>
+                        <?php else : ?>
+                            <p class="text-muted font-13">Nenhum meet & greet em eventos anteriores.</p>
                         <?php endif; ?>
 
                         <hr>
