@@ -115,6 +115,29 @@ class QueueModel extends Model
         return $retorno;
     }
 
+    /**
+     * Retorna as reservas (queue + meet) por ingresso para uso na tela de "Meus Meets".
+     *
+     * @return array de objetos com meet_id, artista, dia, created_at
+     */
+    public function reservasPorIngresso(int $ingresso_id)
+    {
+        return $this->select([
+                'queue_meet.id',
+                'queue_meet.meet_id',
+                'queue_meet.created_at',
+                'queue_meet.updated_at',
+                'meet.artista',
+                'meet.dia',
+                'meet.data_meet',
+                'meet.tipo',
+            ])
+            ->join('meet', 'meet.id = queue_meet.meet_id')
+            ->where('queue_meet.ingresso_id', $ingresso_id)
+            ->orderBy('queue_meet.created_at', 'DESC')
+            ->findAll();
+    }
+
     public function recuperaQueue(int $user_id, $meet_id) {}
 
     public function recuperaCheckinQueue(int $user_id, $meet_id) {}

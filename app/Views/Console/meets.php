@@ -133,6 +133,9 @@
     padding: 4px 12px;
     font-size: .8rem;
     font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
 .mg-slot-card.vip .mg-artistas-wrap { border-top-color: rgba(245,197,24,.3); }
 .mg-slot-card.vip .mg-artista-chip {
@@ -141,6 +144,59 @@
     color: #ffe168;
 }
 .mg-artistas-empty { color: #6c757d; font-size: .8rem; font-style: italic; }
+
+/* Estados do chip */
+.mg-artista-chip.disponivel {
+    background: rgba(40,167,69,.12);
+    border-color: #28a745;
+    color: #5dd879;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .2s ease;
+}
+.mg-artista-chip.disponivel:hover {
+    background: rgba(40,167,69,.25);
+    color: #fff;
+    transform: translateY(-1px);
+}
+.mg-artista-chip.reservado {
+    background: rgba(108,117,125,.15);
+    border-color: #495057;
+    color: #6c757d;
+    text-decoration: line-through;
+}
+.mg-artista-chip.cooldown {
+    background: rgba(255,193,7,.08);
+    border-color: rgba(255,193,7,.4);
+    color: #ffd54f;
+    cursor: not-allowed;
+}
+.mg-artista-chip.cooldown .mg-timer {
+    background: rgba(0,0,0,.3);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-family: monospace;
+    font-size: .75rem;
+    font-weight: 700;
+    margin-left: 4px;
+}
+
+/* Botão verde "Acesso Liberado" */
+.mg-slot-unlocked {
+    background: rgba(40,167,69,.15);
+    color: #5dd879;
+    border: 1px solid #28a745;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: .8rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
 .mg-meet-card {
     background: #212529;
     border: 1px solid #2d343b;
@@ -241,13 +297,46 @@
         <!-- ============ EVENTO ATUAL ============ -->
         <div class="mg-section-title"><i class="bx bx-time-five"></i> Evento atual</div>
 
+        <?php
+        $renderArtistas = function ($artistas, $liberado, $ingressoId) {
+            if (empty($artistas)) {
+                echo '<span class="mg-artistas-empty">Nenhum artista cadastrado ainda.</span>';
+                return;
+            }
+            echo '<div class="mg-artistas-list">';
+            foreach ($artistas as $a) {
+                $status = $a['status'];
+                $nome   = esc($a['nome']);
+                if (!$liberado) {
+                    // Antes da liberação: chip neutro, não clicável
+                    echo '<span class="mg-artista-chip">' . $nome . '</span>';
+                } elseif ($status === 'reservado') {
+                    echo '<span class="mg-artista-chip reservado"><i class="bx bx-check"></i> ' . $nome . '</span>';
+                } elseif ($status === 'cooldown') {
+                    echo '<span class="mg-artista-chip cooldown" data-cooldown-end="' . (int)$a['cooldown_end'] . '">'
+                        . '<i class="bx bx-time"></i> ' . $nome
+                        . '<span class="mg-timer">--:--</span>'
+                        . '</span>';
+                } else {
+                    $href = site_url('/console/queuecheck/' . $a['meet_id'] . '/' . $ingressoId);
+                    echo '<a href="' . $href . '" class="mg-artista-chip disponivel">'
+                        . '<i class="bx bx-plus-circle"></i> ' . $nome
+                        . '</a>';
+                }
+            }
+            echo '</div>';
+        };
+        ?>
+
         <?php if (!empty($ingressosAtuais)) : ?>
             <?php foreach ($ingressosAtuais as $ing) : ?>
                 <?php
-                $isVip  = ($ing->meet_tipo ?? '') === 'vip';
-                $isEpic = ($ing->meet_tipo ?? '') === 'epic';
-                $artistas = $ing->meet_artistas ?? [];
-                $dataLiberacao = $isEpic ? '28/05/2026' : '31/05/2026';
+                $isVip      = ($ing->meet_tipo ?? '') === 'vip';
+                $isEpic     = ($ing->meet_tipo ?? '') === 'epic';
+                $artistas   = $ing->meet_artistas ?? [];
+                $liberado   = !empty($ing->meet_liberado);
+                $delayMin   = (int)($ing->meet_delay_min ?? 0);
+                $dataLib    = $ing->meet_data_liberacao ?? '';
                 ?>
                 <?php if ($isVip) : ?>
                     <div class="mg-slot-card vip">
@@ -266,15 +355,7 @@
                         </div>
                         <div class="mg-artistas-wrap">
                             <div class="mg-artistas-label"><i class="bx bx-mic"></i> Artistas disponíveis</div>
-                            <?php if (!empty($artistas)) : ?>
-                                <div class="mg-artistas-list">
-                                    <?php foreach ($artistas as $artista) : ?>
-                                        <span class="mg-artista-chip"><?= esc($artista) ?></span>
-                                    <?php endforeach; ?>
-                                </div>
-                            <?php else : ?>
-                                <span class="mg-artistas-empty">Nenhum artista cadastrado ainda.</span>
-                            <?php endif; ?>
+                            <?php $renderArtistas($artistas, true, (int)$ing->id); ?>
                         </div>
                     </div>
                 <?php else : ?>
@@ -282,23 +363,21 @@
                         <div class="mg-slot-top">
                             <div class="mg-slot-info">
                                 <span class="mg-slot-name"><?= esc($ing->nome) ?></span>
-                                <span class="mg-slot-sub">Slot Meet &amp; Greet</span>
+                                <span class="mg-slot-sub">Delay entre meets: <?= $delayMin ?> min</span>
                             </div>
-                            <button type="button" class="mg-slot-lock" disabled>
-                                <i class="bx bxs-lock-alt"></i> <?= $dataLiberacao ?>
-                            </button>
+                            <?php if ($liberado) : ?>
+                                <span class="mg-slot-unlocked">
+                                    <i class="bx bxs-unlock-alt"></i> Acesso liberado
+                                </span>
+                            <?php else : ?>
+                                <button type="button" class="mg-slot-lock" disabled>
+                                    <i class="bx bxs-lock-alt"></i> <?= esc($dataLib) ?>
+                                </button>
+                            <?php endif; ?>
                         </div>
                         <div class="mg-artistas-wrap">
                             <div class="mg-artistas-label"><i class="bx bx-mic"></i> Artistas disponíveis</div>
-                            <?php if (!empty($artistas)) : ?>
-                                <div class="mg-artistas-list">
-                                    <?php foreach ($artistas as $artista) : ?>
-                                        <span class="mg-artista-chip"><?= esc($artista) ?></span>
-                                    <?php endforeach; ?>
-                                </div>
-                            <?php else : ?>
-                                <span class="mg-artistas-empty">Nenhum artista cadastrado ainda.</span>
-                            <?php endif; ?>
+                            <?php $renderArtistas($artistas, $liberado, (int)$ing->id); ?>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -347,6 +426,36 @@
 
 
 <script>
+    // ====== Countdown nos chips de artistas em cooldown ======
+    (function () {
+        function fmt(sec) {
+            sec = Math.max(0, sec | 0);
+            var h = Math.floor(sec / 3600);
+            var m = Math.floor((sec % 3600) / 60);
+            var s = sec % 60;
+            function pad(n) { return n < 10 ? '0' + n : '' + n; }
+            return (h > 0 ? pad(h) + ':' : '') + pad(m) + ':' + pad(s);
+        }
+        function tick() {
+            var now = Math.floor(Date.now() / 1000);
+            document.querySelectorAll('.mg-artista-chip.cooldown').forEach(function (el) {
+                var end = parseInt(el.getAttribute('data-cooldown-end'), 10) || 0;
+                var remaining = end - now;
+                var timer = el.querySelector('.mg-timer');
+                if (remaining <= 0) {
+                    // Recarrega a página quando o cooldown termina pra atualizar o estado
+                    location.reload();
+                    return;
+                }
+                if (timer) timer.textContent = fmt(remaining);
+            });
+        }
+        if (document.querySelector('.mg-artista-chip.cooldown')) {
+            tick();
+            setInterval(tick, 1000);
+        }
+    })();
+
     $(document).ready(function() {
 
         //$("#form").LoadingOverlay("show");

@@ -354,6 +354,22 @@ class Console extends BaseController
 
 			// Lista de artistas disponíveis por ingresso (filtrado por tipo + dia)
 			$meetsEvento = $this->meetModel->recuperaMeetForDay((int)$eventoAtualId);
+
+			// Datas de liberação por tipo
+			$liberacao = [
+				'vip'   => '2000-01-01', // sempre liberado
+				'epic'  => '2026-05-28',
+				'comum' => '2026-05-31',
+			];
+			// Delay entre reservas (em minutos) por tipo
+			$delays = [
+				'vip'   => 0,
+				'epic'  => 30,
+				'comum' => 120,
+			];
+			$hoje = date('Y-m-d');
+			$agoraTs = time();
+
 			foreach ($ingressosAtuais as $ing) {
 				$nomeLower = strtolower((string)($ing->nome ?? ''));
 
@@ -373,23 +389,70 @@ class Console extends BaseController
 					$diaIng = 'duo'; // combo dois dias
 				}
 
-				$artistas = [];
+				// Reservas já feitas pelo usuário neste ingresso
+				$reservas = $this->queueModel->reservasPorIngresso((int)$ing->id);
+				$artistasReservados = [];   // ['Nome' => true]
+				$ultimaReservaPorDia = [];  // ['sab' => ts, 'dom' => ts]
+				foreach ($reservas as $r) {
+					$artistasReservados[$r->artista] = true;
+					$diaR = strtolower((string)($r->dia ?? ''));
+					$ts = strtotime((string)($r->created_at ?? $r->updated_at ?? 'now'));
+					if (!isset($ultimaReservaPorDia[$diaR]) || $ts > $ultimaReservaPorDia[$diaR]) {
+						$ultimaReservaPorDia[$diaR] = $ts;
+					}
+				}
+
+				// Junta artistas elegíveis (por tipo + dia) com seu meet_id
+				$artistasMap = []; // ['Nome' => ['meet_id' => X, 'dia' => 'sab']]
 				foreach ($meetsEvento as $m) {
-					// VIP tem acesso a todos os artistas, demais filtram por tipo
 					if ($tipoIng !== 'vip' && strtolower((string)($m->tipo ?? '')) !== $tipoIng) {
 						continue;
 					}
 					if ($diaIng !== 'duo' && strtolower((string)($m->dia ?? '')) !== $diaIng) {
 						continue;
 					}
-					if (!in_array($m->artista, $artistas, true)) {
-						$artistas[] = $m->artista;
+					if (!isset($artistasMap[$m->artista])) {
+						$artistasMap[$m->artista] = [
+							'meet_id' => $m->id,
+							'dia'     => strtolower((string)($m->dia ?? '')),
+						];
 					}
 				}
 
-				$ing->meet_tipo = $tipoIng;
-				$ing->meet_dia = $diaIng;
-				$ing->meet_artistas = $artistas;
+				$delayMin = $delays[$tipoIng] ?? 0;
+				$liberacaoDate = $liberacao[$tipoIng] ?? '2000-01-01';
+				$liberado = $tipoIng === 'vip' ? true : ($hoje >= $liberacaoDate);
+
+				$artistasInfo = [];
+				foreach ($artistasMap as $nomeArtista => $meta) {
+					if (isset($artistasReservados[$nomeArtista])) {
+						$status = 'reservado';
+						$cooldownEnd = 0;
+					} else {
+						$cooldownEnd = 0;
+						if ($delayMin > 0 && isset($ultimaReservaPorDia[$meta['dia']])) {
+							$cooldownEnd = $ultimaReservaPorDia[$meta['dia']] + ($delayMin * 60);
+							if ($cooldownEnd <= $agoraTs) {
+								$cooldownEnd = 0;
+							}
+						}
+						$status = $cooldownEnd > 0 ? 'cooldown' : 'disponivel';
+					}
+					$artistasInfo[] = [
+						'nome'         => $nomeArtista,
+						'meet_id'      => $meta['meet_id'],
+						'dia'          => $meta['dia'],
+						'status'       => $status,
+						'cooldown_end' => $cooldownEnd,
+					];
+				}
+
+				$ing->meet_tipo        = $tipoIng;
+				$ing->meet_dia         = $diaIng;
+				$ing->meet_artistas    = $artistasInfo;
+				$ing->meet_liberado    = $liberado;
+				$ing->meet_delay_min   = $delayMin;
+				$ing->meet_data_liberacao = date('d/m/Y', strtotime($liberacaoDate));
 			}
 		}
 
