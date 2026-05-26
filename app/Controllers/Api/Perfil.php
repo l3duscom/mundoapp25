@@ -364,7 +364,7 @@ class Perfil extends BaseController
                     'message' => 'Imagem atualizada com sucesso',
                     'data'    => [
                         'imagem'     => $usuario->imagem,
-                        'imagem_url' => 'https://backoffice.mundodream.com.br/usuarios/imagem/' . $usuario->imagem,
+                        'imagem_url' => site_url('usuarios/imagem/' . $usuario->imagem),
                     ],
                 ])
                 ->setStatusCode(200);
@@ -414,7 +414,7 @@ class Perfil extends BaseController
                 'codigo'     => $usuario->codigo ?? null,
                 'imagem'     => $usuario->imagem ?? null,
                 'imagem_url' => !empty($usuario->imagem)
-                    ? 'https://backoffice.mundodream.com.br/usuarios/imagem/' . $usuario->imagem
+                    ? site_url('usuarios/imagem/' . $usuario->imagem)
                     : null,
                 'created_at' => $usuario->created_at,
                 'updated_at' => $usuario->updated_at,
