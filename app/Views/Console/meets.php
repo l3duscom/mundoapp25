@@ -54,6 +54,48 @@
     cursor: not-allowed;
 }
 .mg-slot-lock i { font-size: .9rem; }
+
+/* VIP — destaque amarelo */
+.mg-slot-card.vip {
+    border: 1px solid #f5c518;
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            rgba(245,197,24,0.08) 0,
+            rgba(245,197,24,0.08) 8px,
+            transparent 8px,
+            transparent 16px
+        ),
+        #212529;
+    box-shadow: 0 0 0 1px rgba(245,197,24,0.15);
+}
+.mg-slot-card.vip .mg-slot-name { color: #f5c518; }
+.mg-slot-card.vip .mg-slot-sub { color: #f5c518; opacity: .8; }
+.mg-vip-msg {
+    margin-top: 6px;
+    color: #f5c518;
+    font-size: .8rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.mg-vip-msg i { font-size: 1rem; }
+.mg-vip-badge {
+    background: rgba(245,197,24,.15);
+    color: #f5c518;
+    border: 1px solid #f5c518;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: .8rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
 .mg-meet-card {
     background: #212529;
     border: 1px solid #2d343b;
@@ -156,15 +198,37 @@
 
         <?php if (!empty($ingressosAtuais)) : ?>
             <?php foreach ($ingressosAtuais as $ing) : ?>
-                <div class="mg-slot-card">
-                    <div class="mg-slot-info">
-                        <span class="mg-slot-name"><?= esc($ing->nome) ?></span>
-                        <span class="mg-slot-sub">Slot Meet &amp; Greet</span>
+                <?php
+                $nomeIng = strtolower((string)($ing->nome ?? ''));
+                $isVip  = stripos($nomeIng, 'vip')  !== false;
+                $isEpic = !$isVip && stripos($nomeIng, 'epic') !== false;
+                $dataLiberacao = $isEpic ? '28/05/2026' : '31/05/2026';
+                ?>
+                <?php if ($isVip) : ?>
+                    <div class="mg-slot-card vip">
+                        <div class="mg-slot-info" style="flex: 1;">
+                            <span class="mg-slot-name"><?= esc($ing->nome) ?></span>
+                            <span class="mg-slot-sub">VIP FULL</span>
+                            <div class="mg-vip-msg">
+                                <i class="bx bxs-star"></i>
+                                Meet &amp; Greet liberado para VIP FULL sem necessidade de check-in.
+                            </div>
+                        </div>
+                        <span class="mg-vip-badge">
+                            <i class="bx bxs-crown"></i> Acesso liberado
+                        </span>
                     </div>
-                    <button type="button" class="mg-slot-lock" disabled>
-                        <i class="bx bxs-lock-alt"></i> 28/05/2026
-                    </button>
-                </div>
+                <?php else : ?>
+                    <div class="mg-slot-card">
+                        <div class="mg-slot-info">
+                            <span class="mg-slot-name"><?= esc($ing->nome) ?></span>
+                            <span class="mg-slot-sub">Slot Meet &amp; Greet</span>
+                        </div>
+                        <button type="button" class="mg-slot-lock" disabled>
+                            <i class="bx bxs-lock-alt"></i> <?= $dataLiberacao ?>
+                        </button>
+                    </div>
+                <?php endif; ?>
             <?php endforeach; ?>
         <?php endif; ?>
 
