@@ -7,72 +7,135 @@ trait ValidacoesTrait
 {
     public function consultaViaCep(string $cep) : array
     {
+        $cep = preg_replace('/\D/', '', $cep);
 
-        // Limpando o CEP 91667-838
+        if (strlen($cep) !== 8) {
+            session()->set('blockCep', true);
+            return ['erro' => '<span class="text-danger">Informe um CEP válido</span>'];
+        }
 
-        $cep = str_replace('-', '', $cep);
+        $providers = [
+            fn() => $this->cepViaCep($cep),
+            fn() => $this->cepBrasilApi($cep),
+            fn() => $this->cepOpenCep($cep),
+        ];
 
+        $cepInvalido = false;
+        $ultimoErro = null;
 
-        $url = "https://viacep.com.br/ws/{$cep}/json/";
+        foreach ($providers as $consulta) {
+            $resultado = $consulta();
 
+            if ($resultado === null) {
+                continue;
+            }
 
-        // Abrir a conexão
+            if (isset($resultado['_invalido'])) {
+                $cepInvalido = true;
+                continue;
+            }
+
+            if (isset($resultado['_erro'])) {
+                $ultimoErro = $resultado['_erro'];
+                continue;
+            }
+
+            session()->set('blockCep', false);
+
+            return [
+                'endereco' => esc($resultado['logradouro'] ?? ''),
+                'bairro'   => esc($resultado['bairro'] ?? ''),
+                'cidade'   => esc($resultado['localidade'] ?? ''),
+                'estado'   => esc($resultado['uf'] ?? ''),
+            ];
+        }
+
+        if ($cepInvalido) {
+            session()->set('blockCep', true);
+            return ['erro' => '<span class="text-danger">Informe um CEP válido</span>'];
+        }
+
+        return ['erro' => '<span class="text-danger">Não foi possível consultar o CEP no momento. Preencha o endereço manualmente.</span>'];
+    }
+
+    private function httpGetJson(string $url): ?array
+    {
         $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL            => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_CONNECTTIMEOUT => 3,
+            CURLOPT_TIMEOUT        => 6,
+            CURLOPT_IPRESOLVE      => CURL_IPRESOLVE_V4,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_USERAGENT      => 'mundo-app/1.0',
+        ]);
 
-
-        // Defino a URL
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-
-        // Excutamos a consulta
         $resposta = curl_exec($ch);
+        $erro     = curl_error($ch);
+        $status   = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
 
-
-        // Capturamos um possível erro na consulta
-        $erro = curl_error($ch);
-
-
-        $retorno = [];
-
-        if ($erro) {
-            $retorno['erro'] = $erro;
-
-            return $retorno;
+        if ($erro || $status >= 500 || $resposta === false) {
+            return null;
         }
 
+        return ['status' => $status, 'body' => $resposta];
+    }
 
+    private function cepViaCep(string $cep): ?array
+    {
+        $r = $this->httpGetJson("https://viacep.com.br/ws/{$cep}/json/");
+        if ($r === null) return ['_erro' => 'viacep_indisponivel'];
 
-        $consulta = json_decode($resposta);
+        $d = json_decode($r['body'], true);
+        if (!is_array($d)) return ['_erro' => 'viacep_resposta_invalida'];
 
+        if (isset($d['erro']) && empty($d['cep'])) return ['_invalido' => true];
 
-        if (isset($consulta->erro) && !isset($consulta->cep)) {
-            session()->set('blockCep', true); // Usaremos no controller
+        return [
+            'logradouro' => $d['logradouro'] ?? '',
+            'bairro'     => $d['bairro'] ?? '',
+            'localidade' => $d['localidade'] ?? '',
+            'uf'         => $d['uf'] ?? '',
+        ];
+    }
 
-            $retorno['erro'] = '<span class="text-danger">Informe um CEP válido</span>';
+    private function cepBrasilApi(string $cep): ?array
+    {
+        $r = $this->httpGetJson("https://brasilapi.com.br/api/cep/v1/{$cep}");
+        if ($r === null) return ['_erro' => 'brasilapi_indisponivel'];
 
-            return $retorno;
-        }
+        if ($r['status'] === 404) return ['_invalido' => true];
 
+        $d = json_decode($r['body'], true);
+        if (!is_array($d) || empty($d['cep'])) return ['_erro' => 'brasilapi_resposta_invalida'];
 
-        //  {
-        //     "cep": "80530-000",
-        //     "logradouro": "Avenida Cândido de Abreu",
-        //     "complemento": "",
-        //     "bairro": "Centro Cívico",
-        //     "localidade": "Curitiba",
-        //     "uf": "PR",
-        //   }
+        return [
+            'logradouro' => $d['street'] ?? '',
+            'bairro'     => $d['neighborhood'] ?? '',
+            'localidade' => $d['city'] ?? '',
+            'uf'         => $d['state'] ?? '',
+        ];
+    }
 
-        session()->set('blockCep', false); // Usaremos no controller
+    private function cepOpenCep(string $cep): ?array
+    {
+        $r = $this->httpGetJson("https://opencep.com/v1/{$cep}");
+        if ($r === null) return ['_erro' => 'opencep_indisponivel'];
 
+        if ($r['status'] === 404) return ['_invalido' => true];
 
-        $retorno['endereco'] = esc($consulta->logradouro);
-        $retorno['bairro'] = esc($consulta->bairro);
-        $retorno['cidade'] = esc($consulta->localidade);
-        $retorno['estado'] = esc($consulta->uf);
+        $d = json_decode($r['body'], true);
+        if (!is_array($d) || empty($d['cep'])) return ['_erro' => 'opencep_resposta_invalida'];
 
-        return $retorno;
+        return [
+            'logradouro' => $d['logradouro'] ?? '',
+            'bairro'     => $d['bairro'] ?? '',
+            'localidade' => $d['localidade'] ?? '',
+            'uf'         => $d['uf'] ?? '',
+        ];
     }
 
 
