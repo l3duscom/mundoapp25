@@ -217,6 +217,21 @@
 .mg-meet-meta { display: flex; flex-wrap: wrap; gap: 12px; font-size: .85rem; color: #adb5bd; }
 .mg-meet-meta span { display: inline-flex; align-items: center; gap: 5px; }
 .mg-meet-meta .mg-ordem { color: #b4ff48; font-weight: 700; }
+.mg-validar-aviso {
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: rgba(255, 193, 7, 0.12);
+    border: 1px solid rgba(255, 193, 7, 0.4);
+    border-radius: 8px;
+    color: #ffc107;
+    font-size: .85rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.4;
+}
+.mg-validar-aviso i { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+.mg-validar-aviso strong { color: #ffd54f; }
 .mg-tipo-badge {
     background: rgba(180,255,72,.12);
     color: #b4ff48;
@@ -282,8 +297,16 @@
                 <div class="mg-meet-meta">
                     <span><i class="bx bx-calendar"></i> <?= date('d/m/Y', strtotime($meet->data_meet)) ?></span>
                     <span><i class="bx bx-time-five"></i> <?= esc($meet->hora_inicial) ?></span>
-                    <span>Posição: <span class="mg-ordem"><?= esc($meet->ordem) ?>º</span></span>
+                    <?php if ($meet->ordem !== null) : ?>
+                        <span>Posição: <span class="mg-ordem"><?= esc($meet->ordem) ?>º</span></span>
+                    <?php endif; ?>
                 </div>
+                <?php if ($meet->ordem === null) : ?>
+                    <div class="mg-validar-aviso">
+                        <i class="bx bx-info-circle"></i>
+                        <span>Reserva pendente. Compareça ao <strong>balcão de informações</strong> para validar este ingresso e receber sua posição na fila.</span>
+                    </div>
+                <?php endif; ?>
                 <?php if ($exibirQr) : ?>
                     <div class="mg-qr-wrap">
                         <img src="<?= $meet->qr ?>" alt="QR Code">

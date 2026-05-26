@@ -577,11 +577,7 @@ class Console extends BaseController
 	{
 		$id = $this->usuarioLogado()->id;
 
-		$queues = $this->queueModel->recuperaOrdem($meet_id);
-
 		$meet = $this->meetModel->find($meet_id);
-
-		$ordem = $queues->ordem;
 
 		$this->queueModel
 			->protect(false)
@@ -591,7 +587,7 @@ class Console extends BaseController
 				'ingresso_id' => $ingresso_id,
 				'code' => $this->queueModel->geraCodigo(),
 				'status' => 'CHECKIN',
-				'ordem'  => $ordem + 1,
+				'ordem'  => null,
 			]);
 
 		$this->meetModel
