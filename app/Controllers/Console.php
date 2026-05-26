@@ -321,19 +321,26 @@ class Console extends BaseController
 			$meets[$key]->qr = (new QRCode)->render($meets[$key]->code);
 		}
 
+		// Separa em evento atual x eventos anteriores
+		$eventoAtualId = evento_selecionado(); // event_id da sessão (pode ser null)
+		$meetsAtuais = [];
+		$meetsAnteriores = [];
 
-
-
-
-
-
+		foreach ($meets as $meet) {
+			if ($eventoAtualId && (int)$meet->event_id === (int)$eventoAtualId) {
+				$meetsAtuais[] = $meet;
+			} else {
+				$meetsAnteriores[] = $meet;
+			}
+		}
 
 		$data = [
 			'titulo' => 'Dashboard de ' . esc($cliente->nome),
 			'cliente' => $cliente,
 			'convite' => $convite,
 			'meets' => $meets,
-
+			'meetsAtuais' => $meetsAtuais,
+			'meetsAnteriores' => $meetsAnteriores,
 		];
 
 

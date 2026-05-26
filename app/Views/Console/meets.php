@@ -33,32 +33,58 @@
                 <div class="card shadow radius-10">
                     <div class="card-body">
 
-                        <?php if ($meets != null) : ?>
-                            <?php foreach ($meets as $meet) : ?>
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="card shadow radius-10">
-                                            <div class="card-body">
-                                                <div class="col-lg-12">
-                                                    <h2><?= $meet->artista ?></h2>
+                        <?php
+                        $renderMeet = function ($meet, $exibirQr = true) {
+                        ?>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="card shadow radius-10">
+                                        <div class="card-body">
+                                            <div class="col-lg-12">
+                                                <h2><?= esc($meet->artista) ?></h2>
+                                            </div>
+                                            <?php if (!empty($meet->evento_nome)) : ?>
+                                                <div class="col-lg-12" style="font-size: 12px;">
+                                                    <span class="text-muted"><i class="bx bx-calendar-event"></i> <?= esc($meet->evento_nome) ?></span>
                                                 </div>
-                                                <div class="col-lg-12">
-                                                    <span><?= date('d/m/Y', strtotime($meet->data_meet)) ?>
-                                                        | <?= $meet->hora_inicial ?> </span>
-                                                </div>
-                                                <div class="col-lg-12" style="font-size: 13px;">
-                                                    <span>Você é o <strong style="color:greenyellow"><?= $meet->ordem ?>º </strong>da fila <?= $meet->tipo ?></span>
-                                                </div>
+                                            <?php endif; ?>
+                                            <div class="col-lg-12">
+                                                <span><?= date('d/m/Y', strtotime($meet->data_meet)) ?>
+                                                    | <?= esc($meet->hora_inicial) ?> </span>
+                                            </div>
+                                            <div class="col-lg-12" style="font-size: 13px;">
+                                                <span>Você é o <strong style="color:greenyellow"><?= esc($meet->ordem) ?>º </strong>da fila <?= esc($meet->tipo) ?></span>
+                                            </div>
+                                            <?php if ($exibirQr) : ?>
                                                 <div class="col-lg-12 mt-3">
                                                     <img src="<?= $meet->qr ?>" style="background-color:#fff; padding:0px" width="100%">
                                                     <hr>
                                                 </div>
-                                            </div>
+                                            <?php endif; ?>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        <?php
+                        };
+                        ?>
 
+                        <?php if (!empty($meetsAtuais)) : ?>
+                            <h5 class="mt-2 mb-3"><i class="bx bx-time-five"></i> Evento atual</h5>
+                            <?php foreach ($meetsAtuais as $meet) : ?>
+                                <?php $renderMeet($meet, true); ?>
                             <?php endforeach; ?>
+                        <?php endif; ?>
+
+                        <?php if (!empty($meetsAnteriores)) : ?>
+                            <h5 class="mt-4 mb-3 text-muted"><i class="bx bx-archive"></i> Eventos anteriores</h5>
+                            <?php foreach ($meetsAnteriores as $meet) : ?>
+                                <?php $renderMeet($meet, false); ?>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+
+                        <?php if (empty($meetsAtuais) && empty($meetsAnteriores)) : ?>
+                            <p class="text-muted">Você ainda não possui meet & greet.</p>
                         <?php endif; ?>
 
                         <hr>

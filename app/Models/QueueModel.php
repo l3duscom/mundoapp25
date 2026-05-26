@@ -50,12 +50,18 @@ class QueueModel extends Model
             'meet.artista',
             'meet.data_meet',
             'meet.hora_inicial',
-            'meet.tipo'
+            'meet.tipo',
+            'meet.event_id',
+            'eventos.nome AS evento_nome',
+            'eventos.data_inicio AS evento_data_inicio',
+            'eventos.data_fim AS evento_data_fim'
         ];
 
         $ordem = $this->select($atributos)
             ->join('meet', 'meet.id = queue_meet.meet_id')
+            ->join('eventos', 'eventos.id = meet.event_id', 'left')
             ->where('queue_meet.user_id', $user_id)
+            ->orderBy('meet.data_meet', 'DESC')
             ->findAll();
 
         return $ordem;
