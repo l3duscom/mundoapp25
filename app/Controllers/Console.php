@@ -321,39 +321,51 @@ class Console extends BaseController
 			$meets[$key]->qr = (new QRCode)->render($meets[$key]->code);
 		}
 
-		// Separa em evento atual x eventos anteriores
-		$eventoAtualId = evento_selecionado(); // event_id da sessão (pode ser null)
+		// Separa ingressos do usuário em eventos atuais x anteriores pela data_fim do evento
+		// (mesma lógica usada na dashboard — não depende de evento_selecionado() na sessão)
+		$todosIngressos = $this->ingressoModel->recuperaIngressosPorUsuario($id);
+		$hojeStr = date('Y-m-d');
+		$limiteAnteriores = date('Y-m-d', strtotime('-2 days', strtotime($hojeStr)));
+
+		$ingressosAtuais = [];
+		$eventoIdsAtuais = [];
+		foreach ($todosIngressos as $ing) {
+			$dataFim = $ing->data_fim ?? null;
+			$eAtual = !$dataFim || $dataFim >= $limiteAnteriores;
+			if (!$eAtual) {
+				continue;
+			}
+			$eventoIdsAtuais[(int)$ing->evento_id] = true;
+
+			// Cortesia não tem direito a meet & greet
+			if (strcasecmp((string)($ing->tipo ?? ''), 'cortesia') === 0) {
+				continue;
+			}
+			if (stripos((string)($ing->nome ?? ''), 'cortesia') !== false) {
+				continue;
+			}
+			$ingressosAtuais[] = $ing;
+		}
+
 		$meetsAtuais = [];
 		$meetsAnteriores = [];
-
 		foreach ($meets as $meet) {
-			if ($eventoAtualId && (int)$meet->event_id === (int)$eventoAtualId) {
+			if (isset($eventoIdsAtuais[(int)$meet->event_id])) {
 				$meetsAtuais[] = $meet;
 			} else {
 				$meetsAnteriores[] = $meet;
 			}
 		}
 
-		// Recupera ingressos ativos do usuário no evento atual (slots de meet & greet)
-		// Cortesia não tem direito a meet & greet
-		$ingressosAtuais = [];
-		if ($eventoAtualId) {
-			$todosIngressos = $this->ingressoModel->recuperaIngressosPorUsuario($id);
-			foreach ($todosIngressos as $ing) {
-				if ((int)$ing->evento_id !== (int)$eventoAtualId) {
-					continue;
-				}
-				if (strcasecmp((string)($ing->tipo ?? ''), 'cortesia') === 0) {
-					continue;
-				}
-				if (stripos((string)($ing->nome ?? ''), 'cortesia') !== false) {
-					continue;
-				}
-				$ingressosAtuais[] = $ing;
+		if (!empty($ingressosAtuais)) {
+			// Lista de artistas (todos os eventos atuais)
+			$meetsEvento = [];
+			foreach (array_keys($eventoIdsAtuais) as $eventoId) {
+				$meetsEvento = array_merge(
+					$meetsEvento,
+					$this->meetModel->recuperaMeetForDay((int)$eventoId)
+				);
 			}
-
-			// Lista de artistas disponíveis por ingresso (filtrado por tipo + dia)
-			$meetsEvento = $this->meetModel->recuperaMeetForDay((int)$eventoAtualId);
 
 			// Datas de liberação por tipo
 			$liberacao = [
