@@ -375,7 +375,8 @@ class Console extends BaseController
 
 				$artistas = [];
 				foreach ($meetsEvento as $m) {
-					if (strtolower((string)($m->tipo ?? '')) !== $tipoIng) {
+					// VIP tem acesso a todos os artistas, demais filtram por tipo
+					if ($tipoIng !== 'vip' && strtolower((string)($m->tipo ?? '')) !== $tipoIng) {
 						continue;
 					}
 					if ($diaIng !== 'duo' && strtolower((string)($m->dia ?? '')) !== $diaIng) {
