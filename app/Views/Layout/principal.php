@@ -387,7 +387,7 @@
                     <a href="<?php echo site_url('console/meets'); ?>">
                         <div class="parent-icon"><i class='bx bx-camera'></i>
                         </div>
-                        <div class="menu-title">Meus Meet & Greet </div>
+                        <div class="menu-title">Meet & Greet</div>
                     </a>
                 </li>
                 <li>
