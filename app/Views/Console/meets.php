@@ -96,6 +96,51 @@
     text-transform: uppercase;
     letter-spacing: .5px;
 }
+
+/* Slot vira "stack" para acomodar lista de artistas */
+.mg-slot-card { flex-direction: column; align-items: stretch; }
+.mg-slot-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.mg-artistas-wrap {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed #2d343b;
+}
+.mg-artistas-label {
+    color: #6c757d;
+    font-size: .7rem;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.mg-artistas-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.mg-artista-chip {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid #2d343b;
+    color: #dee2e6;
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: .8rem;
+    font-weight: 500;
+}
+.mg-slot-card.vip .mg-artistas-wrap { border-top-color: rgba(245,197,24,.3); }
+.mg-slot-card.vip .mg-artista-chip {
+    background: rgba(245,197,24,.08);
+    border-color: rgba(245,197,24,.35);
+    color: #ffe168;
+}
+.mg-artistas-empty { color: #6c757d; font-size: .8rem; font-style: italic; }
 .mg-meet-card {
     background: #212529;
     border: 1px solid #2d343b;
@@ -202,31 +247,61 @@
                 $nomeIng = strtolower((string)($ing->nome ?? ''));
                 $isVip  = stripos($nomeIng, 'vip')  !== false;
                 $isEpic = !$isVip && stripos($nomeIng, 'epic') !== false;
+                $tipoChave = $isVip ? 'vip' : ($isEpic ? 'epic' : 'comum');
+                $artistas = $artistasPorTipo[$tipoChave] ?? [];
                 $dataLiberacao = $isEpic ? '28/05/2026' : '31/05/2026';
                 ?>
                 <?php if ($isVip) : ?>
                     <div class="mg-slot-card vip">
-                        <div class="mg-slot-info" style="flex: 1;">
-                            <span class="mg-slot-name"><?= esc($ing->nome) ?></span>
-                            <span class="mg-slot-sub">VIP FULL</span>
-                            <div class="mg-vip-msg">
-                                <i class="bx bxs-star"></i>
-                                Meet &amp; Greet liberado para VIP FULL sem necessidade de check-in.
+                        <div class="mg-slot-top">
+                            <div class="mg-slot-info" style="flex: 1;">
+                                <span class="mg-slot-name"><?= esc($ing->nome) ?></span>
+                                <span class="mg-slot-sub">VIP FULL</span>
+                                <div class="mg-vip-msg">
+                                    <i class="bx bxs-star"></i>
+                                    Meet &amp; Greet liberado para VIP FULL sem necessidade de check-in.
+                                </div>
                             </div>
+                            <span class="mg-vip-badge">
+                                <i class="bx bxs-crown"></i> Acesso liberado
+                            </span>
                         </div>
-                        <span class="mg-vip-badge">
-                            <i class="bx bxs-crown"></i> Acesso liberado
-                        </span>
+                        <div class="mg-artistas-wrap">
+                            <div class="mg-artistas-label"><i class="bx bx-mic"></i> Artistas disponíveis</div>
+                            <?php if (!empty($artistas)) : ?>
+                                <div class="mg-artistas-list">
+                                    <?php foreach ($artistas as $artista) : ?>
+                                        <span class="mg-artista-chip"><?= esc($artista) ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php else : ?>
+                                <span class="mg-artistas-empty">Nenhum artista cadastrado ainda.</span>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 <?php else : ?>
                     <div class="mg-slot-card">
-                        <div class="mg-slot-info">
-                            <span class="mg-slot-name"><?= esc($ing->nome) ?></span>
-                            <span class="mg-slot-sub">Slot Meet &amp; Greet</span>
+                        <div class="mg-slot-top">
+                            <div class="mg-slot-info">
+                                <span class="mg-slot-name"><?= esc($ing->nome) ?></span>
+                                <span class="mg-slot-sub">Slot Meet &amp; Greet</span>
+                            </div>
+                            <button type="button" class="mg-slot-lock" disabled>
+                                <i class="bx bxs-lock-alt"></i> <?= $dataLiberacao ?>
+                            </button>
                         </div>
-                        <button type="button" class="mg-slot-lock" disabled>
-                            <i class="bx bxs-lock-alt"></i> <?= $dataLiberacao ?>
-                        </button>
+                        <div class="mg-artistas-wrap">
+                            <div class="mg-artistas-label"><i class="bx bx-mic"></i> Artistas disponíveis</div>
+                            <?php if (!empty($artistas)) : ?>
+                                <div class="mg-artistas-list">
+                                    <?php foreach ($artistas as $artista) : ?>
+                                        <span class="mg-artista-chip"><?= esc($artista) ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php else : ?>
+                                <span class="mg-artistas-empty">Nenhum artista cadastrado ainda.</span>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 <?php endif; ?>
             <?php endforeach; ?>

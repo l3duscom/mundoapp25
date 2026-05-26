@@ -337,6 +337,7 @@ class Console extends BaseController
 		// Recupera ingressos ativos do usuário no evento atual (slots de meet & greet)
 		// Cortesia não tem direito a meet & greet
 		$ingressosAtuais = [];
+		$artistasPorTipo = ['vip' => [], 'epic' => [], 'comum' => []];
 		if ($eventoAtualId) {
 			$todosIngressos = $this->ingressoModel->recuperaIngressosPorUsuario($id);
 			foreach ($todosIngressos as $ing) {
@@ -351,6 +352,18 @@ class Console extends BaseController
 				}
 				$ingressosAtuais[] = $ing;
 			}
+
+			// Lista de artistas disponíveis para meet por tipo no evento atual
+			$meetsEvento = $this->meetModel->recuperaMeetForDay((int)$eventoAtualId);
+			foreach ($meetsEvento as $m) {
+				$tipo = strtolower((string)($m->tipo ?? ''));
+				if (!isset($artistasPorTipo[$tipo])) {
+					$artistasPorTipo[$tipo] = [];
+				}
+				if (!in_array($m->artista, $artistasPorTipo[$tipo], true)) {
+					$artistasPorTipo[$tipo][] = $m->artista;
+				}
+			}
 		}
 
 		$data = [
@@ -361,6 +374,7 @@ class Console extends BaseController
 			'meetsAtuais' => $meetsAtuais,
 			'meetsAnteriores' => $meetsAnteriores,
 			'ingressosAtuais' => $ingressosAtuais,
+			'artistasPorTipo' => $artistasPorTipo,
 		];
 
 
