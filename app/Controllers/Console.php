@@ -334,6 +334,17 @@ class Console extends BaseController
 			}
 		}
 
+		// Recupera ingressos ativos do usuário no evento atual (slots de meet & greet)
+		$ingressosAtuais = [];
+		if ($eventoAtualId) {
+			$todosIngressos = $this->ingressoModel->recuperaIngressosPorUsuario($id);
+			foreach ($todosIngressos as $ing) {
+				if ((int)$ing->evento_id === (int)$eventoAtualId) {
+					$ingressosAtuais[] = $ing;
+				}
+			}
+		}
+
 		$data = [
 			'titulo' => 'Dashboard de ' . esc($cliente->nome),
 			'cliente' => $cliente,
@@ -341,6 +352,7 @@ class Console extends BaseController
 			'meets' => $meets,
 			'meetsAtuais' => $meetsAtuais,
 			'meetsAnteriores' => $meetsAnteriores,
+			'ingressosAtuais' => $ingressosAtuais,
 		];
 
 

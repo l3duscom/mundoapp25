@@ -70,11 +70,31 @@
                         ?>
 
                         <h5 class="mt-2 mb-3"><i class="bx bx-time-five"></i> Evento atual</h5>
+
+                        <?php if (!empty($ingressosAtuais)) : ?>
+                            <?php foreach ($ingressosAtuais as $ing) : ?>
+                                <div class="row mb-2">
+                                    <div class="col-lg-12">
+                                        <div class="card shadow radius-10">
+                                            <div class="card-body d-flex align-items-center justify-content-between" style="gap:10px;">
+                                                <div>
+                                                    <strong><?= esc($ing->nome) ?></strong>
+                                                </div>
+                                                <button type="button" class="btn btn-secondary btn-sm" disabled>
+                                                    <i class="bx bxs-lock-alt"></i> 28/05/2026
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+
                         <?php if (!empty($meetsAtuais)) : ?>
                             <?php foreach ($meetsAtuais as $meet) : ?>
                                 <?php $renderMeet($meet, true); ?>
                             <?php endforeach; ?>
-                        <?php else : ?>
+                        <?php elseif (empty($ingressosAtuais)) : ?>
                             <p class="text-muted font-13">Nenhum meet & greet para o evento atual.</p>
                         <?php endif; ?>
 
