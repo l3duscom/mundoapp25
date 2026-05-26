@@ -244,11 +244,9 @@
         <?php if (!empty($ingressosAtuais)) : ?>
             <?php foreach ($ingressosAtuais as $ing) : ?>
                 <?php
-                $nomeIng = strtolower((string)($ing->nome ?? ''));
-                $isVip  = stripos($nomeIng, 'vip')  !== false;
-                $isEpic = !$isVip && stripos($nomeIng, 'epic') !== false;
-                $tipoChave = $isVip ? 'vip' : ($isEpic ? 'epic' : 'comum');
-                $artistas = $artistasPorTipo[$tipoChave] ?? [];
+                $isVip  = ($ing->meet_tipo ?? '') === 'vip';
+                $isEpic = ($ing->meet_tipo ?? '') === 'epic';
+                $artistas = $ing->meet_artistas ?? [];
                 $dataLiberacao = $isEpic ? '28/05/2026' : '31/05/2026';
                 ?>
                 <?php if ($isVip) : ?>

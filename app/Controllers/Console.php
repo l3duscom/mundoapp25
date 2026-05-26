@@ -337,7 +337,6 @@ class Console extends BaseController
 		// Recupera ingressos ativos do usuário no evento atual (slots de meet & greet)
 		// Cortesia não tem direito a meet & greet
 		$ingressosAtuais = [];
-		$artistasPorTipo = ['vip' => [], 'epic' => [], 'comum' => []];
 		if ($eventoAtualId) {
 			$todosIngressos = $this->ingressoModel->recuperaIngressosPorUsuario($id);
 			foreach ($todosIngressos as $ing) {
@@ -353,16 +352,43 @@ class Console extends BaseController
 				$ingressosAtuais[] = $ing;
 			}
 
-			// Lista de artistas disponíveis para meet por tipo no evento atual
+			// Lista de artistas disponíveis por ingresso (filtrado por tipo + dia)
 			$meetsEvento = $this->meetModel->recuperaMeetForDay((int)$eventoAtualId);
-			foreach ($meetsEvento as $m) {
-				$tipo = strtolower((string)($m->tipo ?? ''));
-				if (!isset($artistasPorTipo[$tipo])) {
-					$artistasPorTipo[$tipo] = [];
+			foreach ($ingressosAtuais as $ing) {
+				$nomeLower = strtolower((string)($ing->nome ?? ''));
+
+				if (stripos($nomeLower, 'vip') !== false) {
+					$tipoIng = 'vip';
+				} elseif (stripos($nomeLower, 'epic') !== false) {
+					$tipoIng = 'epic';
+				} else {
+					$tipoIng = 'comum';
 				}
-				if (!in_array($m->artista, $artistasPorTipo[$tipo], true)) {
-					$artistasPorTipo[$tipo][] = $m->artista;
+
+				if (stripos($nomeLower, 'sábado') !== false || stripos($nomeLower, 'sabado') !== false) {
+					$diaIng = 'sab';
+				} elseif (stripos($nomeLower, 'domingo') !== false) {
+					$diaIng = 'dom';
+				} else {
+					$diaIng = 'duo'; // combo dois dias
 				}
+
+				$artistas = [];
+				foreach ($meetsEvento as $m) {
+					if (strtolower((string)($m->tipo ?? '')) !== $tipoIng) {
+						continue;
+					}
+					if ($diaIng !== 'duo' && strtolower((string)($m->dia ?? '')) !== $diaIng) {
+						continue;
+					}
+					if (!in_array($m->artista, $artistas, true)) {
+						$artistas[] = $m->artista;
+					}
+				}
+
+				$ing->meet_tipo = $tipoIng;
+				$ing->meet_dia = $diaIng;
+				$ing->meet_artistas = $artistas;
 			}
 		}
 
@@ -374,7 +400,6 @@ class Console extends BaseController
 			'meetsAtuais' => $meetsAtuais,
 			'meetsAnteriores' => $meetsAnteriores,
 			'ingressosAtuais' => $ingressosAtuais,
-			'artistasPorTipo' => $artistasPorTipo,
 		];
 
 
