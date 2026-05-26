@@ -335,13 +335,21 @@ class Console extends BaseController
 		}
 
 		// Recupera ingressos ativos do usuário no evento atual (slots de meet & greet)
+		// Cortesia não tem direito a meet & greet
 		$ingressosAtuais = [];
 		if ($eventoAtualId) {
 			$todosIngressos = $this->ingressoModel->recuperaIngressosPorUsuario($id);
 			foreach ($todosIngressos as $ing) {
-				if ((int)$ing->evento_id === (int)$eventoAtualId) {
-					$ingressosAtuais[] = $ing;
+				if ((int)$ing->evento_id !== (int)$eventoAtualId) {
+					continue;
 				}
+				if (strcasecmp((string)($ing->tipo ?? ''), 'cortesia') === 0) {
+					continue;
+				}
+				if (stripos((string)($ing->nome ?? ''), 'cortesia') !== false) {
+					continue;
+				}
+				$ingressosAtuais[] = $ing;
 			}
 		}
 

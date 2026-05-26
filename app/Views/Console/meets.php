@@ -5,9 +5,113 @@
 
 
 <?php echo $this->section('estilos') ?>
-
-<!-- Aqui coloco os estilos da view-->
-
+<style>
+.mg-page-title {
+    color: #fff;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+.mg-section-title {
+    color: #adb5bd;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 1.5rem 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.mg-section-title i { font-size: 1.1rem; }
+.mg-slot-card {
+    background: #212529;
+    border: 1px solid #2d343b;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    transition: border-color .2s ease;
+}
+.mg-slot-card:hover { border-color: #3a4149; }
+.mg-slot-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.mg-slot-name { color: #fff; font-weight: 600; font-size: .95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mg-slot-sub { color: #6c757d; font-size: .75rem; text-transform: uppercase; letter-spacing: .5px; }
+.mg-slot-lock {
+    background: #2d343b;
+    color: #adb5bd;
+    border: 1px solid #3a4149;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: .8rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    cursor: not-allowed;
+}
+.mg-slot-lock i { font-size: .9rem; }
+.mg-meet-card {
+    background: #212529;
+    border: 1px solid #2d343b;
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 14px;
+}
+.mg-meet-card.past { opacity: .75; }
+.mg-meet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+.mg-meet-artista { color: #fff; font-weight: 700; font-size: 1.25rem; margin: 0; }
+.mg-meet-event { color: #6c757d; font-size: .75rem; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px; }
+.mg-meet-meta { display: flex; flex-wrap: wrap; gap: 12px; font-size: .85rem; color: #adb5bd; }
+.mg-meet-meta span { display: inline-flex; align-items: center; gap: 5px; }
+.mg-meet-meta .mg-ordem { color: #b4ff48; font-weight: 700; }
+.mg-tipo-badge {
+    background: rgba(180,255,72,.12);
+    color: #b4ff48;
+    border: 1px solid rgba(180,255,72,.3);
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: .7rem;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    font-weight: 600;
+}
+.mg-qr-wrap {
+    margin-top: 14px;
+    background: #fff;
+    border-radius: 10px;
+    padding: 8px;
+    max-width: 220px;
+}
+.mg-qr-wrap img { width: 100%; display: block; }
+.mg-empty {
+    color: #6c757d;
+    font-size: .9rem;
+    text-align: center;
+    padding: 24px 12px;
+    border: 1px dashed #2d343b;
+    border-radius: 10px;
+    background: rgba(255,255,255,.01);
+}
+.mg-help {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #2d343b;
+    color: #6c757d;
+    font-size: .8rem;
+}
+.mg-help a { color: #b4ff48; text-decoration: none; }
+.mg-help a:hover { text-decoration: underline; }
+</style>
 <?php echo $this->endSection() ?>
 
 
@@ -16,111 +120,77 @@
 
 
 <div class="row">
+    <div class="col-lg-8">
+        <div id="response"></div>
 
+        <h3 class="mg-page-title">Meus Meet &amp; Greet</h3>
 
-    <div class="col-lg-3">
-
-        <div class="block">
-
-            <div class="block-body">
-
-                <!-- Exibirá os retornos do backend -->
-                <div id="response">
-
-
+        <?php
+        $renderMeet = function ($meet, $exibirQr = true) {
+        ?>
+            <div class="mg-meet-card <?= $exibirQr ? '' : 'past' ?>">
+                <div class="mg-meet-header">
+                    <h4 class="mg-meet-artista"><?= esc($meet->artista) ?></h4>
+                    <span class="mg-tipo-badge"><?= esc($meet->tipo) ?></span>
                 </div>
-                <h3>Meus Meet & Greet</h3>
-                <div class="card shadow radius-10">
-                    <div class="card-body">
-
-                        <?php
-                        $renderMeet = function ($meet, $exibirQr = true) {
-                        ?>
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div class="card shadow radius-10">
-                                        <div class="card-body">
-                                            <div class="col-lg-12">
-                                                <h2><?= esc($meet->artista) ?></h2>
-                                            </div>
-                                            <?php if (!empty($meet->evento_nome)) : ?>
-                                                <div class="col-lg-12" style="font-size: 12px;">
-                                                    <span class="text-muted"><i class="bx bx-calendar-event"></i> <?= esc($meet->evento_nome) ?></span>
-                                                </div>
-                                            <?php endif; ?>
-                                            <div class="col-lg-12">
-                                                <span><?= date('d/m/Y', strtotime($meet->data_meet)) ?>
-                                                    | <?= esc($meet->hora_inicial) ?> </span>
-                                            </div>
-                                            <div class="col-lg-12" style="font-size: 13px;">
-                                                <span>Você é o <strong style="color:greenyellow"><?= esc($meet->ordem) ?>º </strong>da fila <?= esc($meet->tipo) ?></span>
-                                            </div>
-                                            <?php if ($exibirQr) : ?>
-                                                <div class="col-lg-12 mt-3">
-                                                    <img src="<?= $meet->qr ?>" style="background-color:#fff; padding:0px" width="100%">
-                                                    <hr>
-                                                </div>
-                                            <?php endif; ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php
-                        };
-                        ?>
-
-                        <h5 class="mt-2 mb-3"><i class="bx bx-time-five"></i> Evento atual</h5>
-
-                        <?php if (!empty($ingressosAtuais)) : ?>
-                            <?php foreach ($ingressosAtuais as $ing) : ?>
-                                <div class="row mb-2">
-                                    <div class="col-lg-12">
-                                        <div class="card shadow radius-10">
-                                            <div class="card-body d-flex align-items-center justify-content-between" style="gap:10px;">
-                                                <div>
-                                                    <strong><?= esc($ing->nome) ?></strong>
-                                                </div>
-                                                <button type="button" class="btn btn-secondary btn-sm" disabled>
-                                                    <i class="bx bxs-lock-alt"></i> 28/05/2026
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-
-                        <?php if (!empty($meetsAtuais)) : ?>
-                            <?php foreach ($meetsAtuais as $meet) : ?>
-                                <?php $renderMeet($meet, true); ?>
-                            <?php endforeach; ?>
-                        <?php elseif (empty($ingressosAtuais)) : ?>
-                            <p class="text-muted font-13">Nenhum meet & greet para o evento atual.</p>
-                        <?php endif; ?>
-
-                        <h5 class="mt-4 mb-3 text-muted"><i class="bx bx-archive"></i> Eventos anteriores</h5>
-                        <?php if (!empty($meetsAnteriores)) : ?>
-                            <?php foreach ($meetsAnteriores as $meet) : ?>
-                                <?php $renderMeet($meet, false); ?>
-                            <?php endforeach; ?>
-                        <?php else : ?>
-                            <p class="text-muted font-13">Nenhum meet & greet em eventos anteriores.</p>
-                        <?php endif; ?>
-
-                        <hr>
-                        <p class="text-muted font-13"> Dúvidas sobre o meet & Greet? <a href="https://dreamfest.com.br/central-de-ajuda/como-funciona-o-meet-greet" target="_blank">Clique aqui</a></p>
+                <?php if (!empty($meet->evento_nome)) : ?>
+                    <div class="mg-meet-event"><i class="bx bx-calendar-event"></i> <?= esc($meet->evento_nome) ?></div>
+                <?php endif; ?>
+                <div class="mg-meet-meta">
+                    <span><i class="bx bx-calendar"></i> <?= date('d/m/Y', strtotime($meet->data_meet)) ?></span>
+                    <span><i class="bx bx-time-five"></i> <?= esc($meet->hora_inicial) ?></span>
+                    <span>Posição: <span class="mg-ordem"><?= esc($meet->ordem) ?>º</span></span>
+                </div>
+                <?php if ($exibirQr) : ?>
+                    <div class="mg-qr-wrap">
+                        <img src="<?= $meet->qr ?>" alt="QR Code">
                     </div>
-                </div>
-
+                <?php endif; ?>
             </div>
+        <?php
+        };
+        ?>
 
+        <!-- ============ EVENTO ATUAL ============ -->
+        <div class="mg-section-title"><i class="bx bx-time-five"></i> Evento atual</div>
 
+        <?php if (!empty($ingressosAtuais)) : ?>
+            <?php foreach ($ingressosAtuais as $ing) : ?>
+                <div class="mg-slot-card">
+                    <div class="mg-slot-info">
+                        <span class="mg-slot-name"><?= esc($ing->nome) ?></span>
+                        <span class="mg-slot-sub">Slot Meet &amp; Greet</span>
+                    </div>
+                    <button type="button" class="mg-slot-lock" disabled>
+                        <i class="bx bxs-lock-alt"></i> 28/05/2026
+                    </button>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
 
-        </div> <!-- ./ block -->
+        <?php if (!empty($meetsAtuais)) : ?>
+            <?php foreach ($meetsAtuais as $meet) : ?>
+                <?php $renderMeet($meet, true); ?>
+            <?php endforeach; ?>
+        <?php elseif (empty($ingressosAtuais)) : ?>
+            <div class="mg-empty">Nenhum meet &amp; greet para o evento atual.</div>
+        <?php endif; ?>
 
+        <!-- ============ EVENTOS ANTERIORES ============ -->
+        <div class="mg-section-title"><i class="bx bx-archive"></i> Eventos anteriores</div>
+
+        <?php if (!empty($meetsAnteriores)) : ?>
+            <?php foreach ($meetsAnteriores as $meet) : ?>
+                <?php $renderMeet($meet, false); ?>
+            <?php endforeach; ?>
+        <?php else : ?>
+            <div class="mg-empty">Nenhum meet &amp; greet em eventos anteriores.</div>
+        <?php endif; ?>
+
+        <div class="mg-help">
+            Dúvidas sobre o meet &amp; greet? <a href="https://dreamfest.com.br/central-de-ajuda/como-funciona-o-meet-greet" target="_blank">Clique aqui</a>
+        </div>
     </div>
-
-
 </div>
 
 
