@@ -209,6 +209,10 @@ class Auth extends BaseController
             'email' => $usuario->email,
             'codigo' => $usuario->codigo ?? null,
             'ativo' => $usuario->ativo,
+            'imagem' => $usuario->imagem ?? null,
+            'imagem_url' => !empty($usuario->imagem)
+                ? site_url('usuarios/imagem/' . $usuario->imagem)
+                : null,
             'is_admin' => $usuario->is_admin,
             'is_cliente' => $usuario->is_cliente,
             'is_membro' => $usuario->is_membro,
@@ -390,6 +394,9 @@ class Auth extends BaseController
             'codigo' => $usuario->codigo ?? null,
             'ativo' => $usuario->ativo,
             'imagem' => $usuario->imagem ?? null,
+            'imagem_url' => !empty($usuario->imagem)
+                ? site_url('usuarios/imagem/' . $usuario->imagem)
+                : null,
             'is_admin' => $usuario->is_admin,
             'is_cliente' => $usuario->is_cliente,
             'is_membro' => $usuario->is_membro,
