@@ -41,10 +41,6 @@ $routes->get('logout', 'Login::logout');
 
 $routes->get('esqueci', 'Password::esqueci');
 
-// Validação de Meet & Greet (backoffice)
-$routes->get('meets/validar', 'Meets::validar');
-$routes->post('meets/validar-code', 'Meets::validarCode');
-
 // Página pública de cancelamento
 $routes->get('cancelamento', 'Cancelamento::index');
 $routes->post('cancelamento/localizar', 'Cancelamento::localizar');
