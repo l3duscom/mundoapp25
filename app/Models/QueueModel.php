@@ -88,9 +88,7 @@ class QueueModel extends Model
     {
         do {
             $codigo = strtoupper(random_string('alnum', 10));
-
-            $this->select('codigo')->where('codigo', $codigo);
-        } while ($this->countAllResults() > 1);
+        } while ($this->where('code', $codigo)->countAllResults() > 0);
 
         return $codigo;
     }

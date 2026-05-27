@@ -591,7 +591,7 @@ class Console extends BaseController
 
 		$meet = $this->meetModel->find($meet_id);
 
-		$this->queueModel
+		$inserido = $this->queueModel
 			->protect(false)
 			->insert([
 				'user_id' => $id,
@@ -602,13 +602,17 @@ class Console extends BaseController
 				'ordem'  => null,
 			]);
 
+		if (!$inserido) {
+			return redirect()->to(site_url("console/meets"))->with('atencao', "Não foi possível reservar este Meet & Greet. Tente novamente.");
+		}
+
 		$this->meetModel
 			->protect(false)
 			->where('id', $meet_id)
 			->set('quantidade', $meet->quantidade - 1)
 			->update();
 
-		return redirect()->to(site_url("console/dashboard"))->with('sucesso', "Meet & Greet reservado com sucesso!");
+		return redirect()->to(site_url("console/meets"))->with('sucesso', "Meet & Greet reservado com sucesso!");
 	}
 
 	/**
