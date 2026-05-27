@@ -598,7 +598,7 @@ class Console extends BaseController
 				'meet_id' => $meet_id,
 				'ingresso_id' => $ingresso_id,
 				'code' => $this->queueModel->geraCodigo(),
-				'status' => 'CHECKIN',
+				'status' => 'PENDENTE',
 				'ordem'  => null,
 			]);
 

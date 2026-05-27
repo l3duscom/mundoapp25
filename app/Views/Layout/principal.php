@@ -345,6 +345,13 @@
                                 <div class="menu-title">Concursos</div>
                             </a>
                         </li>
+                        <li>
+                            <a href="<?php echo site_url('/meets/validar'); ?>">
+                                <div class="parent-icon"><i class="bx bx-qr-scan"></i>
+                                </div>
+                                <div class="menu-title">Validar Meet &amp; Greet</div>
+                            </a>
+                        </li>
                     <?php endif; ?>
                 <?php endif; ?>
 
