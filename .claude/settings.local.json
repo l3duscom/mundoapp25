@@ -21,7 +21,12 @@
       "Bash(php -l app/Views/Carrinho/index.php)",
       "Bash(/c/xampp/php/php.exe -l c:/Users/Edu/Documents/Projetos/mundo_app/app/Views/Carrinho/index.php)",
       "Bash(awk 'NR>=314 && NR<=342 { for\\(i=1;i<=length\\($0\\);i++\\){c=substr\\($0,i,1\\); if\\(c==\"\\\\t\"\\) printf \"[TAB]\"; else printf \"%s\", c } printf \"\\\\n\" }' \"c:/Users/Edu/Documents/Projetos/mundo_app/app/Controllers/Console.php\")",
-      "Bash(awk 'NR>=314 && NR<=343 { gsub\\(/\\\\t/,\"\\\\\\\\t\"\\); print NR\": [\"$0\"]\" }' \"c:/Users/Edu/Documents/Projetos/mundo_app/app/Controllers/Console.php\")"
+      "Bash(awk 'NR>=314 && NR<=343 { gsub\\(/\\\\t/,\"\\\\\\\\t\"\\); print NR\": [\"$0\"]\" }' \"c:/Users/Edu/Documents/Projetos/mundo_app/app/Controllers/Console.php\")",
+      "Bash(git -C c:/Users/Edu/Documents/Projetos/mundo_app log --oneline -20 -- app/Controllers/Console.php)",
+      "Bash(git -C c:/Users/Edu/Documents/Projetos/mundo_app show 1b194515 -- app/Controllers/Console.php)",
+      "Bash(git -C c:/Users/Edu/Documents/Projetos/mundo_app log --all --oneline -- app/Controllers/Console.php)",
+      "Bash(git -C c:/Users/Edu/Documents/Projetos/mundo_app log --all -p -S \"queuecheck\" -- app/Controllers/Console.php)",
+      "Bash(git -C c:/Users/Edu/Documents/Projetos/mundo_app show eb205bf4:app/Controllers/Console.php)"
     ]
   }
 }

@@ -294,14 +294,15 @@
                 <?php if (!empty($meet->evento_nome)) : ?>
                     <div class="mg-meet-event"><i class="bx bx-calendar-event"></i> <?= esc($meet->evento_nome) ?></div>
                 <?php endif; ?>
+                <?php $pendente = strtoupper((string)($meet->status ?? '')) === 'PENDENTE'; ?>
                 <div class="mg-meet-meta">
                     <span><i class="bx bx-calendar"></i> <?= date('d/m/Y', strtotime($meet->data_meet)) ?></span>
                     <span><i class="bx bx-time-five"></i> <?= esc($meet->hora_inicial) ?></span>
-                    <?php if ($meet->ordem !== null) : ?>
+                    <?php if (!$pendente && (int)$meet->ordem > 0) : ?>
                         <span>Posição: <span class="mg-ordem"><?= esc($meet->ordem) ?>º</span></span>
                     <?php endif; ?>
                 </div>
-                <?php if ($meet->ordem === null) : ?>
+                <?php if ($pendente) : ?>
                     <div class="mg-validar-aviso">
                         <i class="bx bx-info-circle"></i>
                         <span>Reserva pendente. Compareça ao <strong>balcão de informações</strong> para validar este ingresso e receber sua posição na fila.</span>
