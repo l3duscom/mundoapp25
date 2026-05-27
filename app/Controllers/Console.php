@@ -370,7 +370,7 @@ class Console extends BaseController
 			// Datas de liberação por tipo
 			$liberacao = [
 				'vip'   => '2000-01-01', // sempre liberado
-				'epic'  => '2026-05-25',
+				'epic'  => '2026-05-28',
 				'comum' => '2026-05-31',
 			];
 			// Delay entre reservas (em minutos) por tipo
