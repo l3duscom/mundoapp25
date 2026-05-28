@@ -87,6 +87,7 @@ $routes->group('api/cronograma', ['filter' => 'secureApi'], function ($routes) {
     $routes->get('/', 'Api\Cronograma::index', ['filter' => 'jwtAuth']); // Lista todos os cronogramas
     $routes->get('(:num)', 'Api\Cronograma::show/$1', ['filter' => 'jwtAuth']); // Detalhes de um cronograma
     $routes->get('evento/(:num)', 'Api\Cronograma::byEvento/$1', ['filter' => 'jwtAuth']); // Cronogramas por evento
+    $routes->get('evento/(:num)/itens', 'Api\Cronograma::byEventoComItens/$1', ['filter' => 'jwtAuth']); // Cronogramas + itens por evento
     $routes->post('/', 'Api\Cronograma::create', ['filter' => 'jwtAuth']); // Cria novo cronograma
     $routes->put('(:num)', 'Api\Cronograma::update/$1', ['filter' => 'jwtAuth']); // Atualiza cronograma
     $routes->patch('(:num)', 'Api\Cronograma::update/$1', ['filter' => 'jwtAuth']); // Atualiza parcialmente

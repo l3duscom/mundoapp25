@@ -12,11 +12,13 @@ use App\Entities\CronogramaEntity;
 class Cronograma extends BaseController
 {
     private $cronogramaModel;
+    private $cronogramaItemModel;
     private $eventoModel;
 
     public function __construct()
     {
         $this->cronogramaModel = new \App\Models\CronogramaModel();
+        $this->cronogramaItemModel = new \App\Models\CronogramaItemModel();
         $this->eventoModel = new \App\Models\EventoModel();
     }
 
@@ -663,11 +665,103 @@ class Cronograma extends BaseController
 
         } catch (\Exception $e) {
             log_message('error', 'Erro ao listar cronogramas por evento API: ' . $e->getMessage());
-            
+
             return $this->response
                 ->setJSON([
                     'success' => false,
                     'message' => 'Erro ao listar cronogramas',
+                    'error' => ENVIRONMENT === 'development' ? $e->getMessage() : 'Erro interno'
+                ])
+                ->setStatusCode(500);
+        }
+    }
+
+    /**
+     * Lista cronogramas de um evento com seus itens embutidos
+     * GET /api/cronograma/evento/{event_id}/itens
+     *
+     * @param int $event_id ID do evento
+     * @return \CodeIgniter\HTTP\Response
+     */
+    public function byEventoComItens($event_id = null)
+    {
+        if (!$event_id) {
+            return $this->response
+                ->setJSON([
+                    'success' => false,
+                    'message' => 'ID do evento não fornecido'
+                ])
+                ->setStatusCode(400);
+        }
+
+        try {
+            $evento = $this->eventoModel->find($event_id);
+            if (!$evento) {
+                return $this->response
+                    ->setJSON([
+                        'success' => false,
+                        'message' => 'Evento não encontrado'
+                    ])
+                    ->setStatusCode(404);
+            }
+
+            $cronogramas = $this->cronogramaModel->getCronogramasByEvento($event_id);
+
+            $data = [];
+            foreach ($cronogramas as $cronograma) {
+                $itens = $this->cronogramaItemModel->getItensByCronograma((int)$cronograma->id);
+
+                $itensFmt = [];
+                foreach ($itens as $item) {
+                    $itensFmt[] = [
+                        'id'                => $item->id,
+                        'cronograma_id'     => $item->cronograma_id,
+                        'nome_item'         => $item->nome_item,
+                        'data_hora_inicio'  => $item->data_hora_inicio,
+                        'data_hora_fim'     => $item->data_hora_fim,
+                        'duracao_minutos'   => $item->getDuracaoMinutos(),
+                        'duracao_formatada' => $item->getDuracaoFormatada(),
+                        'ativo'             => (int)$item->ativo,
+                        'status'            => $item->status,
+                        'is_passado'        => $item->isPassado(),
+                        'is_agora'          => $item->isAgora(),
+                        'created_at'        => $item->created_at,
+                        'updated_at'        => $item->updated_at,
+                    ];
+                }
+
+                $data[] = [
+                    'id'         => $cronograma->id,
+                    'name'       => $cronograma->name,
+                    'ativo'      => (int)$cronograma->ativo,
+                    'created_at' => $cronograma->created_at,
+                    'updated_at' => $cronograma->updated_at,
+                    'itens'      => $itensFmt,
+                    'total_itens' => count($itensFmt),
+                ];
+            }
+
+            return $this->response
+                ->setJSON([
+                    'success' => true,
+                    'data' => [
+                        'evento' => [
+                            'id'   => $evento->id,
+                            'nome' => $evento->nome,
+                        ],
+                        'cronogramas' => $data,
+                        'total'       => count($data),
+                    ]
+                ])
+                ->setStatusCode(200);
+
+        } catch (\Exception $e) {
+            log_message('error', 'Erro ao listar cronogramas com itens por evento API: ' . $e->getMessage());
+
+            return $this->response
+                ->setJSON([
+                    'success' => false,
+                    'message' => 'Erro ao listar cronogramas com itens',
                     'error' => ENVIRONMENT === 'development' ? $e->getMessage() : 'Erro interno'
                 ])
                 ->setStatusCode(500);
