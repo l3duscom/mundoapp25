@@ -27,7 +27,10 @@
       "Bash(git -C c:/Users/Edu/Documents/Projetos/mundo_app log --all --oneline -- app/Controllers/Console.php)",
       "Bash(git -C c:/Users/Edu/Documents/Projetos/mundo_app log --all -p -S \"queuecheck\" -- app/Controllers/Console.php)",
       "Bash(git -C c:/Users/Edu/Documents/Projetos/mundo_app show eb205bf4:app/Controllers/Console.php)",
-      "Bash(xargs ls *)"
+      "Bash(xargs ls *)",
+      "Bash(zcat \"c:\\\\Users\\\\Edu\\\\Documents\\\\Projetos\\\\mundo_app/bkp_banco.sql\")",
+      "Bash(grep -A 35 \"CREATE TABLE.*\\\\`meet\\\\`\" \"c:\\\\Users\\\\Edu\\\\Documents\\\\Projetos\\\\mundo_app/bkp_banco.sql\")",
+      "Bash(grep -n \"api/meets\\\\|Api\\\\\\\\\\\\\\\\Meets\\\\|api/meet\" c:/Users/Edu/Documents/Projetos/mundo_app/app/Config/Routes.php)"
     ]
   }
 }

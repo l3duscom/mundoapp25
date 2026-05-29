@@ -370,6 +370,13 @@ $routes->group('api/ingressos', ['filter' => 'secureApi'], function ($routes) {
     $routes->get('(:num)', 'Api\Ingressos::show/$1', ['filter' => 'jwtAuth']); // Detalhes de um ingresso específico (com QR code)
 });
 
+// ========================================
+// Rotas da API de Meet & Greet
+// ========================================
+$routes->group('api/meets', ['filter' => 'secureApi'], function ($routes) {
+    $routes->get('/', 'Api\Meets::index', ['filter' => 'jwtAuth']); // Reservas do usuário autenticado (GET /api/meets?event_id=X)
+});
+
 
 /*
  * --------------------------------------------------------------------
