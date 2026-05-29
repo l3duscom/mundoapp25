@@ -26,7 +26,8 @@
       "Bash(git -C c:/Users/Edu/Documents/Projetos/mundo_app show 1b194515 -- app/Controllers/Console.php)",
       "Bash(git -C c:/Users/Edu/Documents/Projetos/mundo_app log --all --oneline -- app/Controllers/Console.php)",
       "Bash(git -C c:/Users/Edu/Documents/Projetos/mundo_app log --all -p -S \"queuecheck\" -- app/Controllers/Console.php)",
-      "Bash(git -C c:/Users/Edu/Documents/Projetos/mundo_app show eb205bf4:app/Controllers/Console.php)"
+      "Bash(git -C c:/Users/Edu/Documents/Projetos/mundo_app show eb205bf4:app/Controllers/Console.php)",
+      "Bash(xargs ls *)"
     ]
   }
 }

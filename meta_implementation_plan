@@ -1,0 +1,306 @@
+# Integração Meta Conversions API (CAPI) no Checkout
+
+Implementar rastreamento server-side de eventos do Meta Pixel usando a Conversions API, complementando o rastreamento client-side (`fbq()`) que já existe. Isso resolve o problema de perda de 20-40% dos eventos de conversão causada por ad-blockers e restrições de privacidade dos navegadores.
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Token de Acesso necessário:** Você precisará gerar um **Access Token** do Pixel Meta no Events Manager do Facebook. Esse token será configurado no `.env`. Já possui esse token?
+
+> [!IMPORTANT]
+> **Pixel ID por evento:** O código atual já suporta `meta_pixel_id` por evento (campo no banco de dados). A CAPI usará esse mesmo campo. Confirme se todos os eventos ativos já possuem `meta_pixel_id` preenchido no banco.
+
+> [!WARNING]
+> **Evento `Purchase` é a prioridade.** A CAPI é mais crítica para o evento de compra (que envia valor monetário) do que para ViewContent/AddToCart. O plano prioriza Purchase e inclui os demais como bônus.
+
+## Open Questions
+
+> [!IMPORTANT]
+> **Um único token para todos os pixels?** Se cada evento tem seu próprio `meta_pixel_id`, cada um precisaria de um token de acesso próprio? Ou todos compartilham o mesmo Business Manager e token?
+
+> [!NOTE]
+> **Hashing de dados do usuário:** A CAPI exige que dados como email, telefone e CPF sejam enviados com hash SHA-256. Isso será feito automaticamente no Service. Confirme se o email e telefone no banco estão em formato "limpo" (sem espaços extras).
+
+---
+
+## Arquitetura da Solução
+
+```mermaid
+graph TD
+    A["Browser (Usuário)"] -->|"fbq('track', 'Purchase')"| B["Meta Pixel (Client-side)"]
+    C["Servidor PHP"] -->|"cURL POST"| D["Meta Conversions API"]
+    B --> E["Meta Events Manager"]
+    D --> E
+    E -->|"Deduplicação via event_id"| F["Dados Unificados"]
+    
+    G["Webhook Asaas"] --> C
+    H["CheckoutService"] --> C
+    I["Checkout Controller"] --> C
+```
+
+### Deduplicação Client ↔ Server
+
+Para evitar contagem dupla do mesmo evento:
+- Um **`event_id` único** é gerado no servidor no momento da compra (ex: `purchase_{pedido_id}_{timestamp}`)
+- Esse `event_id` é passado para a **view** via sessão/dados e usado no `fbq()` client-side
+- O **mesmo `event_id`** é enviado na chamada CAPI server-side
+- O Meta deduplica automaticamente eventos com mesmo `event_id` recebidos em até 48h
+
+---
+
+## Proposed Changes
+
+### Configuração (.env)
+
+#### [MODIFY] [.env](file:///c:/Users/Edu/Documents/Projetos/mundo_app/.env)
+
+Adicionar variáveis para a Meta Conversions API:
+
+```diff
++#--------------------------------------------------------------------
++# META CONVERSIONS API (CAPI)
++#--------------------------------------------------------------------
++META_PIXEL_ID = '393991432344364'
++META_PIXEL_ACCESS_TOKEN = 'SEU_TOKEN_AQUI'
++META_CAPI_TEST_EVENT_CODE = ''
+```
+
+- `META_PIXEL_ID`: Pixel ID padrão (fallback quando o evento não tem `meta_pixel_id` próprio)
+- `META_PIXEL_ACCESS_TOKEN`: Token de acesso gerado no Meta Events Manager
+- `META_CAPI_TEST_EVENT_CODE`: Código de teste para validação (usado apenas em desenvolvimento, deixar vazio em produção)
+
+---
+
+### Service Principal
+
+#### [NEW] [MetaConversionsService.php](file:///c:/Users/Edu/Documents/Projetos/mundo_app/app/Services/MetaConversionsService.php)
+
+Service responsável por enviar eventos para a Meta Conversions API via cURL (sem dependências externas).
+
+**Responsabilidades:**
+- Hash SHA-256 de dados do usuário (email, telefone, nome, CPF)
+- Construção do payload conforme especificação da API
+- Envio assíncrono (fire-and-forget com timeout curto)
+- Log de sucesso/falha sem interromper o fluxo de compra
+- Suporte a test_event_code para debugging
+
+**Eventos implementados:**
+| Evento | Quando | Dados enviados |
+|--------|--------|----------------|
+| `Purchase` | Pagamento confirmado | valor, moeda, order_id, content_ids, email, telefone, nome |
+| `InitiateCheckout` | Formulário de checkout submetido | valor, content_ids, num_items, email |
+| `Lead` | Novo cadastro durante checkout | email, nome, telefone |
+
+**Métodos públicos:**
+```php
+class MetaConversionsService
+{
+    public function sendPurchaseEvent(object $pedido, object $cliente, object $evento): bool
+    public function sendInitiateCheckoutEvent(array $data, object $evento): bool
+    public function sendLeadEvent(object $cliente, object $evento): bool
+    public function generateEventId(string $eventName, int $pedidoId): string
+}
+```
+
+**Detalhes técnicos do payload:**
+```json
+{
+  "data": [{
+    "event_name": "Purchase",
+    "event_time": 1717012345,
+    "event_id": "purchase_123_1717012345",
+    "event_source_url": "https://mundodream.com.br/checkout/obrigado",
+    "action_source": "website",
+    "user_data": {
+      "em": ["sha256_hash_do_email"],
+      "ph": ["sha256_hash_do_telefone"],
+      "fn": ["sha256_hash_do_primeiro_nome"],
+      "ln": ["sha256_hash_do_sobrenome"],
+      "ct": ["sha256_hash_da_cidade"],
+      "st": ["sha256_hash_do_estado"],
+      "zp": ["sha256_hash_do_cep"],
+      "country": ["sha256_hash_br"],
+      "external_id": ["sha256_hash_do_user_id"],
+      "client_ip_address": "IP do cliente",
+      "client_user_agent": "User-Agent do cliente",
+      "fbc": "cookie _fbc",
+      "fbp": "cookie _fbp"
+    },
+    "custom_data": {
+      "value": 150.00,
+      "currency": "BRL",
+      "content_ids": ["17"],
+      "content_type": "product",
+      "order_id": "PED-ABC123",
+      "content_name": "Dreamfest 25"
+    }
+  }],
+  "test_event_code": "TEST12345"
+}
+```
+
+---
+
+### Pontos de Integração
+
+#### [MODIFY] [Webhook.php](file:///c:/Users/Edu/Documents/Projetos/mundo_app/app/Controllers/Webhook.php)
+
+**Onde:** Após o bloco que verifica `$statusAtualConfirmado` (linha ~114), dentro do `if (!$statusAnteriorConfirmado && $statusAtualConfirmado)`.
+
+**O quê:** Chamar `MetaConversionsService::sendPurchaseEvent()` após confirmação de pagamento via webhook Asaas. Este é o **ponto mais importante** pois cobre pagamentos PIX (que são confirmados assincronamente).
+
+```diff
+ // Notifica UTMify sobre a venda confirmada
+ try {
+     log_message('info', 'UTMify: Iniciando notificação...');
+     // ... código UTMify existente
+ } catch (\Exception $e) {
+     // ... catch existente
+ }
++
++// Notifica Meta Conversions API sobre a compra
++try {
++    $metaService = new \App\Services\MetaConversionsService();
++    $metaService->sendPurchaseEventFromWebhook($pedido);
++    log_message('info', 'Meta CAPI: Purchase event enviado para pedido #' . $pedido->id);
++} catch (\Exception $e) {
++    log_message('error', 'Meta CAPI: Erro ao enviar evento: ' . $e->getMessage());
++}
+```
+
+> [!NOTE]
+> No webhook, não temos acesso a `client_ip_address` e `client_user_agent` originais do comprador. Enviaremos sem esses campos — o Meta aceita, mas a qualidade do match será menor. A deduplicação com o evento client-side (que tem esses dados) compensa.
+
+---
+
+#### [MODIFY] [CheckoutService.php](file:///c:/Users/Edu/Documents/Projetos/mundo_app/app/Services/CheckoutService.php)
+
+**Onde:** No método `processarPagamentoCartao()` (linha ~182), após confirmar que o status é `CONFIRMED`.
+
+**O quê:** Disparar evento CAPI de Purchase imediatamente para pagamentos com cartão (que são confirmados sincronamente), com IP e User-Agent reais do comprador.
+
+```diff
+ Services::emailService()->enviarConfirmacaoCartao($cliente);
++
++// Meta Conversions API - Purchase (cartão confirmado imediatamente)
++if ($status === 'CONFIRMED') {
++    try {
++        $metaService = new \App\Services\MetaConversionsService();
++        $evento = $this->eventoModel->find($pedido->evento_id ?? 12);
++        $metaService->sendPurchaseEvent($pedido, $cliente, $evento);
++    } catch (\Exception $e) {
++        log_message('error', 'Meta CAPI: ' . $e->getMessage());
++    }
++}
+```
+
+---
+
+#### [MODIFY] [Checkout.php](file:///c:/Users/Edu/Documents/Projetos/mundo_app/app/Controllers/Checkout.php)
+
+**Onde 1:** No método `obrigado()` (linha ~622), gerar e passar `event_id` para a view para deduplicação.
+
+```diff
+ $data = [
+     'titulo' => 'Comprar ingressos',
+     'id' => $id,
+     'items' => $ingressos,
+     'evento' => $evento,
+     'total' => $total,
+-    'order_id' => session()->get('order_id') ?? ''
++    'order_id' => session()->get('order_id') ?? '',
++    'meta_event_id' => session()->get('meta_event_id') ?? ''
+ ];
+```
+
+**Onde 2:** Nos métodos `finalizarcartao()` (no controller ou CheckoutService) — ao gerar o `purchase`, criar o `event_id` e salvá-lo em sessão:
+
+```diff
++$metaEventId = 'purchase_' . $pedido_id . '_' . time();
++session()->set('meta_event_id', $metaEventId);
+```
+
+---
+
+#### [MODIFY] [obrigado.php](file:///c:/Users/Edu/Documents/Projetos/mundo_app/app/Views/Checkout/obrigado.php)
+
+**Onde:** No bloco de script do Meta Pixel Purchase (linha ~370).
+
+**O quê:** Usar o `event_id` compartilhado para deduplicação.
+
+```diff
+ fbq('track', 'Purchase', {
+     content_name: '<?= $evento->nome ?>',
+     content_category: '<?= $evento->categoria ?? 'Evento' ?>',
+     content_type: 'product',
+     value: <?= $total ?? 0 ?>,
+     currency: 'BRL',
+     content_ids: [<?= $evento->id ?>],
+     order_id: '<?= $order_id ?? '' ?>'
+-});
++}, {eventID: '<?= $meta_event_id ?? '' ?>'});
+```
+
+---
+
+### Helper (Opcional)
+
+#### [MODIFY] [meta_pixel_helper.php](file:///c:/Users/Edu/Documents/Projetos/mundo_app/app/Helpers/meta_pixel_helper.php)
+
+Adicionar função helper para gerar event_id e incluí-lo nos eventos fbq existentes:
+
+```php
+if (!function_exists('generate_meta_event_id')) {
+    function generate_meta_event_id(string $event_name, $identifier = null): string
+    {
+        return $event_name . '_' . ($identifier ?? uniqid()) . '_' . time();
+    }
+}
+```
+
+---
+
+## Resumo de Arquivos
+
+| Ação | Arquivo | Motivo |
+|------|---------|--------|
+| **NOVO** | `app/Services/MetaConversionsService.php` | Service central da CAPI |
+| **MODIFICAR** | `.env` | Adicionar token e pixel_id |
+| **MODIFICAR** | `app/Controllers/Webhook.php` | Disparo CAPI no webhook de pagamento confirmado |
+| **MODIFICAR** | `app/Services/CheckoutService.php` | Disparo CAPI para cartão confirmado sync |
+| **MODIFICAR** | `app/Controllers/Checkout.php` | Gerar e passar event_id para deduplicação |
+| **MODIFICAR** | `app/Views/Checkout/obrigado.php` | Usar event_id no fbq client-side |
+| **MODIFICAR** | `app/Helpers/meta_pixel_helper.php` | Helper para gerar event_id |
+
+---
+
+## Verification Plan
+
+### Teste em Desenvolvimento
+
+1. **Configurar `META_CAPI_TEST_EVENT_CODE`** no `.env` com o código obtido no Meta Events Manager → Test Events
+2. **Realizar compra de teste** (PIX ou cartão)
+3. **Verificar no Meta Events Manager:**
+   - Aba "Test Events" → evento `Purchase` deve aparecer como "Server" 
+   - Aba "Overview" → o evento deve mostrar tanto "Browser" quanto "Server"
+   - Indicador de **"Deduplication"** deve estar ativo (event_id match)
+4. **Verificar logs do CodeIgniter** (`writable/logs/`) para mensagens `Meta CAPI:` 
+
+### Testes Manuais
+
+| Cenário | Esperado |
+|---------|----------|
+| Compra PIX → pagamento confirmado via webhook | Evento Purchase enviado server-side via webhook |
+| Compra cartão → pagamento confirmado sync | Evento Purchase enviado server-side imediatamente |
+| Compra com ad-blocker ativo | Evento Purchase server-side garante tracking mesmo sem client-side |
+| Token inválido no .env | Log de erro, compra não é interrompida |
+| Evento sem `meta_pixel_id` | Usa `META_PIXEL_ID` do `.env` como fallback |
+
+### Checklist de Qualidade
+
+- [ ] Nenhuma compra é interrompida por falha na CAPI (try/catch em todos os pontos)
+- [ ] Dados do usuário são hasheados com SHA-256 antes do envio
+- [ ] `event_id` é compartilhado entre browser e servidor para deduplicação
+- [ ] Timeout do cURL é curto (5s) para não atrasar o fluxo
+- [ ] Logs informativos em caso de sucesso e erro
+- [ ] Token não é exposto em nenhum frontend/view

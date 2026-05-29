@@ -9,6 +9,7 @@ use App\Models\TransactionModel;
 use App\Models\EnderecoModel;
 use App\Models\EventoModel;
 use App\Services\AsaasService;
+use App\Services\MetaConversionsService;
 use App\Services\PagarmeService;
 use App\Entities\Cliente;
 use Config\Services;
@@ -208,6 +209,21 @@ class CheckoutService
         ]);
 
         Services::emailService()->enviarConfirmacaoCartao($cliente);
+
+        // Meta Conversions API — cartão confirmado sincronamente (temos IP e UA reais)
+        if ($status === 'CONFIRMED') {
+            try {
+                $metaService = new MetaConversionsService();
+                $metaService->sendPurchaseEvent((int)$pedido_id, [
+                    'ip'  => $_SERVER['REMOTE_ADDR'] ?? '',
+                    'ua'  => $_SERVER['HTTP_USER_AGENT'] ?? '',
+                    'fbc' => $_COOKIE['_fbc'] ?? '',
+                    'fbp' => $_COOKIE['_fbp'] ?? '',
+                ]);
+            } catch (\Exception $e) {
+                log_message('error', 'Meta CAPI: Erro ao enviar Purchase (cartão) pedido #' . $pedido_id . ': ' . $e->getMessage());
+            }
+        }
 
         unset($_SESSION['carrinho']);
 

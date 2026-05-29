@@ -130,6 +130,14 @@ class Webhook extends BaseController
                     } catch (\Exception $e) {
                         log_message('error', 'UTMify: Erro ao notificar venda do pedido #' . $pedido->id . ': ' . $e->getMessage());
                     }
+
+                    // Notifica Meta Conversions API (CAPI) — sem IP/UA pois é via webhook
+                    try {
+                        $metaService = new \App\Services\MetaConversionsService();
+                        $metaService->sendPurchaseEvent((int)$pedido->id);
+                    } catch (\Exception $e) {
+                        log_message('error', 'Meta CAPI: Erro ao enviar Purchase para pedido #' . $pedido->id . ': ' . $e->getMessage());
+                    }
                 }
             }
 

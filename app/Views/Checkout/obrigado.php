@@ -375,7 +375,7 @@ fbq('track', 'Purchase', {
     currency: 'BRL',
     content_ids: [<?= $evento->id ?>],
     order_id: '<?= $order_id ?? '' ?>'
-});
+}, {eventID: '<?= $meta_event_id ?? '' ?>'});
 </script>
 <?php endif; ?>
 

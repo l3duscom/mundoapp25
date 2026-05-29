@@ -657,13 +657,16 @@ class Checkout extends BaseController
 		// Calcular total da sessão
 		$total = $_SESSION['total'] ?? 0;
 
+		$orderId = session()->get('order_id') ?? '';
+
 		$data = [
 			'titulo' => 'Comprar ingressos',
 			'id' => $id,
 			'items' => $ingressos,
 			'evento' => $evento,
 			'total' => $total,
-			'order_id' => session()->get('order_id') ?? ''
+			'order_id' => $orderId,
+			'meta_event_id' => $orderId !== '' ? 'purchase_' . $orderId : '',
 		];
 
 		return view('Checkout/obrigado', $data);
