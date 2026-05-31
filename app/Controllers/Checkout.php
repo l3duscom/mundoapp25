@@ -2137,6 +2137,8 @@ class Checkout extends BaseController
 
 		$indicacoes = $this->pedidoModel->where('convite', $convite->codigo)->where('status', 'paid')->countAllResults();
 
+		$pedidoId = $transaction->pedido_id ?? null;
+
 		$data = [
 			'titulo' => 'Pagamento via PIX ',
 			'charge_id' => $id,
@@ -2145,7 +2147,8 @@ class Checkout extends BaseController
 			'indicacoes' => $indicacoes,
 			'status' => $status,
 			'event_id' => $event_id,
-			'evento' => $evento
+			'evento' => $evento,
+			'meta_event_id' => $pedidoId ? 'purchase_' . $pedidoId : '',
 		];
 
 

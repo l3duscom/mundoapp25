@@ -312,20 +312,8 @@ if ($status == 'RECEIVED') {
 
 <?php echo $this->section('scripts') ?>
 
-<!-- Meta Pixel Purchase Event -->
-<?php if (isset($evento) && !empty($evento->meta_pixel_id)): ?>
-<script>
-fbq('track', 'Purchase', {
-    content_name: '<?= $evento->nome ?> - PIX',
-    content_category: '<?= $evento->categoria ?? 'Evento' ?>',
-    content_type: 'product',
-    value: <?= ($transaction->installment_value ?? 0) / 100 ?>,
-    currency: 'BRL',
-    content_ids: [<?= $evento->id ?>],
-    order_id: '<?= $charge_id ?? '' ?>'
-});
-</script>
-<?php endif; ?>
+<!-- Meta Pixel Purchase Event: disparado no callback do polling quando is_paid=true -->
+<?php /* fbq movido para o callback JS abaixo para não disparar múltiplas vezes em reloads */ ?>
 
 <script src="<?php echo site_url('recursos/vendor/loadingoverlay/loadingoverlay.min.js') ?>"></script>
 <script src="<?php echo site_url('recursos/vendor/mask/jquery.mask.min.js') ?>"></script>
@@ -389,6 +377,21 @@ fbq('track', 'Purchase', {
                         isPaymentReceived = true;
                         clearInterval(pollingInterval);
                         clearInterval(countdownInterval);
+
+                        // Meta Pixel Purchase — dispara uma única vez quando PIX confirmado
+                        <?php if (isset($evento) && !empty($evento->meta_pixel_id)): ?>
+                        if (typeof fbq !== 'undefined') {
+                            fbq('track', 'Purchase', {
+                                content_name: '<?= esc($evento->nome, 'js') ?> - PIX',
+                                content_category: '<?= esc($evento->categoria ?? 'Evento', 'js') ?>',
+                                content_type: 'product',
+                                value: <?= ($transaction->installment_value ?? 0) / 100 ?>,
+                                currency: 'BRL',
+                                content_ids: [<?= $evento->id ?>],
+                                order_id: '<?= esc($charge_id ?? '', 'js') ?>'
+                            }, {eventID: '<?= esc($meta_event_id ?? '', 'js') ?>'});
+                        }
+                        <?php endif; ?>
 
                         $("#response").html('<div class="alert alert-success" style="border-radius: 10px;"><i class="bx bx-check-circle me-1"></i> Pagamento confirmado! Redirecionando...</div>');
                         $("#btn-salvar").text('Pagamento Confirmado!').prop('disabled', true).css('background', '#065f46');
