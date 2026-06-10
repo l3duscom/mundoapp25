@@ -30,7 +30,11 @@
       "Bash(xargs ls *)",
       "Bash(zcat \"c:\\\\Users\\\\Edu\\\\Documents\\\\Projetos\\\\mundo_app/bkp_banco.sql\")",
       "Bash(grep -A 35 \"CREATE TABLE.*\\\\`meet\\\\`\" \"c:\\\\Users\\\\Edu\\\\Documents\\\\Projetos\\\\mundo_app/bkp_banco.sql\")",
-      "Bash(grep -n \"api/meets\\\\|Api\\\\\\\\\\\\\\\\Meets\\\\|api/meet\" c:/Users/Edu/Documents/Projetos/mundo_app/app/Config/Routes.php)"
+      "Bash(grep -n \"api/meets\\\\|Api\\\\\\\\\\\\\\\\Meets\\\\|api/meet\" c:/Users/Edu/Documents/Projetos/mundo_app/app/Config/Routes.php)",
+      "Bash(grep -n \"allowedFields\\\\|protected \\\\$\" c:/Users/Edu/Documents/Projetos/mundo_app/app/Models/UsuarioModel.php)",
+      "Bash(grep -n \"allowedFields\\\\|protected \\\\$\" c:/Users/Edu/Documents/Projetos/mundo_app/app/Models/EnderecoModel.php)",
+      "Bash(grep -n \"allowedFields\\\\|protected \\\\$\" c:/Users/Edu/Documents/Projetos/mundo_app/app/Models/ClienteModel.php)",
+      "Bash(php -l \"c:/Users/Edu/Documents/Projetos/mundo_app/app/Services/MetaConversionsService.php\")"
     ]
   }
 }
