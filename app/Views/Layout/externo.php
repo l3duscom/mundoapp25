@@ -297,7 +297,7 @@
 </head>
 
 <body>
-    <a href="https://wa.me/5551993406154?text=Preciso%20de%20ajuda%20com%20meus%20ingressos" target="_blank" class="whatsapp-float">
+    <a href="https://wa.me/555197139143?text=Preciso%20de%20ajuda%20com%20meus%20ingressos" target="_blank" class="whatsapp-float">
         <img src="<?php echo site_url('recursos/front/'); ?>images/wpq.png" alt="WhatsApp" width="60" height="60">
     </a>
     <!--start wrapper-->
