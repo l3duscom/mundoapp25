@@ -308,16 +308,16 @@ class InscricaoModel extends Model
             ];
         }
 
-        // Verificar prazo (7 dias antes do evento)
+        // Verificar prazo (5 dias antes do evento)
         $dataEvento = strtotime($inscricao->evento_data_inicio);
-        $prazoLimite = strtotime('-7 days', $dataEvento);
+        $prazoLimite = strtotime('-5 days', $dataEvento);
         $hoje = time();
 
         if ($hoje > $prazoLimite) {
             $dataLimite = date('d/m/Y', $prazoLimite);
             return [
                 'pode_editar' => false,
-                'motivo' => "O prazo para edição desta inscrição encerrou em {$dataLimite}. Edições são permitidas apenas até 7 dias antes da data do evento."
+                'motivo' => "O prazo para edição desta inscrição encerrou em {$dataLimite}. Edições são permitidas apenas até 5 dias antes da data do evento."
             ];
         }
 
